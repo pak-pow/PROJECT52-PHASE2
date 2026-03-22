@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 todos = [
     {"id": 1, "task": "Learn Flask", "completed": True},
@@ -16,6 +16,23 @@ def home():
     }
 
     return jsonify(response_data)
+
+@app.route("/todos", methods=["GET"])
+def get_todos():
+    return jsonify({"todos": todos})
+
+@app.route("/todos", methods=['POST'])
+def add_todos():
+    incoming_data = request.get_json()
+
+    new_todo = {
+        "id": len(todos) + 1,
+        "task": incoming_data["task"],
+        "completed": False
+    }
+
+    todos.append(new_todo)
+    return jsonify(new_todo), 201
 
 if __name__ == '__main__':
     print("Starting TODO Backend Server")
