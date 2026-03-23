@@ -39,13 +39,13 @@ def add_todos():
 def update_todo(todo_id):
     incoming_data = request.get_json()
     
-    for todo in todo_id:
+    for todo in todos:
         if todo["id"] == todo_id:
-            todo["tasks"] = incoming_data.get("task", todo["task"])
+            todo["task"] = incoming_data.get("task", todo["task"])
             todo["completed"] = incoming_data.get("completed", todo["completed"])
             return jsonify({"message": "Todo updated successfully", "todo": todo})
         
-    return jsonify({"error", "Todo not found"}), 404
+    return jsonify({"error": "Todo not found"}), 404
 
 
 if __name__ == '__main__':
