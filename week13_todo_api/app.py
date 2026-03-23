@@ -47,6 +47,12 @@ def update_todo(todo_id):
         
     return jsonify({"error": "Todo not found"}), 404
 
+@app.route('/todos/<int:todo_id>', methods=['DELETE'])
+def delete_todo(todo_id):
+    global todos 
+    todos = [todo for todo in todos if todo["id"] != todo_id]
+    
+    return jsonify({"message": f"Todo {todo_id} deleted successfully!"})
 
 if __name__ == '__main__':
     print("Starting TODO Backend Server")
