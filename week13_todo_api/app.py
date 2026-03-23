@@ -34,6 +34,12 @@ def add_todos():
     todos.append(new_todo)
     return jsonify(new_todo), 201
 
+
+@app.route("/todos/<int:todo_id>", methods=["PUT"]) #type: ignore
+def update_todo(todo_id):
+    pass
+
+
 if __name__ == '__main__':
     print("Starting TODO Backend Server")
     app.run(debug=True, port=5000)
