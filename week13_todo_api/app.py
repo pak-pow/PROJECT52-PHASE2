@@ -47,6 +47,10 @@ def update_todo(todo_id):
     
     for todo in todos:
         if todo["id"] == todo_id:
+            
+            if "task" in incoming_data and incoming_data["task"].strip() == "":
+                return jsonify({"error": "Updated task cannot be empty!"}), 400
+            
             todo["task"] = incoming_data.get("task", todo["task"])
             todo["completed"] = incoming_data.get("completed", todo["completed"])
             return jsonify({"message": "Todo updated successfully", "todo": todo})
@@ -56,8 +60,11 @@ def update_todo(todo_id):
 @app.route('/todos/<int:todo_id>', methods=['DELETE'])
 def delete_todo(todo_id):
     global todos 
-    todos = [todo for todo in todos if todo["id"] != todo_id]
     
+    if not any(todo["id"] == todo_id for todo in todos):
+        return jsonify({"error": "Todo not found, cannot delete."}), 404
+    
+    todos = [todo for todo in todos if todo["id"] != todo_id]
     return jsonify({"message": f"Todo {todo_id} deleted successfully!"})
 
 if __name__ == '__main__':
