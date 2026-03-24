@@ -28,6 +28,9 @@ def get_todos():
 def add_todos():
     incoming_data = request.get_json()
 
+    if not incoming_data or "task" not in incoming_data or incoming_data["task"].strip() == "":
+        return jsonify({"error": "Task cannot be empty"}), 400
+
     new_todo = {
         "id": len(todos) + 1,
         "task": incoming_data["task"],
