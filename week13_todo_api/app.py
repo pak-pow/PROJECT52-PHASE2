@@ -1,16 +1,15 @@
+import os
+import json
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS #type: ignore
-
-todos = [
-    {"id": 1, "task": "Learn Flask", "completed": True},
-    {"id": 2, "task": "Build GET and POST endpoints", "completed":False}
-]
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/', methods=['GET']) # type: ignore
+FILE_PATH = "todos.json"
 
+@app.route('/', methods=['GET']) # type: ignore
 def home():
     response_data = {
         "status": "success",
