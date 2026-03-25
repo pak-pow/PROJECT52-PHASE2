@@ -8,7 +8,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Permanent storage setup
-FILE_PATH = "todos.json"
+# 1. Get the exact, absolute path to the folder where app.py lives
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Tell Python to securely glue the folder path and the file name together
+FILE_PATH = os.path.join(BASE_DIR, "todos.json")
 
 def load_todos():
     """

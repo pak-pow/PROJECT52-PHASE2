@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "task": "Do Exam",
+        "completed": false
+    },
+    {
+        "id": 2,
+        "task": "Study APP DEV",
+        "completed": false
+    },
+    {
+        "id": 3,
+        "task": "Study Coding",
+        "completed": false
+    },
+    {
+        "id": 4,
+        "task": "Do journal",
+        "completed": false
+    }
+]
