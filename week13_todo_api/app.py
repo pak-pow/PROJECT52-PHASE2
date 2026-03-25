@@ -33,35 +33,38 @@ def save_todos(todos):
     """
     with open(FILE_PATH, "w") as file:
         json.dump(todos, file, indent=4)
-    
+
+# API Endpoints
 @app.route('/', methods=['GET']) # type: ignore
 def home():
-    response_data = {
-        "status": "success",
-        "message": "TODO App is UP",
+    return jsonify({
+        "status": "success", 
+        "message": "Welcome to the TODO API!",
         "version": "1.0"
-    }
-
-    return jsonify(response_data)
+    })
 
 @app.route("/todos", methods=["GET"])
 def get_todos():
+    todos = load_todos()
     return jsonify({"todos": todos})
 
 @app.route("/todos", methods=['POST'])
 def add_todos():
+    todos = load_todos()
     incoming_data = request.get_json()
 
     if not incoming_data or "task" not in incoming_data or incoming_data["task"].strip() == "":
         return jsonify({"error": "Task cannot be empty"}), 400
 
+    new_id = 1 if len(todos) == 0 else max(t["id"] for t in todos) + 1
     new_todo = {
-        "id": len(todos) + 1,
+        "id": new_id,
         "task": incoming_data["task"],
         "completed": False
     }
 
     todos.append(new_todo)
+    save_todos(todos)
     return jsonify(new_todo), 201
 
 
