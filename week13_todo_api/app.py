@@ -70,6 +70,7 @@ def add_todos():
 
 @app.route("/todos/<int:todo_id>", methods=["PUT"]) #type: ignore
 def update_todo(todo_id):
+    todos = load_todos()
     incoming_data = request.get_json()
     
     for todo in todos:
@@ -80,18 +81,22 @@ def update_todo(todo_id):
             
             todo["task"] = incoming_data.get("task", todo["task"])
             todo["completed"] = incoming_data.get("completed", todo["completed"])
+            
+            save_todos(todos)
             return jsonify({"message": "Todo updated successfully", "todo": todo})
         
     return jsonify({"error": "Todo not found"}), 404
 
 @app.route('/todos/<int:todo_id>', methods=['DELETE'])
 def delete_todo(todo_id):
-    global todos 
+    todos = load_todos()
     
     if not any(todo["id"] == todo_id for todo in todos):
         return jsonify({"error": "Todo not found, cannot delete."}), 404
     
     todos = [todo for todo in todos if todo["id"] != todo_id]
+    save_todos(todos)
+    
     return jsonify({"message": f"Todo {todo_id} deleted successfully!"})
 
 if __name__ == '__main__':
