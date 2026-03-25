@@ -7,8 +7,22 @@ from flask_cors import CORS #type: ignore
 app = Flask(__name__)
 CORS(app)
 
+# Permanent storage setup
 FILE_PATH = "todos.json"
 
+def load_todos():
+    """
+    reading tasks from json file
+    and if file is nowhere to be seen it will return 
+    an empty list
+    """
+    
+    if not os.path.exists(FILE_PATH):
+        return []
+    
+    with open(FILE_PATH, "r") as file:
+        return json.load(file)
+    
 @app.route('/', methods=['GET']) # type: ignore
 def home():
     response_data = {
