@@ -23,6 +23,17 @@ def load_todos():
     with open(FILE_PATH, "r") as file:
         return json.load(file)
     
+def save_todos(todos):
+    """
+    The function `save_todos` saves a list of todos to a file in JSON format with an indent of 4 spaces.
+    
+    :param todos: The `todos` parameter is a list of tasks or to-dos that need to be saved to a file.
+    The `save_todos` function takes this list of tasks and writes it to a file in JSON format with an
+    indentation of 4 spaces
+    """
+    with open(FILE_PATH, "w") as file:
+        json.dump(todos, file, indent=4)
+    
 @app.route('/', methods=['GET']) # type: ignore
 def home():
     response_data = {
