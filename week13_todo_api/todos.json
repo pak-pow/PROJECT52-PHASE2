@@ -1,10 +1,5 @@
 [
     {
-        "id": 1,
-        "task": "Do Exam",
-        "completed": false
-    },
-    {
         "id": 2,
         "task": "Study APP DEV",
         "completed": false
@@ -17,6 +12,16 @@
     {
         "id": 4,
         "task": "Do journal",
+        "completed": false
+    },
+    {
+        "id": 5,
+        "task": "Finish AppDev",
+        "completed": false
+    },
+    {
+        "id": 6,
+        "task": "Test 1 - 3/27/26",
         "completed": false
     }
 ]

@@ -1,7 +1,7 @@
 import os
 import json
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
 from flask_cors import CORS #type: ignore
 
 app = Flask(__name__)
