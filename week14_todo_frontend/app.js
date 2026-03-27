@@ -1,7 +1,7 @@
 const API_URL = 'http://127.0.0.1:5000/todos';
 const todoList = document.getElementById('todoList');
 
-asynch function loadTodos(){
+async function loadTodos(){
 
     try {
 
@@ -14,9 +14,12 @@ asynch function loadTodos(){
 
         data.todos.forEach(todo => {
             const li = document.createElement('li');
+            li.textContent = todo.task;
+            todoList.appendChild(li);
         });
-
-
+    } catch (error) {
+        console.error("Error connecting to the backend: ", error);
+        todoList.innerHTML = "<li> Could not connect to the server. Is Python running?</li>";
     }
 
 }
