@@ -29,6 +29,32 @@ async function loadTodos(){
 
 // POST / create tasks
 async function addTodo() {
+    const taskValue = taskInput.value.trim();
+
+    if (taskValue === ""){
+        alert("Please enter a task!");
+        return;
+    }
+
+    try{
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ task: taskValue })
+        });
+
+        if (response.ok){
+            taskInput.value = '';
+            loadTodos();
+        } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.error}`)
+        }
+    } catch (error) {
+        console.error("Error Adding Task:", error);
+    }
 }
 
 loadTodos();
