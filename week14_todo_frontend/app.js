@@ -57,4 +57,11 @@ async function addTodo() {
     }
 }
 
+addBtn.addEventListener('click', addTodo);
+taskInput.addEventListener('keypress', function(event){
+    if (event.key === 'Enter'){
+        addTodo();
+    }
+});
+
 loadTodos();
