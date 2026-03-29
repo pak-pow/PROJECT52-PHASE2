@@ -82,9 +82,8 @@ async function addTodo() {
 }
 
 async function toggleComplete(id, currentTaskName, currentStatus) {
-
-    try{
-        const response = await fetch(`${API_URL} / ${id}`, {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({
