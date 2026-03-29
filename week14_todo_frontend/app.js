@@ -71,13 +71,47 @@ async function addTodo() {
         if (response.ok){
             taskInput.value = '';
             loadTodos();
-            
+
         } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.error}`)
         }
     } catch (error) {
         console.error("Error Adding Task:", error);
+    }
+}
+
+async function toggleComplete(id, currentTaskName, currentStatus) {
+
+    try{
+        const response = await fetch(`${API_URL} / ${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                task: currentTaskName,
+                completed: !currentStatus
+            })
+        });
+
+        if (response.ok){
+            loadTodos();
+        }
+    } catch (error){
+        console.error("Error updating task: ", error);
+    }
+}
+
+async function deleteTodo(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE' 
+        });
+
+        if (response.ok) {
+            loadTodos(); 
+        }
+    } catch (error) {
+        console.error("Error deleting task:", error);
     }
 }
 

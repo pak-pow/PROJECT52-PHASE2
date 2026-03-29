@@ -1,35 +1,5 @@
 [
     {
-        "id": 2,
-        "task": "Study APP DEV",
-        "completed": false
-    },
-    {
-        "id": 3,
-        "task": "Study Coding",
-        "completed": false
-    },
-    {
-        "id": 4,
-        "task": "Do journal",
-        "completed": false
-    },
-    {
-        "id": 5,
-        "task": "Finish AppDev",
-        "completed": false
-    },
-    {
-        "id": 6,
-        "task": "Test 1 - 3/27/26",
-        "completed": false
-    },
-    {
-        "id": 7,
-        "task": "xie xie",
-        "completed": false
-    },
-    {
         "id": 8,
         "task": "Test 2 - 3/28/26",
         "completed": false
