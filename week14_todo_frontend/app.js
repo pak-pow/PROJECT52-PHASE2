@@ -18,7 +18,30 @@ async function loadTodos(){
 
         data.todos.forEach(todo => {
             const li = document.createElement('li');
-            li.textContent = todo.task;
+
+            if (todo.completed){
+                li.classList.add('completed');
+            }
+            
+            // Create the clickable text (PUT trigger)
+            const taskSpan = document.createElement('span');
+            taskSpan.className = 'task-text';
+            taskSpan.textContent = todo.task;
+
+            // When clicked, send the ID, the name, and the current status to be flipped
+            taskSpan.onclick = () => toggleComplete(todo.id, todo.task, todo.completed);
+
+            // Create the delete button (DELETE trigger)
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = '❌';
+
+            // Send the ID to be destroyed
+            deleteBtn.onclick = () => deleteTodo(todo.id); 
+
+            // Assemble the HTML
+            li.appendChild(taskSpan);
+            li.appendChild(deleteBtn);
             todoList.appendChild(li);
         });
     } catch (error) {
@@ -48,6 +71,7 @@ async function addTodo() {
         if (response.ok){
             taskInput.value = '';
             loadTodos();
+            
         } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.error}`)
