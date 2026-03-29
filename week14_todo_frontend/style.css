@@ -77,3 +77,25 @@ li {
     justify-content: space-between;
     align-items: center;
 }
+
+.task-text {
+    flex: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.task-text:hover {
+    color: #bb86fc;
+}
+
+li.completed .task-text {
+    text-decoration: line-through;
+    color: #777777;
+}
+
+.delete-btn {
+    background-color: transparent;
+    font-size: 1.2rem;
+    padding: 5px;
+    margin-left: 10px;
+}
