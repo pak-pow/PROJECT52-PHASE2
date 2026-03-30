@@ -5,7 +5,7 @@ const API_URL = 'http://127.0.0.1:5000/todos';
 const todoList = document.getElementById('todoList');
 const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById('addBtn');   
-const filterBtns = document.getElementById('.filter-btn');
+const filterBtns = document.querySelectorAll('.filter-btn');
 
 // state variable, can be all, active, completed
 let currentFilter = 'all';
@@ -29,7 +29,7 @@ async function loadTodos(){
             displayTodos = data.todos.filter(todo => todo.completed === true);
         }
 
-        data.todos.forEach(todo => {
+        displayTodos.forEach(todo => {
             const li = document.createElement('li');
 
             if (todo.completed){
