@@ -1,1 +1,32 @@
-[]
+[
+    {
+        "id": 1,
+        "task": "DO: Coding",
+        "completed": true
+    },
+    {
+        "id": 2,
+        "task": "DO: Study",
+        "completed": true
+    },
+    {
+        "id": 3,
+        "task": "DO: Coursera",
+        "completed": false
+    },
+    {
+        "id": 4,
+        "task": "DO: Make Lunch",
+        "completed": true
+    },
+    {
+        "id": 5,
+        "task": "DO: Play Mincraft",
+        "completed": false
+    },
+    {
+        "id": 6,
+        "task": "DO: Happpy?",
+        "completed": false
+    }
+]
