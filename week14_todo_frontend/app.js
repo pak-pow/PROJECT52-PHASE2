@@ -63,6 +63,23 @@ async function loadTodos(){
     }
 }
 
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Remove the 'active' purple highlight from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        
+        // Add the 'active' highlight to the exact button we just clicked
+        e.target.classList.add('active');
+        
+        // Update our state variable based on the button's text (All, Active, Completed)
+        currentFilter = e.target.textContent.toLowerCase();
+        
+        // Redraw the list using the new filter!
+        loadTodos();
+    });
+});
+
+
 // POST / create tasks
 async function addTodo() {
     const taskValue = taskInput.value.trim();
