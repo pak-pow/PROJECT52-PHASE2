@@ -1,23 +1,8 @@
 [
     {
-        "id": 1,
-        "task": "DO: Coding",
-        "completed": true
-    },
-    {
-        "id": 2,
-        "task": "DO: Study",
-        "completed": true
-    },
-    {
         "id": 3,
         "task": "DO: Coursera",
         "completed": false
-    },
-    {
-        "id": 4,
-        "task": "DO: Make Lunch",
-        "completed": true
     },
     {
         "id": 5,
@@ -27,6 +12,16 @@
     {
         "id": 6,
         "task": "DO: Happpy?",
+        "completed": false
+    },
+    {
+        "id": 7,
+        "task": "DO: Do coding",
+        "completed": false
+    },
+    {
+        "id": 8,
+        "task": "DO: Journaling",
         "completed": false
     }
 ]

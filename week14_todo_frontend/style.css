@@ -228,3 +228,25 @@ li:hover .delete-btn {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.2);
 }
+
+
+li.empty-state {
+    justify-content: center;
+    background-color: transparent;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    cursor: default;
+    animation: none; /* No slide-in animation needed here */
+}
+
+li.empty-state:hover {
+    transform: none; /* Don't slide right on hover */
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.empty-text {
+    color: #64748b;
+    font-style: italic;
+    font-size: 1.05rem;
+    pointer-events: none; /* Can't click the text */
+}
