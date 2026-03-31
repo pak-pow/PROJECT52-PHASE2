@@ -1,213 +1,208 @@
-/* ==========================================
-   PREMIUM DARK MODE UI OVERHAUL
-   ========================================== */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap");
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
 }
 
 body {
   /* Animated dark gradient background */
-  background: linear-gradient(-45deg, #0f172a, #1e1b4b, #171717, #2e1065);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
-  color: #e2e8f0;
-  display: flex;
-  justify-content: center;
-  padding-top: 5rem;
-  min-height: 100vh;
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #171717, #2e1065);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: center;
+    padding-top: 5rem;
+    min-height: 100vh;
 }
 
 @keyframes gradientBG {
-  0% {
+    0% {
     background-position: 0% 50%;
-  }
-  50% {
+    }
+    50% {
     background-position: 100% 50%;
-  }
-  100% {
+    }
+    100% {
     background-position: 0% 50%;
-  }
+    }
 }
 
 .container {
-  /* Glassmorphism Effect */
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  width: 100%;
-  max-width: 550px;
-  padding: 2.5rem;
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+    max-width: 550px;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-weight: 800;
-  font-size: 2.2rem;
-  /* Gradient Text */
-  background: linear-gradient(to right, #a855f7, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 800;
+    font-size: 2.2rem;
+    background: linear-gradient(to right, #a855f7, #ec4899);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
 }
 
-/* --- Input Section --- */
 .input-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 2rem;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2rem;
 }
 
 input {
-  flex: 1;
-  padding: 14px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  background-color: rgba(15, 23, 42, 0.6);
-  color: white;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+    flex: 1;
+    padding: 14px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: rgba(15, 23, 42, 0.6);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 input:focus {
-  outline: none;
-  border-color: #a855f7;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    outline: none;
+    border-color: #a855f7;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
 }
 
 input::placeholder {
-  color: #64748b;
+    color: #64748b;
 }
 
 button#addBtn {
-  padding: 0 24px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #a855f7, #c026d3);
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  box-shadow: 0 4px 14px 0 rgba(168, 85, 247, 0.39);
+    padding: 0 24px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #a855f7, #c026d3);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    box-shadow: 0 4px 14px 0 rgba(168, 85, 247, 0.39);
 }
 
 button#addBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
 }
 
 button#addBtn:active {
-  transform: translateY(0);
+    transform: translateY(0);
 }
 
 /* --- Filter Tabs --- */
 .filters {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 2rem;
 }
 
 .filter-btn {
-  background-color: transparent;
-  color: #94a3b8;
-  border: 1px solid transparent;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+    background-color: transparent;
+    color: #94a3b8;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .filter-btn:hover {
-  color: #e2e8f0;
-  background-color: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .filter-btn.active {
-  background-color: rgba(168, 85, 247, 0.15);
-  color: #d8b4fe;
-  border-color: rgba(168, 85, 247, 0.3);
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #d8b4fe;
+    border-color: rgba(168, 85, 247, 0.3);
 }
 
 /* --- Task List --- */
 ul {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 li {
-  background-color: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 16px 20px;
-  border-radius: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: slideIn 0.3s ease-out forwards;
+    background-color: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px 20px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideIn 0.3s ease-out forwards;
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 li:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .task-text {
-  flex: 1;
-  cursor: pointer;
-  font-size: 1.05rem;
-  transition: color 0.2s;
-  user-select: none; /* Prevents text highlighting when double-clicking */
+    flex: 1;
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: color 0.2s;
+    user-select: none; /* Prevents text highlighting when double-clicking */
 }
 
 .task-text:hover {
-  color: #d8b4fe;
+    color: #d8b4fe;
 }
 
 li.completed .task-text {
-  text-decoration: line-through;
-  color: #475569;
+    text-decoration: line-through;
+    color: #475569;
 }
 
 /* --- Delete Button --- */
 .delete-btn {
-  background-color: transparent;
-  border: none;
-  color: #ef4444;
-  font-size: 1.2rem;
-  padding: 8px;
-  margin-left: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: all 0.2s;
+    background-color: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 1.2rem;
+    padding: 8px;
+    margin-left: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
 }
 
 li:hover .delete-btn {
@@ -215,21 +210,21 @@ li:hover .delete-btn {
 }
 
 .delete-btn:hover {
-  background-color: rgba(239, 68, 68, 0.15);
-  transform: scale(1.1);
+    background-color: rgba(239, 68, 68, 0.15);
+    transform: scale(1.1);
 }
 
 /* Custom Scrollbar for a polished look */
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
