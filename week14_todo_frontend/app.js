@@ -29,6 +29,19 @@ async function loadTodos(){
             displayTodos = data.todos.filter(todo => todo.completed === true);
         }
 
+        if (displayTodos.length === 0) {
+            let emptyMessage = "✨ You're all caught up!";
+            if (currentFilter === 'active') emptyMessage = "🌴 No active tasks. Time to chill!";
+            if (currentFilter === 'completed') emptyMessage = "🚀 Get to work! No tasks completed yet.";
+
+            const emptyLi = document.createElement('li');
+            emptyLi.className = 'empty-state';
+            emptyLi.innerHTML = `<span class="empty-text">${emptyMessage}</span>`;
+            todoList.appendChild(emptyLi);
+            
+            return; 
+        }
+
         displayTodos.forEach(todo => {
             const li = document.createElement('li');
 
