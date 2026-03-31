@@ -1,27 +1,17 @@
 [
     {
+        "id": 1,
+        "task": "DO: Coding",
+        "completed": true
+    },
+    {
+        "id": 2,
+        "task": "DO: Make journal",
+        "completed": false
+    },
+    {
         "id": 3,
-        "task": "DO: Coursera",
-        "completed": false
-    },
-    {
-        "id": 5,
-        "task": "DO: Play Mincraft",
-        "completed": false
-    },
-    {
-        "id": 6,
-        "task": "DO: Happpy?",
-        "completed": false
-    },
-    {
-        "id": 7,
-        "task": "DO: Do coding",
-        "completed": false
-    },
-    {
-        "id": 8,
-        "task": "DO: Journaling",
+        "task": "DO: Make MC Server",
         "completed": false
     }
 ]
