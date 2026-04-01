@@ -279,3 +279,31 @@ li.empty-state:hover {
     border-left-color: #ef4444;
 }
 
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%); 
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.edit-input {
+    flex: 1;
+    padding: 8px 12px;
+    margin-right: 12px;
+    background-color: rgba(15,23,42,0.8);
+    border: 2px solid #a855f7;
+    color: white;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    outline: none;
+}
