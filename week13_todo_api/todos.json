@@ -1,12 +1,32 @@
 [
     {
+        "id": 1,
+        "task": "DO: Coding",
+        "completed": false
+    },
+    {
+        "id": 2,
+        "task": "DO: Journaling",
+        "completed": false
+    },
+    {
         "id": 3,
         "task": "DO: Make MC Server",
         "completed": false
     },
     {
         "id": 4,
-        "task": "DO: Sheesh",
-        "completed": true
+        "task": "DO: Task1",
+        "completed": false
+    },
+    {
+        "id": 5,
+        "task": "DO: Task2",
+        "completed": false
+    },
+    {
+        "id": 6,
+        "task": "DO: Task 3",
+        "completed": false
     }
 ]

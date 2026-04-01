@@ -69,9 +69,20 @@ async function loadTodos(){
             taskSpan.textContent = todo.task;
 
             // When clicked, send the ID, the name, and the current status to be flipped
-            taskSpan.onclick = () => toggleComplete(todo.id, todo.task, todo.completed);
-
-            taskSpan.ondblclick = () => activateEditMode(li, taskSpan, todo)
+// Create a timer for this specific task
+            let clickTimer = null;
+            taskSpan.onclick = () => {
+                clearTimeout(clickTimer);
+                clickTimer = setTimeout(() => {
+                    toggleComplete(todo.id, todo.task, todo.completed);
+                }, 250);
+            };
+            
+            // Double Click = Inline Edit (Cancel the single click!)
+            taskSpan.ondblclick = () => {
+                clearTimeout(clickTimer);
+                activateEditMode(li, taskSpan, todo);
+            };
 
             // Create the delete button (DELETE trigger)
             const deleteBtn = document.createElement('button');
