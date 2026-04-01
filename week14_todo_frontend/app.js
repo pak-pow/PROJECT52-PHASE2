@@ -10,6 +10,20 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 // state variable, can be all, active, completed
 let currentFilter = 'all';
 
+function showToast(message, type = 'success'){
+    const container = document.getElementById('toast-container');
+    const toast = document.getElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    
+    }, 3000)
+}
+
 // GET / Read tasks
 async function loadTodos(){
     try {
@@ -57,6 +71,8 @@ async function loadTodos(){
             // When clicked, send the ID, the name, and the current status to be flipped
             taskSpan.onclick = () => toggleComplete(todo.id, todo.task, todo.completed);
 
+            taskSpan.ondblclick = () => activateEditMode(li, taskSpan, todo)
+
             // Create the delete button (DELETE trigger)
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
@@ -73,6 +89,62 @@ async function loadTodos(){
     } catch (error) {
         console.error("Error connecting to the backend: ", error);
         todoList.innerHTML = "<li> Could not connect to the server. Is Python running?</li>";
+    }
+}
+
+function activateEditMode(li, taskSpan, todo) {
+    // Create a new input box
+    const editInput = document.createElement('input');
+    editInput.type = 'text';
+    editInput.value = todo.task;
+    editInput.className = 'edit-input';
+
+    // Swap the text with the input box
+    li.insertBefore(editInput, taskSpan);
+    li.removeChild(taskSpan);
+    
+    // Put the blinking cursor inside automatically
+    editInput.focus(); 
+
+    // When they click away (blur) or press Enter, save it!
+    const saveEdit = () => {
+        const newText = editInput.value.trim();
+        if (newText === "") {
+            showToast("Task cannot be empty!", "error");
+            
+            // Abort and reload original text
+            loadTodos(); 
+            return;
+        }
+        if (newText !== todo.task) {
+            updateTaskText(todo.id, newText, todo.completed);
+        } else {
+
+            // No changes made, just redraw
+            loadTodos(); 
+        }
+    };
+
+    editInput.onblur = saveEdit;
+    editInput.onkeypress = (e) => {
+        if (e.key === 'Enter') editInput.blur();
+    };
+}
+
+async function updateTaskText(id, newText, currentStatus) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: newText, completed: currentStatus })
+        });
+
+        if (response.ok) {
+            showToast("Task updated successfully!");
+            loadTodos(); 
+        }
+    } catch (error) {
+        showToast("Error updating task", "error");
     }
 }
 
@@ -98,7 +170,7 @@ async function addTodo() {
     const taskValue = taskInput.value.trim();
 
     if (taskValue === ""){
-        alert("Please enter a task!");
+        showToast("Please enter a task!", "error");
         return;
     }
 
@@ -113,6 +185,7 @@ async function addTodo() {
 
         if (response.ok){
             taskInput.value = '';
+            showToast("Task added successfully!"); 
             loadTodos();
 
         } else {
@@ -139,7 +212,7 @@ async function toggleComplete(id, currentTaskName, currentStatus) {
             loadTodos();
         }
     } catch (error){
-        console.error("Error updating task: ", error);
+        showToast("Error updating task", "error");
     }
 }
 
@@ -150,10 +223,11 @@ async function deleteTodo(id) {
         });
 
         if (response.ok) {
+            showToast("Task deleted!", "error");
             loadTodos(); 
         }
     } catch (error) {
-        console.error("Error deleting task:", error);
+        showToast("Error deleting task", "error");
     }
 }
 
