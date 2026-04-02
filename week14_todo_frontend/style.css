@@ -307,3 +307,44 @@ li.empty-state:hover {
     font-size: 1.05rem;
     outline: none;
 }
+
+.task-text {
+    word-break: break-word;
+    padding-right: 10px;
+}
+
+/* Mobile Devices (Phones, 600px and down) */
+@media (max-width: 600px) {
+    body {
+        padding-top: 2rem;
+        padding-inline: 1rem; 
+    }
+
+    .container {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .input-section {
+        flex-direction: column; 
+    }
+
+    button#addBtn {
+        padding: 14px;
+        width: 100%; 
+    }
+
+    #toast-container {
+        bottom: 16px;
+        right: 16px;
+        left: 16px; 
+    }
+
+    .toast {
+        text-align: center;
+    }
+}
