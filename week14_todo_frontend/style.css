@@ -331,7 +331,23 @@ li.empty-state:hover {
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
+.clear-btn {
+    background-color: rgba(239,68,68,0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
+.clear-btn:hover {
+    background-color: #ef4444;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+}
 
 /* Mobile Devices (Phones, 600px and down) */
 @media (max-width: 600px) {
