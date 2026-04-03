@@ -6,6 +6,8 @@ const todoList = document.getElementById('todoList');
 const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById('addBtn');   
 const filterBtns = document.querySelectorAll('.filter-btn');
+const searchInput = document.getElementById('searchInput');
+const clearCompletedBtn = document.getElementById('clearCompletedBtn');
 
 // state variable, can be all, active, completed
 let currentFilter = 'all';
@@ -30,6 +32,7 @@ async function loadTodos(){
         // getting a get response from the local server
         const response = await fetch(API_URL);
         const data = await response.json();
+        const searchTerm = searchInput.value.trim().toLowerCase();
         
         // clearing the list on the screen so we don't get duplicates
         todoList.innerHTML = '';
@@ -41,6 +44,12 @@ async function loadTodos(){
         
         } else if (currentFilter === 'completed') {
             displayTodos = data.todos.filter(todo => todo.completed === true);
+        }
+
+        if(searchTerm != ""){
+            displayTodos = displayTodos.filter(todo =>
+                todo.task.toLowerCase().includes(searchTerm)
+            );
         }
 
         if (displayTodos.length === 0) {
@@ -69,7 +78,7 @@ async function loadTodos(){
             taskSpan.textContent = todo.task;
 
             // When clicked, send the ID, the name, and the current status to be flipped
-// Create a timer for this specific task
+            // Create a timer for this specific task
             let clickTimer = null;
             taskSpan.onclick = () => {
                 clearTimeout(clickTimer);
@@ -247,6 +256,41 @@ taskInput.addEventListener('keypress', function(event){
     if (event.key === 'Enter'){
         addTodo();
     }
+});
+
+searchInput.addEventListener('input', loadTodos)
+// Bulk Delete Function
+clearCompletedBtn.addEventListener('click', async () => {
+    // Fetch all tasks to see which ones are completed
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    
+    const completedTasks = data.todos.filter(todo => todo.completed === true);
+
+    if (completedTasks.length === 0) {
+        showToast("No completed tasks to clear!", "error");
+        return;
+    }
+
+    // Confirm before mass deletion
+    if (!confirm(`Are you sure you want to permanently delete ${completedTasks.length} completed tasks?`)) {
+        return; 
+    }
+
+    // Loop through every completed task and send a DELETE request
+    let deletedCount = 0;
+    for (const task of completedTasks) {
+        try {
+            await fetch(`${API_URL}/${task.id}`, { method: 'DELETE' });
+            deletedCount++;
+        } catch (error) {
+            console.error(`Failed to delete task ${task.id}`);
+        }
+    }
+
+    // 3. Celebrate and redraw!
+    showToast(`Successfully cleared ${deletedCount} tasks!`);
+    loadTodos();
 });
 
 loadTodos();
