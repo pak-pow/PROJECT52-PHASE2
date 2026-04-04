@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Project 52 Phase 2 | HUB</title>
+
+    <style>
+        body { 
+            background: #0a0a0a; 
+            color: #4196f3; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-align: center; 
+            padding-top: 100px; 
+            padding-bottom: 100px;
+        }
+        
+        h1 { 
+            letter-spacing: 5px;
+            margin-bottom: 5px; 
+            background: linear-gradient(to right, #4196f3, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #888;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        a { 
+            color: white; 
+            text-decoration: none; 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            padding: 15px 30px;
+            width: 350px; 
+            display: inline-block; 
+            margin: 10px; 
+            border-radius: 8px;
+            transition: 0.3s ease;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        a:hover { 
+            transform: translateY(-5px);
+            background: white; 
+            color: black; 
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
+            border-color: white;
+        }
+
+        /* Styling for Backend / API Repositories */
+        .api-link {
+            border-color: #00ff88;
+            color : #00ff88;
+            background: rgba(0, 255, 136, 0.02);
+        }
+
+        .api-link:hover {
+            background: #00ff88;
+            color: #0a0a0a;
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+            border-color: #00ff88;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>PROJECT 52</h1>
+    <p>PHASE 2: INTEGRATION</p>
+    
+    <div class="project-list">
+        
+        <a href="https://github.com/pak-pow/PROJECT52-PHASE2/tree/main/week13_todo_api" class="api-link" target="_blank">
+            WEEK 13: Full-Stack Todo API (Python)
+        </a>
+
+        <a href="./week14_todo_frontend/index.html" target="_blank">
+            WEEK 14: Premium Todo UI (Frontend)
+        </a>
+
+    </div>
+
+    <br><br>
+    <p style="font-size: 0.8rem; opacity: 0.5; text-transform: uppercase;">More Integration Modules Coming Soon...</p>
+
+</body>
+</html>
