@@ -34,6 +34,21 @@ def register():
     # hashing the password using bcrypt
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    
+    # save the user to the database
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute("INSERT INTO users (username, password_hash) VALUES(?, ?)", (username, hashed_password))
+        conn.commit()
+    
+    except sqlite3.IntegrityError:
+        return jsonify({'error': 'Username already exists'}), 409
+    
+    finally:
+        conn.close()
+        
+    return jsonify({'message': 'User registered successfully!'}), 201
 
 if __name__ == '__main__':
     init_db()
