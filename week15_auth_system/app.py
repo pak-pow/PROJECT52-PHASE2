@@ -24,7 +24,16 @@ def init_db():
 
 @app.route('/register', methods=['POST'])
 def register():
-    pass
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'error': "Username and Password are required"}), 400
+
+    # hashing the password using bcrypt
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
 
 if __name__ == '__main__':
     init_db()
