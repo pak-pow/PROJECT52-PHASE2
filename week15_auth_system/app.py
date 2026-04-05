@@ -54,7 +54,33 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    pass
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return jsonify({'error': 'Username and password are required'}), 400
+
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("SELECT id, username, password_hash FROM users WHERE username = ?", (username,))
+    user = c.fetchone()
+    conn.close()
+
+    # Check if user exists AND if the password matches the hash
+    # user[0] = id, user[1] = username, user[2] = password_hash
+    if user and bcrypt.checkpw(password.encode('utf-8'), user[2]):
+        
+        # Generate the JWT 
+        token = jwt.encode({
+            'user_id': user[0],
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }, app.config['SECRET_KEY'], algorithm='HS256')
+
+        return jsonify({'message': 'Login successful!', 'token': token}), 200
+
+    # If the username doesn't exist OR the password was wrong:
+    return jsonify({'error': 'Invalid username or password'}), 401
 
 if __name__ == '__main__':
     init_db()
