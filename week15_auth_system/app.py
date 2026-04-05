@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify   #type: ignore
 from flask_cors import CORS                 #type: ignore
 import bcrypt                               #type: ignore
 import sqlite3                              #type: ignore
+import jwt                                  #type: ignore
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -49,6 +51,10 @@ def register():
         conn.close()
         
     return jsonify({'message': 'User registered successfully!'}), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    pass
 
 if __name__ == '__main__':
     init_db()
