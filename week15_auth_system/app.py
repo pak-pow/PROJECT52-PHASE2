@@ -1,3 +1,4 @@
+from functools import wraps
 from flask import Flask, request, jsonify   #type: ignore
 from flask_cors import CORS                 #type: ignore
 import bcrypt                               #type: ignore
@@ -81,6 +82,14 @@ def login():
 
     # If the username doesn't exist OR the password was wrong:
     return jsonify({'error': 'Invalid username or password'}), 401
+
+def token_required(f):
+    @wraps(f)
+    
+    def decorated(*args, **kwargs):
+        pass
+    
+    return decorated
 
 if __name__ == '__main__':
     init_db()
