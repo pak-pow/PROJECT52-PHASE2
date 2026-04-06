@@ -127,6 +127,11 @@ def token_required(f):
     
     return decorated
 
+@app.route('/dashboard', methods=['GET'])
+@token_required
+def dashboard(current_user):
+    pass
+
 if __name__ == '__main__':
     init_db()
     print("Auth Server Running!")
