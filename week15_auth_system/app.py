@@ -130,7 +130,17 @@ def token_required(f):
 @app.route('/dashboard', methods=['GET'])
 @token_required
 def dashboard(current_user):
-    pass
+
+    # current_user[0] is the ID, current_user[1] is the username
+    return jsonify({
+        'message': f'Welcome to your private dashboard, {current_user[1]}!',
+        'user_data': {
+            'id': current_user[0],
+            'username': current_user[1],
+            'status': 'VIP Member'
+        }
+    }), 200
+    
 
 if __name__ == '__main__':
     init_db()
