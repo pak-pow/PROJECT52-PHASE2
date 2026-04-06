@@ -110,7 +110,7 @@ def token_required(f):
             # fetching the user from the data base
             conn = sqlite3.connect(DB_NAME)
             c = conn.cursor()
-            c.execute("SELECT id, username FROM user WHERE id = ?", (current_user_id,))
+            c.execute("SELECT id, username FROM users WHERE id = ?", (current_user_id,))
             current_user = c.fetchone()
             conn.close()
             
