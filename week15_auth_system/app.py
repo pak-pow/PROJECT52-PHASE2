@@ -87,7 +87,43 @@ def token_required(f):
     @wraps(f)
     
     def decorated(*args, **kwargs):
-        pass
+        token = None
+        
+        # looking for token in headers
+        if 'Authorization' in request.headers:
+            
+            # as the header comes in as 'Bearers <token_string>'
+            # splitting in spaces just to grab the token part
+            parts = request.headers['Authorization'].split()
+            if len(parts) == 2 and parts[0] == 'Bearer':
+                token = parts[1]
+        
+        # if no token then bye bye
+        if not token:
+            return jsonify({'error': "token is missing! Access Denied."}), 401
+        
+        # trying to decode
+        try: 
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_user_id = data['user_id']
+            
+            # fetching the user from the data base
+            conn = sqlite3.connect(DB_NAME)
+            c = conn.cursor()
+            c.execute("SELECT id, username FROM user WHERE id = ?", (current_user_id,))
+            current_user = c.fetchone()
+            conn.close()
+            
+            if not current_user:
+                return jsonify({'error': 'User not found!'}), 401
+            
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token has expired! Please log in again.'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Token is invalid!'}), 401
+        
+        # If everything is good it will they will be accepted
+        return f(current_user, *args, **kwargs)
     
     return decorated
 
