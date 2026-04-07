@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Project 52 Phase 2 | Auth Client</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 52 | Auth Client</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Client Side</h1>
         
-        <div class="container">
-            <h2>Client Login</h2>
+        <div class="input-section">
             <input type="text" id="username" placeholder="Username" value="admin">
             <input type="password" id="password" placeholder="Password" value="supersecretpassword">
-
-            <button onclick="login()">Log In & Get Token</button>
-            <button class="btn-success" onclick="accessDashboard()">Access VIP Dashboard</button>
-            <button class="btn-danger" onclick="logout()">Log Out (Delete Token)</button>
-
-            <div id="output">Server Response will appear here...</div>
         </div>
 
-        <script src="script.js" async defer></script>
-    </body>
+        <div class="action-bar">
+            <button id="loginBtn" class="primary-btn">1. Log In & Get Token</button>
+            <button id="dashboardBtn" class="success-btn">2. Access Dashboard</button>
+            <button id="logoutBtn" class="danger-btn">3. Log Out</button>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    
+    <script src="script.js"></script>
+</body>
 </html>
