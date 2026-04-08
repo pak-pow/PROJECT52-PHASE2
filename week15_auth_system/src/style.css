@@ -53,6 +53,9 @@ button {
 .btn-danger { background-color: #dc3545; }
 .btn-danger:hover { background-color: #c82333; }
 
+.btn-warning { background-color: #fd7e14;}
+.btn-warning:hover { background-color: #e86e04;}
+
 #output { 
     margin-top: 10px; 
     padding: 15px; 
