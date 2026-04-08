@@ -7,6 +7,19 @@ const loginBtn = document.getElementById('loginBtn');
 const dashboardBtn = document.getElementById('dashboardBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const outputBox = document.getElementById('output');
+const registerBtn = document.getElementById('registerBtn');
+
+async function register() {
+    const user = usernameInput.value.trim();
+    const pass = passwordInput.value.trim();
+    
+    if (!user || !pass){
+        outputBox.innerHTML = `<span class="text-error">Error:</span> Please enter both username and password!`;
+        return;
+    }
+
+    outputBox.innerHTML = "Attempting to create account...";
+}
 
 async function login() {
     const user = usernameInput.value.trim();
