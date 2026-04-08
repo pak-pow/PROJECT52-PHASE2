@@ -1,5 +1,3 @@
-const { jsxs } = require("react/jsx-runtime");
-
 const API_URL = 'http://127.0.0.1:5000';
 
 // Grabbing the HTML elements
