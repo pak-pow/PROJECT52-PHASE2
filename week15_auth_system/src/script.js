@@ -1,3 +1,5 @@
+const { jsxs } = require("react/jsx-runtime");
+
 const API_URL = 'http://127.0.0.1:5000';
 
 // Grabbing the HTML elements
@@ -19,6 +21,29 @@ async function register() {
     }
 
     outputBox.innerHTML = "Attempting to create account...";
+
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ username: user, password: pass})
+        });
+
+        const data = await response.json();
+
+        // 201 is our specific HTTP status code for "Created"
+        if (response.status === 201) {
+            outputBox.innerHTML = `<span class="text-success">Account Created!</span><br>Welcome ${user}. You may now log in.`;
+            // Clear the inputs to look clean
+            usernameInput.value = '';
+            passwordInput.value = '';
+        } else {
+            // This will catch our 409 Conflict if the username is already taken
+            outputBox.innerHTML = `<span class="text-error">Registration Failed:</span> ${data.error}`;
+        }
+    } catch (error) {
+        outputBox.innerText = "Network error communicating with the server..."
+    }
 }
 
 async function login() {
@@ -82,5 +107,6 @@ function logout() {
 
 // Event Listeners
 loginBtn.addEventListener('click', login);
+registerBtn.addEventListener('click', register);
 dashboardBtn.addEventListener('click', accessDashboard);
 logoutBtn.addEventListener('click', logout);
