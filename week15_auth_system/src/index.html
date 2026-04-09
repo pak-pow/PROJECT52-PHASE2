@@ -8,17 +8,25 @@
 </head>
 <body>
     <div class="container">
-        <h2>Client Login</h2>
+        <div id="auth-section">
+            <h2>Client Login</h2>
+            <input type="text" placeholder="User" id="username">
+            <input type="password" placeholder="Password" id="password">
         
-        <input type="text" id="username">
-        <input type="password" id="password">
-        
-        <button id="loginBtn" class="btn-primary">Log In & Get Token</button>
-        <button id="registerBtn" class="btn-warning">Create A New Account</button>
-        <button id="dashboardBtn" class="btn-success">Access VIP Dashboard</button>
-        <button id="logoutBtn" class="btn-danger">Log Out (Delete Token)</button>
+            <button id="loginBtn" class="btn-primary">Log In</button>
+            <button id="registerBtn" class="btn-warning">Create A New Account</button>
+        </div>
 
-        <div id="output">Server Response</div>
+        <div id="dashboard-section" class="hidden">
+            <h2>VIP Dashboard</h2>
+            <div class="profile-card">
+                <p><strong>User ID:</strong> <span id="profile-id">--</span></p>
+                <p><strong>Username:</strong> <span id="profile-user">--</span></p>
+                <p><strong>Status:</strong> <span class="text-success">Verified JWT</span></p>
+            </div>
+            <button id="logoutBtn" class="btn-danger">Log Out Securely</button>
+        </div>
+        <div id="output">Server Response</div> 
     </div>
 
     <script src="script.js"></script>
