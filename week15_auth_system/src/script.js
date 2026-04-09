@@ -4,10 +4,14 @@ const API_URL = 'http://127.0.0.1:5000';
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const loginBtn = document.getElementById('loginBtn');
-const dashboardBtn = document.getElementById('dashboardBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const outputBox = document.getElementById('output');
 const registerBtn = document.getElementById('registerBtn');
+
+const authSection = document.getElementById('auth-section');
+const dashboardSection = document.getElementById('dashboard-section');
+const profileId = document.getElementById('profile-id');
+const profileUser = document.getElementById('profile-user');
 
 async function register() {
     const user = usernameInput.value.trim();
@@ -62,6 +66,8 @@ async function login() {
         if (response.ok) {
             localStorage.setItem('project52_token', data.token);
             outputBox.innerHTML = `<span class="text-success">Login Success!</span><br>Token saved to localStorage.`;
+
+            checkAuthState()
         } else {
             outputBox.innerHTML = `<span class="text-error">Error:</span> ${data.error}`;
         }
@@ -70,16 +76,18 @@ async function login() {
     }
 }
 
-async function accessDashboard() {
+async function checkAuthState() {
     const token = localStorage.getItem('project52_token');
 
     if (!token) {
-        outputBox.innerHTML = `<span class="text-error">Access Denied!</span> No token found. Please log in first.`;
+        // NO TOKEN: Show Auth, Hide Dashboard
+        authSection.classList.remove('hidden');
+        dashboardSection.classList.add('hidden');
+        outputBox.innerText = "Please log in or create an account.";
         return;
     }
 
-    outputBox.innerText = "Showing VIP pass to the Bouncer...";
-
+    // TOKEN FOUND: Attempt to fetch the secure dashboard data
     try {
         const response = await fetch(`${API_URL}/dashboard`, {
             method: 'GET',
@@ -89,9 +97,19 @@ async function accessDashboard() {
         const data = await response.json();
 
         if (response.ok) {
-            outputBox.innerHTML = `<span class="text-success">Access Granted!</span><br>Message: ${data.message}`;
+            // SUCCESS: Token is valid Show Dashboard, Hide Auth
+            authSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            
+            // Populate the Profile Card with real database data!
+            profileId.innerText = data.user_data.id;
+            profileUser.innerText = data.user_data.username;
+            
+            outputBox.innerHTML = `<span class="text-success">Welcome back!</span>`;
         } else {
-            outputBox.innerHTML = `<span class="text-error">Bouncer says:</span> ${data.error}`;
+            // TOKEN INVALID OR EXPIRED: Kick them out
+            logout();
+            outputBox.innerHTML = `<span class="text-error">Session Expired:</span> Please log in again.`;
         }
     } catch (error) {
         outputBox.innerText = "Network error communicating with the server.";
@@ -100,11 +118,13 @@ async function accessDashboard() {
 
 function logout() {
     localStorage.removeItem('project52_token');
-    outputBox.innerHTML = "Logged out. Token deleted from localStorage.";
+    checkAuthState();
+    outputBox.innerHTML = "Logged out successfully.";
 }
 
 // Event Listeners
 loginBtn.addEventListener('click', login);
 registerBtn.addEventListener('click', register);
-dashboardBtn.addEventListener('click', accessDashboard);
 logoutBtn.addEventListener('click', logout);
+
+checkAuthState();
