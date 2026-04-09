@@ -69,3 +69,28 @@ button {
 
 .text-success { color: #4CAF50; font-weight: bold; }
 .text-error { color: #f44336; font-weight: bold; }
+
+.hidden {
+    display: none !important;
+}
+
+.profile-card {
+    background: #111;
+    border: 1px solid #4CAF50;
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.profile-card p {
+    margin: 8px 0;
+    font-size: 1.05rem;
+    color: #ccc;
+}
+
+.profile-card span {
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
