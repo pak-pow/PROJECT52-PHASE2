@@ -13,6 +13,10 @@ const dashboardSection = document.getElementById('dashboard-section');
 const profileId = document.getElementById('profile-id');
 const profileUser = document.getElementById('profile-user');
 
+const oldPasswordInput = document.getElementById('old-password');
+const newPasswordInput = document.getElementById('new-password');
+const changePasswordBtn = document.getElementById('changePasswordBtn');
+
 async function register() {
     const user = usernameInput.value.trim();
     const pass = passwordInput.value.trim();
@@ -116,6 +120,42 @@ async function checkAuthState() {
     }
 }
 
+async function changePassword() {
+    const oldPass = oldPasswordInput.value.trim();
+    const newPass = newPasswordInput.value.trim();
+    const token = localStorage.getItem('project52_token');
+
+    if (!oldPass || !newPass) {
+        outputBox.innerHTML = `<span class="text-error">Error:</span> Please fill in both password fields!`;
+        return;
+    }
+
+    outputBox.innerText = "Updating password...";
+
+    try {
+        const response = await fetch(`${API_URL}/change-password`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({ old_password: oldPass, new_password: newPass })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            outputBox.innerHTML = `<span class="text-success">Success!</span> ${data.message}`;
+            oldPasswordInput.value = '';
+            newPasswordInput.value = '';
+        } else {
+            outputBox.innerHTML = `<span class="text-error">Update Failed:</span> ${data.error}`;
+        }
+    } catch (error) {
+        outputBox.innerText = "Network error communicating with the server.";
+    }
+}
+
 function logout() {
     localStorage.removeItem('project52_token');
     checkAuthState();
@@ -126,5 +166,6 @@ function logout() {
 loginBtn.addEventListener('click', login);
 registerBtn.addEventListener('click', register);
 logoutBtn.addEventListener('click', logout);
+changePasswordBtn.addEventListener('click', changePassword);
 
 checkAuthState();
