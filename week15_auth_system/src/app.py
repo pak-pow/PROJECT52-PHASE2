@@ -145,7 +145,32 @@ def dashboard(current_user):
 @app.route('/change-password', methods=['PUT'])
 @token_required
 def change_password(current_user):
-    pass
+    
+    data = request.get_json()
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    
+    if not old_password or new_password:
+        return jsonify({'error': 'Old and new passwords are required'}), 400
+    
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    
+    c.execute("SELECT password_hash FROM users WHERE id = ?", (current_user[0],))
+    stored_hash = c.fetchone()[0]
+    
+    if not bcrypt.checkpw(old_password.encode('utf-8'), stored_hash):
+        conn.close()
+        return jsonify({'error': 'Incorrect current password'}), 401
+    
+    salt = bcrypt.gensalt()
+    new_hashed = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+    
+    c.execute("UPDATE users SET password_hash = ? WHERE id = ?", (new_hashed, current_user[0]))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Password updated successfully!'}), 200
 
 if __name__ == '__main__':
     init_db()
