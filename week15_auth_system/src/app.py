@@ -142,6 +142,11 @@ def dashboard(current_user):
     }), 200
     
 
+@app.route('/change-password', methods=['PUT'])
+@token_required
+def change_password(current_user):
+    pass
+
 if __name__ == '__main__':
     init_db()
     print("Auth Server Running!")
