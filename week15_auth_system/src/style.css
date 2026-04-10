@@ -94,3 +94,19 @@ button {
     font-family: monospace;
     font-size: 1.1rem;
 }
+
+.password-card {
+    background: #111;
+    border: 1px solid #007acc;
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.password-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #fff;
+}
