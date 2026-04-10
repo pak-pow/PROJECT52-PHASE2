@@ -150,7 +150,7 @@ def change_password(current_user):
     old_password = data.get('old_password')
     new_password = data.get('new_password')
     
-    if not old_password or new_password:
+    if not old_password or not new_password:
         return jsonify({'error': 'Old and new passwords are required'}), 400
     
     conn = sqlite3.connect(DB_NAME)
