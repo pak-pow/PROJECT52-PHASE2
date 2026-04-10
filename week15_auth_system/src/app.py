@@ -156,16 +156,20 @@ def change_password(current_user):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     
+    # grabbing the users current hashed password from the database
     c.execute("SELECT password_hash FROM users WHERE id = ?", (current_user[0],))
     stored_hash = c.fetchone()[0]
     
+    # verifying the old password matches the stored hash
     if not bcrypt.checkpw(old_password.encode('utf-8'), stored_hash):
         conn.close()
         return jsonify({'error': 'Incorrect current password'}), 401
     
+    # if it matches, hash the new password
     salt = bcrypt.gensalt()
     new_hashed = bcrypt.hashpw(new_password.encode('utf-8'), salt)
     
+    # update the database
     c.execute("UPDATE users SET password_hash = ? WHERE id = ?", (new_hashed, current_user[0]))
     conn.commit()
     conn.close()
