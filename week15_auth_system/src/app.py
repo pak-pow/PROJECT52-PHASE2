@@ -179,7 +179,28 @@ def change_password(current_user):
 @app.route('/delete-account', methods=['DELETE'])
 @token_required
 def delete_account(current_user):
-    pass
+    
+    data = request.get_json()
+    password = data.get('password')
+    
+    if not password:
+        return jsonify({'error':'Password is required to delete account'}), 400
+    
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    
+    c.execute("SELECT password_hash FROM users WHERE id = ?", (current_user[0],))
+    stored_hash = c.fetchone()[0]
+    
+    if not bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+        conn.close()
+        return jsonify({'error': 'Incorrect password. Deletion cancelled.'}), 401
+    
+    c.execute("DELETE FROM users WHERE id = ?", (current_user[0],))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Account permanently deleted.'}), 200
 
 if __name__ == '__main__':
     init_db()
