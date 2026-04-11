@@ -1,3 +1,4 @@
+// Api url link
 const API_URL = 'http://127.0.0.1:5000';
 
 // Grabbing the HTML elements
@@ -17,6 +18,10 @@ const oldPasswordInput = document.getElementById('old-password');
 const newPasswordInput = document.getElementById('new-password');
 const changePasswordBtn = document.getElementById('changePasswordBtn');
 
+const deletePasswordInput = document.getElementById('delete-password');
+const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+
+// functions
 async function register() {
     const user = usernameInput.value.trim();
     const pass = passwordInput.value.trim();
@@ -156,6 +161,45 @@ async function changePassword() {
     }
 }
 
+async function deleteAccount() {
+    const pass = deletePasswordInput.value.trim();
+    const token = localStorage.getItem('project52_token');
+
+    if (!pass){
+        outputBox.innerHTML = `<span class="text-error">Error:</span> Please enter your password to confirm!`;
+        return;
+    }
+    if (!confirm("Are you ABSOLUTELY sure? This will permanently erase your account.")) {
+        return;
+    }
+
+    outputBox.innerText = "Deleting account...";
+
+    try {
+        const response = await fetch(`${API_URL}/delete-account`, {
+            method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({ password: pass })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            outputBox.innerHTML = `<span class="text-success">Goodbye!</span> ${data.message}`;
+            deletePasswordInput.value = '';
+            localStorage.removeItem('project52_token');
+            checkAuthState(); 
+        } else {
+            outputBox.innerHTML = `<span class="text-error">Deletion Failed:</span> ${data.error}`;
+        }
+    } catch (error) {
+        outputBox.innerText = "Network error communicating with the server.";
+    }
+}
+
 function logout() {
     localStorage.removeItem('project52_token');
     checkAuthState();
@@ -167,5 +211,6 @@ loginBtn.addEventListener('click', login);
 registerBtn.addEventListener('click', register);
 logoutBtn.addEventListener('click', logout);
 changePasswordBtn.addEventListener('click', changePassword);
+deleteAccountBtn.addEventListener('click', deleteAccount);
 
 checkAuthState();
