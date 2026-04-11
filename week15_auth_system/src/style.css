@@ -110,3 +110,19 @@ button {
     font-size: 1.1rem;
     color: #fff;
 }
+
+.danger-zone-card {
+    background: #111;
+    border: 1px solid #dc3545; 
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.danger-zone-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #ff4d4d;
+}
