@@ -176,6 +176,11 @@ def change_password(current_user):
     
     return jsonify({'message': 'Password updated successfully!'}), 200
 
+@app.route('/delete-account', methods=['DELETE'])
+@token_required
+def delete_account(current_user):
+    pass
+
 if __name__ == '__main__':
     init_db()
     print("Auth Server Running!")
