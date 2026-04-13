@@ -29,9 +29,9 @@ Phase 2 represents the convergence of foundational skills into cohesive systems.
 
 | Week | Project | Category | Skills | Time | Status |
 |:----:|:--------|:---------|:-------|:----:|:------:|
-| 13 | REST API for Todo App | Backend | Flask/FastAPI, RESTful Design | 5h | Not Started |
-| 14 | Todo Frontend with Fetch API | Frontend + Backend | AJAX, API Integration, JSON | 4h | Not Started |
-| 15 | User Authentication System | Backend | JWT, Password Hashing, Sessions | 6h | Not Started |
+| 13 | REST API for Todo App | Backend | Flask/FastAPI, RESTful Design | 5h | Done |
+| 14 | Todo Frontend with Fetch API | Frontend + Backend | AJAX, API Integration, JSON | 4h | Done |
+| 15 | User Authentication System | Backend | JWT, Password Hashing, Sessions | 6h | Done |
 | 16 | Blog Platform (Static) | Frontend | Multi-page Layout, SEO Basics | 4h | Not Started |
 | 17 | SQLite Database Manager | Backend + Database | SQL Queries, CRUD Operations | 5h | Not Started |
 | 18 | Weather Dashboard with API | Full Stack | External APIs, Async JS, UI Updates | 5h | Not Started |
