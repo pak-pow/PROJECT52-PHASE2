@@ -142,3 +142,40 @@ footer {
 main {
     animation: fadeSlideUp 0.6s ease-out forwards;
 }
+
+.post-card {
+    animation: fadeSlideUp 0.6s ease-out 0.2s both;
+}
+
+@media screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+
+    nav {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    nav a {
+        margin-left: 0;
+        font-size: 1rem;
+        padding: 5px 10px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    main {
+        padding: 2rem 5%;
+    }
+}
