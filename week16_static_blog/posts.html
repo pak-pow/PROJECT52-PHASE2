@@ -13,15 +13,27 @@
   </head>
   <body>
     <div class="progress-container">
-        <div class="progress-bar" id="myBar"></div>
+      <div class="progress-bar" id="myBar"></div>
     </div>
-    
+
     <header>
       <div class="logo">P52.Blog</div>
       <nav>
         <a href="index.html">Home</a>
         <a href="posts.html" class="active">Articles</a>
         <a href="about.html">About</a>
+        <button
+          id="themeToggle"
+          style="
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 20px;
+          "
+        >
+          🌙
+        </button>
       </nav>
     </header>
     <main>
@@ -51,6 +63,6 @@
     <footer>
       <p>&copy; 2026 Project 52. All rights reserved.</p>
     </footer>
-    <script src="" async defer></script>
+    <script src="theme.js"></script>
   </body>
 </html>
