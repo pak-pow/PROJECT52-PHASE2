@@ -45,7 +45,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f8f9fa;
+    background-color: var(--bg-main);
     color: #333;
     line-height: 1.6;
     display: flex;
