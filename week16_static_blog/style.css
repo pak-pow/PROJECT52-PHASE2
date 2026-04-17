@@ -184,6 +184,20 @@ main {
     animation: fadeSlideUp 0.6s ease-out 0.2s both;
 }
 
+.featured-projects h2 {
+    margin-bottom: 2rem;
+    border-bottom: 3px solid var(--accent-blue);
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+.projects-grid {
+    display: grid;
+    /* This creates responsive columns that never shrink below 300px */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
 @media screen and (max-width: 768px) {
     header {
         flex-direction: column;
