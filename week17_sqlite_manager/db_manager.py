@@ -20,10 +20,36 @@ class DatabaseManager:
             print(f"Connection Error: {e}")
     
     def disconnect(self):
-        pass
+        if self.connection:
+            self.connection.close()
+            print("Database Connection Closed")
     
-    def execute_write(self):
-        pass
+    def execute_write(self, query, params=()):
+        try:
+            self.connect()
+            self.cursor.execute(query, params) # type: ignore
+            self.connection.commit() # type: ignore
+            print("Write operation successful.")
+            return True
+        
+        except sqlite3.Error as e:
+            print(f"Write Error: {e}")
+            return False
+        
+        finally:
+            self.disconnect()
+        
     
-    def execute_read(self):
-        pass
+    def execute_read(self, query, params=()):
+        try:
+            self.connect()
+            self.cursor.execute(query, params) # type: ignore
+            results = [dict(row) for row in self.cursor.fetchall()] # type: ignore
+            return results
+        
+        except sqlite3.Error as e:
+            print(f"❌ Read Error: {e}")
+            return []
+        
+        finally:
+            self.disconnect()
