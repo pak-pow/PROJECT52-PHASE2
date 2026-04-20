@@ -1,50 +1,91 @@
 from db_manager import DatabaseManager
+import sys
 
-def run_tests():
-    # 1. Initialize our custom manager
-    db = DatabaseManager("test_database.db")
+def print_menu():
+    """Displays the main CLI menu."""
+    print("\n" + "="*35)
+    print(" SQLITE MANAGER ")
+    print("="*35)
+    print("1. 👥 View All Users")
+    print("2. ➕ Add New User")
+    print("3. ✏️ Update User Role")
+    print("4. ❌ Delete User")
+    print("5. 🚪 Exit")
+    print("="*35)
 
-    # 2. CREATE (Initialize a table)
-    print("\n--- CREATING TABLE ---")
-    create_table_query = """
+def main():
+    # Initialize our custom manager
+    db = DatabaseManager("project52.db")
+
+    # 1. Initialize the Database Table silently on startup
+    db.execute_write("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         role TEXT NOT NULL,
         is_active BOOLEAN NOT NULL DEFAULT 1
     );
-    """
-    db.execute_write(create_table_query)
+    """)
 
-    # 3. INSERT (Create records)
-    print("\n--- INSERTING DATA ---")
-    insert_query = "INSERT INTO users (username, role) VALUES (?, ?)"
-    # Using parameterized queries (?, ?) prevents SQL Injection hacks!
-    db.execute_write(insert_query, ("admin", "admin"))
-    db.execute_write(insert_query, ("test_user", "subscriber"))
+    # 2. The Application Loop
+    while True:
+        print_menu()
+        choice = input("Select an option (1-5): ").strip()
 
-    # 4. READ (Select records)
-    print("\n--- READING DATA ---")
-    select_query = "SELECT * FROM users"
-    users = db.execute_read(select_query)
-    for user in users:
-        print(user)
+        if choice == '1':
+            print("\n--- CURRENT USERS ---")
+            users = db.execute_read("SELECT * FROM users")
+            if not users:
+                print("⚠️ No users found in the database.")
+            else:
+                for u in users:
+                    # Formatting the dictionary output to look like a clean table
+                    print(f"ID: {u['id']:<3} | User: {u['username']:<15} | Role: {u['role']:<10} | Active: {u['is_active']}")
 
-    # 5. UPDATE (Modify a record)
-    print("\n--- UPDATING DATA ---")
-    update_query = "UPDATE users SET role = ? WHERE username = ?"
-    db.execute_write(update_query, ("super_admin", "admin_paul"))
+        elif choice == '2':
+            print("\n--- ADD NEW USER ---")
+            username = input("Enter username: ").strip()
+            role = input("Enter role (e.g., admin, editor, guest): ").strip()
+            
+            if username and role:
+                success = db.execute_write("INSERT INTO users (username, role) VALUES (?, ?)", (username, role))
+                if success:
+                    print(f"✅ Successfully added '{username}' to the database.")
+            else:
+                print("❌ Error: Username and Role cannot be empty.")
 
-    # 6. DELETE (Remove a record)
-    print("\n--- DELETING DATA ---")
-    delete_query = "DELETE FROM users WHERE username = ?"
-    db.execute_write(delete_query, ("test_user",))
+        elif choice == '3':
+            print("\n--- UPDATE USER ROLE ---")
+            username = input("Enter the username to update: ").strip()
+            new_role = input("Enter the new role: ").strip()
+            
+            if username and new_role:
+                # Note: This will execute even if the user doesn't exist, but it won't crash.
+                success = db.execute_write("UPDATE users SET role = ? WHERE username = ?", (new_role, username))
+                if success:
+                    print(f"✅ Successfully updated '{username}' to role: {new_role}.")
+            else:
+                print("❌ Error: Inputs cannot be empty.")
 
-    # 7. FINAL READ (Verify changes)
-    print("\n--- FINAL DATABASE STATE ---")
-    final_users = db.execute_read(select_query)
-    for user in final_users:
-        print(user)
+        elif choice == '4':
+            print("\n--- DELETE USER ---")
+            username = input("Enter the username to DELETE: ").strip()
+            
+            # Add a safety confirmation before deleting!
+            confirm = input(f"⚠️ Are you SURE you want to delete '{username}'? (y/n): ").strip().lower()
+            if confirm == 'y':
+                success = db.execute_write("DELETE FROM users WHERE username = ?", (username,))
+                if success:
+                    print(f"🗑️ Successfully deleted '{username}'.")
+            else:
+                print("🛑 Deletion cancelled.")
+
+        elif choice == '5':
+            print("\nShutting down Database Manager. Goodbye! 👋\n")
+            sys.exit()
+
+        else:
+            print("\n❌ Invalid selection. Please type a number between 1 and 5.")
 
 if __name__ == "__main__":
-    run_tests()
+    main()
