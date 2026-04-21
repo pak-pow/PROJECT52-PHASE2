@@ -1,14 +1,15 @@
-from flask import Flask, render_template, request, jsonify # type: ignore
+from flask import Flask, request, jsonify # type: ignore
+from flask_cors import CORS # type: ignore
 from db_manager import DatabaseManager
 
 app = Flask(__name__)
+# Enable CORS so our Live Server frontend can talk to this API
+CORS(app) 
+
+# Initialize the database engine
 db = DatabaseManager("project52.db")
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/api/users", methods=['GET'])
+@app.route('/api/users', methods=['GET'])
 def get_users():
     users = db.execute_read("SELECT * FROM users")
     return jsonify(users)
@@ -27,7 +28,7 @@ def add_user():
         return jsonify({"message": f"User {username} added!"}), 201
     else:
         return jsonify({"error": "Username might already exist."}), 400
-
+    
 @app.route('/api/users/<username>', methods=['DELETE'])
 def delete_user(username):
     success = db.execute_write("DELETE FROM users WHERE username = ?", (username,))
@@ -37,7 +38,6 @@ def delete_user(username):
         return jsonify({"error": "Failed to delete user."}), 400
 
 if __name__ == '__main__':
-    # Initialize the table just in case it doesn't exist
     db.execute_write("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,4 +46,4 @@ if __name__ == '__main__':
         is_active BOOLEAN NOT NULL DEFAULT 1
     );
     """)
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
