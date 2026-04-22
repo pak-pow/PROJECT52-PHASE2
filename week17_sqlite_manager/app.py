@@ -30,7 +30,7 @@ def add_user():
         return jsonify({"error": "Username might already exist."}), 400
     
 
-@app.route('api/users/<username>', methods=['PUT'])
+@app.route('/api/users/<username>', methods=['PUT'])
 def update_user_role(username):
     data = request.json
     new_role = data.get('role')

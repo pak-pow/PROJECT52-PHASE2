@@ -11,6 +11,7 @@ const CONFIG = {
   },
   CLASSES: {
     DELETE_BTN: "delete-btn",
+    EDIT_BTN: "edit-btn",
   },
 };
 
@@ -44,18 +45,17 @@ const ApiService = {
     }
   },
 
-  async updateUserRoles(username, newRole) {
+  async updateUserRole(username, newRole) {
     try {
       const response = await fetch(`${CONFIG.API_BASE_URL}/${username}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: newRole }), 
+        body: JSON.stringify({ role: newRole }),
       });
       if (!response.ok) throw new Error("Failed to update user.");
       return true;
-
     } catch (error) {
-      console.error("API Error: ", error)
+      console.error("API Error: ", error);
       throw error;
     }
   },
@@ -76,11 +76,13 @@ const ApiService = {
 // ==========================================
 // UI CONTROLLER (Interface Logic)
 // ==========================================
+// ==========================================
+// UI CONTROLLER (Interface Logic)
+// ==========================================
 const UIController = {
   elements: {},
 
   init() {
-    // 1. Cache the DOM elements on startup using our Config
     this.elements = {
       tableBody: document.getElementById(CONFIG.DOM_IDS.TABLE_BODY),
       form: document.getElementById(CONFIG.DOM_IDS.FORM),
@@ -96,7 +98,7 @@ const UIController = {
     this.elements.form.addEventListener("submit", this.handleCreate.bind(this));
     this.elements.tableBody.addEventListener(
       "click",
-      this.handleDelete.bind(this),
+      this.handleTableClick.bind(this),
     );
   },
 
@@ -106,13 +108,15 @@ const UIController = {
 
     const fragment = document.createDocumentFragment();
 
-    users.forEach((user) => {
+    users.forEach((user, index) => {
+      // Added index back for the organized IDs
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${user.id}</td>
+        <td>${index + 1}</td>
         <td>${user.username}</td>
         <td>${user.role}</td>
         <td>
+          <button class="${CONFIG.CLASSES.EDIT_BTN}" data-username="${user.username}" style="background: var(--accent-blue); color: black; margin-right: 5px;">Edit</button>
           <button class="${CONFIG.CLASSES.DELETE_BTN}" data-username="${user.username}">Delete</button>
         </td>
       `;
@@ -138,10 +142,11 @@ const UIController = {
     }
   },
 
-  async handleDelete(event) {
-    // Checking the class name against our Config
-    if (event.target.classList.contains(CONFIG.CLASSES.DELETE_BTN)) {
-      const username = event.target.dataset.username;
+  async handleTableClick(event) {
+    const target = event.target; 
+
+    if (target.classList.contains(CONFIG.CLASSES.DELETE_BTN)) {
+      const username = target.dataset.username;
 
       if (confirm(`Are you sure you want to delete ${username}?`)) {
         try {
@@ -149,6 +154,21 @@ const UIController = {
           this.loadAndRenderUsers();
         } catch (error) {
           alert("Could not delete user.");
+        }
+      }
+    }
+
+    if (target.classList.contains(CONFIG.CLASSES.EDIT_BTN)) {
+      const username = target.dataset.username;
+
+      const newRole = prompt(`Enter the new role for ${username}:`);
+
+      if (newRole && newRole.trim() !== "") {
+        try {
+          await ApiService.updateUserRole(username, newRole.trim());
+          this.loadAndRenderUsers();
+        } catch (error) {
+          alert("Could not update user role.");
         }
       }
     }
