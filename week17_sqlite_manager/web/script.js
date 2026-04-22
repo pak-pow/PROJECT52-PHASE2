@@ -44,6 +44,22 @@ const ApiService = {
     }
   },
 
+  async updateUserRoles(username, newRole) {
+    try {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/${username}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }), 
+      });
+      if (!response.ok) throw new Error("Failed to update user.");
+      return true;
+
+    } catch (error) {
+      console.error("API Error: ", error)
+      throw error;
+    }
+  },
+
   async deleteUser(username) {
     try {
       const response = await fetch(`${CONFIG.API_BASE_URL}/${username}`, {
