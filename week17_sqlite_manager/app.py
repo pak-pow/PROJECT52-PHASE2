@@ -40,6 +40,11 @@ def update_user_role(username):
     
     success = db.execute_write("UPDATE users SET role = ? WHERE username = ?", (new_role, username))
     
+    if success:
+        return jsonify({"message": f"User {username} updated to {new_role}!"}), 200
+    
+    else:
+        return jsonify({"error": "Failed to update user"}), 400
 
 @app.route('/api/users/<username>', methods=['DELETE'])
 def delete_user(username):
