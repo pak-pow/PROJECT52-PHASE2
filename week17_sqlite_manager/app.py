@@ -8,7 +8,7 @@ CORS(app)
 
 # Initialize the database engine
 db = DatabaseManager("project52.db")
-
+ 
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = db.execute_read("SELECT * FROM users")
@@ -29,6 +29,11 @@ def add_user():
     else:
         return jsonify({"error": "Username might already exist."}), 400
     
+
+@app.route('api/users/<username>', methods=['PUT'])
+def update_user_role(username):
+    pass
+
 @app.route('/api/users/<username>', methods=['DELETE'])
 def delete_user(username):
     success = db.execute_write("DELETE FROM users WHERE username = ?", (username,))
