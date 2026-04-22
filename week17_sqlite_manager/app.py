@@ -32,7 +32,14 @@ def add_user():
 
 @app.route('api/users/<username>', methods=['PUT'])
 def update_user_role(username):
-    pass
+    data = request.json
+    new_role = data.get('role')
+    
+    if not new_role:
+        return jsonify({"error": "New role is required"}), 400
+    
+    success = db.execute_write("UPDATE users SET role = ? WHERE username = ?", (new_role, username))
+    
 
 @app.route('/api/users/<username>', methods=['DELETE'])
 def delete_user(username):
