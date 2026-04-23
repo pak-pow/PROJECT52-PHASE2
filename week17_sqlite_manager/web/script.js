@@ -115,13 +115,13 @@ const UIController = {
 
     users.forEach((user, index) => {
       const tr = document.createElement("tr");
-      
+
       tr.innerHTML = `
         <td>${index + 1}</td>
         <td>${Utils.escapeHTML(user.username)}</td>
         <td>${Utils.escapeHTML(user.role)}</td>
         <td>
-          <button class="${CONFIG.CLASSES.EDIT_BTN}" data-username="${user.username}" style="background: var(--accent-blue); color: black; margin-right: 5px;">Edit</button>
+          <button class="${CONFIG.CLASSES.EDIT_BTN}" data-username="${user.username}">Edit</button>
           <button class="${CONFIG.CLASSES.DELETE_BTN}" data-username="${user.username}">Delete</button>
         </td>
       `;

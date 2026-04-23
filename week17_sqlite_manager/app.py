@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify # type: ignore
 from flask_cors import CORS # type: ignore
 from db_manager import DatabaseManager
+import os
 
 app = Flask(__name__)
 # Enable CORS so our Live Server frontend can talk to this API
 CORS(app) 
 
-# Initialize the database engine
-db = DatabaseManager("project52.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "project52.db")
+db = DatabaseManager(DB_PATH)
  
 @app.route('/api/users', methods=['GET'])
 def get_users():
