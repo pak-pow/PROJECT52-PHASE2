@@ -15,13 +15,21 @@ const CONFIG = {
   },
 };
 
+const Utils = {
+  escapeHTML(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  },
+};
+
 // ==========================================
 // API SERVICE
 // ==========================================
 const ApiService = {
   async getUsers() {
     try {
-      const response = await fetch(CONFIG.API_BASE_URL); // Using Config!
+      const response = await fetch(CONFIG.API_BASE_URL);
       if (!response.ok) throw new Error("Failed to fetch users.");
       return await response.json();
     } catch (error) {
@@ -76,9 +84,6 @@ const ApiService = {
 // ==========================================
 // UI CONTROLLER (Interface Logic)
 // ==========================================
-// ==========================================
-// UI CONTROLLER (Interface Logic)
-// ==========================================
 const UIController = {
   elements: {},
 
@@ -109,12 +114,12 @@ const UIController = {
     const fragment = document.createDocumentFragment();
 
     users.forEach((user, index) => {
-      // Added index back for the organized IDs
       const tr = document.createElement("tr");
+      
       tr.innerHTML = `
         <td>${index + 1}</td>
-        <td>${user.username}</td>
-        <td>${user.role}</td>
+        <td>${Utils.escapeHTML(user.username)}</td>
+        <td>${Utils.escapeHTML(user.role)}</td>
         <td>
           <button class="${CONFIG.CLASSES.EDIT_BTN}" data-username="${user.username}" style="background: var(--accent-blue); color: black; margin-right: 5px;">Edit</button>
           <button class="${CONFIG.CLASSES.DELETE_BTN}" data-username="${user.username}">Delete</button>
@@ -143,7 +148,7 @@ const UIController = {
   },
 
   async handleTableClick(event) {
-    const target = event.target; 
+    const target = event.target;
 
     if (target.classList.contains(CONFIG.CLASSES.DELETE_BTN)) {
       const username = target.dataset.username;
