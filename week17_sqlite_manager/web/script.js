@@ -93,10 +93,12 @@ const UIController = {
       form: document.getElementById(CONFIG.DOM_IDS.FORM),
       username: document.getElementById(CONFIG.DOM_IDS.USERNAME_INPUT),
       role: document.getElementById(CONFIG.DOM_IDS.ROLE_INPUT),
+      searchInput: document.getElementById(CONFIG.DOM_IDS.SEARCH_INPUT),
+      roleFilter: document.getElementById(CONFIG.DOM_IDS.ROLE_FILTER),
     };
 
     this.setupEventListeners();
-    this.loadAndRenderUsers();
+    this.fetchUsers(); // Changed from loadAndRender
   },
 
   setupEventListeners() {
@@ -105,6 +107,21 @@ const UIController = {
       "click",
       this.handleTableClick.bind(this),
     );
+
+    this.elements.searchInput.addEventListener(
+      "input",
+      this.filterAndRender.bind(this),
+    );
+
+    this.elements.roleFilter.addEventListener(
+      "change",
+      this.filterAndRender.bind(this),
+    );
+  },
+
+  async fetchUsers() {
+    AppState.allUsers = await ApiService.getUsers(); 
+    this.filterAndRender(); 
   },
 
   async loadAndRenderUsers() {
