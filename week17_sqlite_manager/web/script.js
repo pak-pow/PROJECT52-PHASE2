@@ -8,11 +8,17 @@ const CONFIG = {
     FORM: "userForm",
     USERNAME_INPUT: "username",
     ROLE_INPUT: "role",
+    SEARCH_INPUT: "searchInput",
+    ROLE_FILTER: "roleFilter",
   },
   CLASSES: {
     DELETE_BTN: "delete-btn",
     EDIT_BTN: "edit-btn",
   },
+};
+
+const AppState = {
+  allUsers: [],
 };
 
 const Utils = {
@@ -170,7 +176,7 @@ const UIController = {
     try {
       await ApiService.createUser(username, role);
       this.elements.form.reset();
-      this.loadAndRenderUsers();
+      this.fetchUsers();
     } catch (error) {
       alert(error.message);
     }
@@ -185,7 +191,7 @@ const UIController = {
       if (confirm(`Are you sure you want to delete ${username}?`)) {
         try {
           await ApiService.deleteUser(username);
-          this.loadAndRenderUsers();
+          this.fetchUsers();
         } catch (error) {
           alert("Could not delete user.");
         }
@@ -200,7 +206,7 @@ const UIController = {
       if (newRole && newRole.trim() !== "") {
         try {
           await ApiService.updateUserRole(username, newRole.trim());
-          this.loadAndRenderUsers();
+          this.fetchUsers();
         } catch (error) {
           alert("Could not update user role.");
         }
