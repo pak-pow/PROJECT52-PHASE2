@@ -120,19 +120,31 @@ const UIController = {
   },
 
   async fetchUsers() {
-    AppState.allUsers = await ApiService.getUsers(); 
-    this.filterAndRender(); 
+    AppState.allUsers = await ApiService.getUsers();
+    this.filterAndRender();
   },
 
-  async loadAndRenderUsers() {
-    const users = await ApiService.getUsers();
-    this.elements.tableBody.innerHTML = "";
+  filterAndRender() {
+    const searchTerm = this.elements.searchInput.value.toLowerCase();
+    const selectedRole = this.elements.roleFilter.value.toLowerCase();
 
+    const filteredUsers = AppState.allUsers.filter((user) => {
+      const matchesSearch = user.username.toLowerCase().includes(searchTerm);
+      const matchesRole =
+        selectedRole === "all" || user.role.toLowerCase() === selectedRole;
+
+      return matchesSearch && matchesRole;
+    });
+
+    this.renderTable(filteredUsers);
+  },
+
+  renderTable(usersToDraw) {
+    this.elements.tableBody.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
-    users.forEach((user, index) => {
+    usersToDraw.forEach((user, index) => {
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
         <td>${index + 1}</td>
         <td>${Utils.escapeHTML(user.username)}</td>
