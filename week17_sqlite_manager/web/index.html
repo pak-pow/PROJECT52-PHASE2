@@ -24,6 +24,22 @@
 
       <div class="card">
         <h2>Database Users</h2>
+
+        <div class="filter-container">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="🔍 Search usernames..."
+          />
+          <select id="roleFilter" class="role-filter">
+            <option value="all">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+            <option value="guest">Guest</option>
+          </select>
+        </div>
+
         <table>
           <thead>
             <tr>
