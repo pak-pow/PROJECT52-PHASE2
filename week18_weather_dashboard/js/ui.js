@@ -28,22 +28,24 @@ export function renderWeather(data) {
   const currentTemp = data.hourly.temperature_2m[currentHour];
   const chanceOfRain = data.hourly.precipitation_probability[currentHour];
 
-  // 3. Paint the DOM
   card.innerHTML = `
         <div class="weather-main">
-            <h2 style="font-size: 3rem; margin: 0;">${currentTemp}°C</h2>
+            <h2>${currentTemp}°C</h2>
             <p>High: ${maxTemp}°C | Low: ${minTemp}°C</p>
         </div>
         
-        <div class="weather-details" style="display: flex; gap: 2rem; margin-top: 1.5rem; color: gray;">
+        <div class="weather-details">
             <div>
-                <strong>🌧️ Rain Chance:</strong> ${chanceOfRain}%
+                <strong>🌧️ Rain Chance</strong>
+                <span>${chanceOfRain}%</span>
             </div>
             <div>
-                <strong>🌅 Sunrise:</strong> ${sunrise}
+                <strong>🌅 Sunrise</strong>
+                <span>${sunrise}</span>
             </div>
             <div>
-                <strong>🌇 Sunset:</strong> ${sunset}
+                <strong>🌇 Sunset</strong>
+                <span>${sunset}</span>
             </div>
         </div>
     `;
