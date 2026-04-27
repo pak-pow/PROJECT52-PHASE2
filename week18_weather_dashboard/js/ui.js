@@ -50,3 +50,59 @@ export function renderWeather(data) {
         </div>
     `;
 }
+
+// ==========================================
+// 📊 CHART CONTROLLER
+// ==========================================
+let weatherChart = null; 
+
+export function renderChart(data) {
+    const ctx = document.getElementById('hourlyChart').getContext('2d');
+    const currentHourStr = new Date().toISOString().slice(0, 14) + "00"; 
+    const currentIndex = data.hourly.time.findIndex(t => t.startsWith(currentHourStr));
+    const startIndex = currentIndex !== -1 ? currentIndex : 0;
+    
+    const next12Hours = data.hourly.time.slice(startIndex, startIndex + 12);
+    const next12Temps = data.hourly.temperature_2m.slice(startIndex, startIndex + 12);
+    const formattedLabels = next12Hours.map(timeStr => {
+        return new Date(timeStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    });
+    if (weatherChart) {
+        weatherChart.destroy();
+    }
+    weatherChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: formattedLabels,
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: next12Temps,
+                borderColor: '#3b82f6', // Matches your --accent-blue
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                tension: 0.4, // Makes the line smooth and curvy
+                fill: true,
+                pointBackgroundColor: '#0f1115',
+                pointBorderColor: '#3b82f6',
+                pointHoverBackgroundColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false } // Hides the legend for a cleaner look
+            },
+            scales: {
+                x: {
+                    grid: { display: false, color: '#2d3139' },
+                    ticks: { color: '#9ca3af' }
+                },
+                y: {
+                    grid: { color: '#2d3139' },
+                    ticks: { color: '#9ca3af', stepSize: 1 }
+                }
+            }
+        }
+    });
+}
