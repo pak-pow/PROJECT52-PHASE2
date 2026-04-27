@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -12,6 +14,9 @@
         
         <div id="weather-card" class="card">
             <p id="loading-text">Fetching live data from satellite...</p>
+            <div class="chart-container" style="margin-top: 2rem; position: relative; height: 200px; width: 100%;">
+                <canvas id="hourlyChart"></canvas>
+            </div>
         </div>
     </div>
 
