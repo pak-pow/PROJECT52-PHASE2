@@ -1,5 +1,5 @@
 const BASE_URL = "https://api.open-meteo.com/v1/forecast";
-const GEOCODE_URL = "https://geocoding-api.open-mateo.com/v1/search";
+const GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search";
 
 export async function fetchCoordinates(city) {
   try {
@@ -18,19 +18,17 @@ export async function fetchCoordinates(city) {
       name: data.results[0].name,
       country: data.results[0].country,
     };
-
   } catch (error) {
     console.error("Geocoding Error:", error);
     return null;
   }
 }
 
-export async function fetchWeather() {
+export async function fetchWeather(lat, lon) {
   try {
-    // This exactly matches the checkboxes in your new screenshots
     const params = new URLSearchParams({
-      latitude: 13.4088,
-      longitude: 122.5615,
+      latitude: lat,
+      longitude: lon,
 
       // Hourly Variables
       hourly: "temperature_2m,precipitation_probability,precipitation",
