@@ -1,7 +1,16 @@
 // ==========================================
 // 🌐 API SERVICE (Open-Meteo Network Logic)
 // ==========================================
-const BASE_URL = "https://api.open-meteo.com/v1/forecast";
+const BASE_URL    = "https://api.open-meteo.com/v1/forecast";
+const GEOCODE_URL = "https://geocoding-api.open-mateo.com/v1/search";
+
+export async function fetchCoordinates(city){
+  try {
+
+  } catch (error) {
+    
+  }
+}
 
 export async function fetchWeather() {
   try {
