@@ -12,13 +12,18 @@
     <div class="container">
         <h1>Weather Dashboard</h1>
         
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Enter a city name...">
+            <button id="search-btn">Search</button>
+        </div>
+
         <div id="weather-card" class="card">
             
             <div id="current-weather">
                 <p id="loading-text">Fetching live data from satellite...</p>
             </div>
             
-            <div class="chart-container" style="margin-top: 2rem; position: relative; height: 200px; width: 100%;">
+            <div class="chart-container">
                 <canvas id="hourlyChart"></canvas>
             </div>
             
