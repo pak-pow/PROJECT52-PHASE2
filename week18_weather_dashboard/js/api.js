@@ -1,14 +1,27 @@
-// ==========================================
-// 🌐 API SERVICE (Open-Meteo Network Logic)
-// ==========================================
-const BASE_URL    = "https://api.open-meteo.com/v1/forecast";
+const BASE_URL = "https://api.open-meteo.com/v1/forecast";
 const GEOCODE_URL = "https://geocoding-api.open-mateo.com/v1/search";
 
-export async function fetchCoordinates(city){
+export async function fetchCoordinates(city) {
   try {
+    const response = await fetch(
+      `${GEOCODE_URL}?name=${city}&count=1&language=en&format=json`,
+    );
+    if (!response.ok) throw new Error("Geocoding failed");
+    const data = await response.json();
+
+    // returns null if searched no city or fake
+    if (!data.results || data.results.length === 0) return null;
+
+    return {
+      lat: data.results[0].latitude,
+      lon: data.results[0].longitude,
+      name: data.results[0].name,
+      country: data.results[0].country,
+    };
 
   } catch (error) {
-    
+    console.error("Geocoding Error:", error);
+    return null;
   }
 }
 
