@@ -1,13 +1,8 @@
-// ==========================================
-// 🖥️ UI CONTROLLER (Interface Logic Only)
-// ==========================================
-
-export function renderWeather(data) {
-  // 1. CHANGE THIS TARGET:
+export function renderWeather(data, locationName) {
   const weatherContainer = document.getElementById("current-weather");
 
   if (!data) {
-    weatherContainer.innerHTML = `<p style="color: red;">Failed to load weather data.</p>`;
+    weatherContainer.innerHTML = `<p style="color: #ef4444;">Failed to load weather data.</p>`;
     return;
   }
 
@@ -25,10 +20,9 @@ export function renderWeather(data) {
   const currentHour = new Date().getHours();
   const currentTemp = data.hourly.temperature_2m[currentHour];
   const chanceOfRain = data.hourly.precipitation_probability[currentHour];
-
-  // 2. UPDATE THIS TARGET:
   weatherContainer.innerHTML = `
         <div class="weather-main">
+            <h3>📍 ${locationName}</h3>
             <h2>${currentTemp}°C</h2>
             <p>High: ${maxTemp}°C | Low: ${minTemp}°C</p>
         </div>
@@ -50,9 +44,6 @@ export function renderWeather(data) {
     `;
 }
 
-// ==========================================
-// 📊 CHART CONTROLLER
-// ==========================================
 let weatherChart = null;
 
 export function renderChart(data) {
