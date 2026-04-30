@@ -118,3 +118,33 @@ function getWeatherIcon(code) {
   if (code >= 95 && code <= 99) return "⛈️"; // Thunderstorm
   return "☁️";
 }
+
+export function renderWeeklyForecast(data) {
+  const weeklyContainer = document.getElementById("weekly-forecast");
+  weeklyContainer.innerHTML = ""; // Clear any old data out first
+
+  // Loop through all 7 days of data
+  for (let i = 0; i < 7; i++) {
+    const dateString = data.daily.time[i]; // e.g., "2026-04-30"
+    const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
+    const minTemp = Math.round(data.daily.temperature_2m_min[i]);
+    const weatherCode = data.daily.weather_code[i];
+
+    // Convert the raw date string into a friendly day name (Mon, Tue, Wed)
+    // We add "T00:00:00" to prevent timezone bugs where it shifts a day backward
+    const dayName = new Date(dateString + "T00:00:00").toLocaleDateString('en-US', { weekday: 'short' });
+    
+    // Get the matching emoji
+    const icon = getWeatherIcon(weatherCode);
+
+    // Inject the HTML for this specific day into our container
+    weeklyContainer.innerHTML += `
+        <div class="daily-card">
+            <span class="day-name">${dayName}</span>
+            <span style="font-size: 1.5rem; margin: 0.25rem 0;">${icon}</span>
+            <span class="day-temp">${maxTemp}°</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">${minTemp}°</span>
+        </div>
+    `;
+  }
+}
