@@ -165,3 +165,58 @@ h1 {
   height: 200px;
   width: 100%;
 }
+
+.forecast-section{
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.forecast-title {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.weekly-container {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;      
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.weekly-container::-webkit-scrollbar {
+  display: none; 
+}
+
+.daily-card {
+  background: rgba(255, 255, 255, 0.03); 
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem 0.5rem;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0; 
+}
+
+.daily-card .day-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.daily-card .day-temp {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+}
