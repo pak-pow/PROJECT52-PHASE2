@@ -148,3 +148,26 @@ export function renderWeeklyForecast(data) {
     `;
   }
 }
+
+export function renderAdvancedMetrics(data){
+
+  // index 0 is always today
+  const maxWind = Math.round(data.daily.wind_speed_10m_max[0]);
+  const uvIndex = Math.round(data.daily.uv_index_max[0]);
+
+  const totalRain = data.daily.precipitation_sum[0].toFixed(1);
+  
+  const sunrise = new Date(data.daily.sunrise[0]);
+  const sunset = new Date(data.daily.sunset[0]);
+
+  const diffMs = sunset - sunrise;
+  const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  const daylightStr = `${diffHrs}h ${diffMins}m`;
+
+  document.getElementById("metric-wind").innerText = maxWind;
+  document.getElementById("metric-uv").innerText = uvIndex;
+  document.getElementById("metric-rain").innerText = totalRain;
+  document.getElementById("metric-sun").innerText = daylightStr;
+}
+

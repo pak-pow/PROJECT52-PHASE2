@@ -1,5 +1,5 @@
 import { fetchWeather, fetchCoordinates } from "./api.js";
-import { renderWeather, renderChart, renderWeeklyForecast } from "./ui.js";
+import { renderWeather, renderChart, renderWeeklyForecast, renderAdvancedMetrics } from "./ui.js";
 
 async function loadWeather(lat, lon, locationName) {
   const weatherContainer = document.getElementById("current-weather");
@@ -10,6 +10,7 @@ async function loadWeather(lat, lon, locationName) {
     renderWeather(weatherData, locationName);
     renderChart(weatherData);
     renderWeeklyForecast(weatherData);
+    renderAdvancedMetrics(weatherData);
   }
 }
 
