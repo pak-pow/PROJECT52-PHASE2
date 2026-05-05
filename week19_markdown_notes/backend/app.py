@@ -27,6 +27,23 @@ def read_notes(filename):
     
     if not os.path.exists(filepath):
         return jsonify({"error": "File not Found"}), 404
+    
+    with open(filepath, 'r', encoding='utf-8') as file:
+        content = file.read()
+        
+    return jsonify({"filename": filename, "content": content})
 
+@app.route('/api/notes', methods=['POST'])
+def save_note():
+    data = request.get_json()
+    filename = data.get('filename')
+    content = data.get('content')
+    
+    filepath = os.path.join(DATA_DIR, filename)
+    
+    with open(filepath, 'w', encoding='utf-8') as file:
+        file.write(content)
+        
+    return jsonify({"message": f"Successfully saved {filename}!"})
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
