@@ -46,5 +46,21 @@ def save_note():
         file.write(content)
         
     return jsonify({"message": f"Successfully saved {filename}!"})
+
+@app.route('/api/notes/<filename>', methods=['DELETE'])
+def delete_notes(filename):
+    filepath = os.path.join(DATA_DIR, filename)
+    
+    if not os.path.join(filepath):
+        return jsonify({"error": "File not found"}), 404
+    
+    try: 
+        os.remove(filepath)
+        return jsonify({"message": f"Successfully deleted {filename}"})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
