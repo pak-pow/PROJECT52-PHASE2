@@ -8,8 +8,16 @@
     </head>
     <body>
         <div class="app-container">
-            <h1>Markdown Engine...</h1>
-            <p>Press F12 to check your browser for the backend connection.</p>
+            <aside class="sidebar">
+                <h2>My Notes</h2>
+                <button id="new-note-btn">New Note</button>
+                <ul id="note-list">
+                </ul>
+            </aside>
+
+            <main class="editor-pane">
+                <h1>Select a note to begin...</h1>
+            </main>
         </div>
         
         <script src="app.js" async defer></script>
