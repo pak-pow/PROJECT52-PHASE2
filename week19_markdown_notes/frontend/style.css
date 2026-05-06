@@ -56,3 +56,32 @@ body {
 .note-item:hover {
     background-color: #2a2e38;
 }
+
+#editor-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#note-title-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #2d3139;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    outline: none;
+}
+
+#markdown-editor {
+    flex: 1; 
+    background: transparent;
+    border: none;
+    color: #a9b1d6;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    resize: none; 
+    outline: none;
+}
