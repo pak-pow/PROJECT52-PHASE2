@@ -11,6 +11,8 @@ if not os.path.exists(DATA_DIR):
 @app.after_request
 def add_cors(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, OPTIONS'
     return response
 
 @app.route('/api/notes', methods=['GET'])
@@ -51,7 +53,7 @@ def save_note():
 def delete_notes(filename):
     filepath = os.path.join(DATA_DIR, filename)
     
-    if not os.path.join(filepath):
+    if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404
     
     try: 
