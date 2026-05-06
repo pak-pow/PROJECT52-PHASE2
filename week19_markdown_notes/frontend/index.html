@@ -16,12 +16,14 @@
             </aside>
 
             <main class="editor-pane">
-            <!-- Hidden by default until a note is clicked -->
-                <div id="editor-container" style="display: none; height: 100%;">
-                    <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)" readonly>
-                    <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
+            <div id="editor-container" class="hidden">
+                <div class="editor-header">
+                    <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)">
+                    <button id="save-note-btn">💾 Save</button>
                 </div>
-                <h1 id="welcome-text">Select a note to begin...</h1>
+                <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
+            </div>
+            <h1 id="welcome-text">Select a note to begin...</h1>
             </main>
         </div>
         

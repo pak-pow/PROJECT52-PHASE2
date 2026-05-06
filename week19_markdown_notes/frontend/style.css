@@ -57,10 +57,36 @@ body {
     background-color: #2a2e38;
 }
 
+.hidden {
+    display: none !important;
+}
+
 #editor-container {
     display: flex;
+    height: 100%;
     flex-direction: column;
     gap: 1rem;
+}
+
+.editor-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+#save-note-btn, #new-note-btn {
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#save-note-btn:hover, #new-note-btn:hover {
+    background-color: #45a049;
 }
 
 #note-title-input {
