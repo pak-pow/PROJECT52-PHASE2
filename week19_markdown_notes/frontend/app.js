@@ -5,6 +5,7 @@ const titleInput = document.getElementById('note-title-input');
 const markdownEditor = document.getElementById('markdown-editor');
 const saveBtn = document.getElementById('save-note-btn');
 const newNoteBtn = document.getElementById('new-note-btn');
+const markdownPreview = document.getElementById('markdown-preview');
 
 async function loadNoteList() {
     try {
@@ -38,6 +39,7 @@ async function loadNoteContent(filename) {
         titleInput.value = data.filename;
         markdownEditor.value = data.content;
         
+        markdownPreview.innerHTML = marked.parse(data.content);
     } catch (error) {
         console.error("Failed to load note:", error);
     }
@@ -73,6 +75,11 @@ newNoteBtn.addEventListener('click', () => {
     editorContainer.classList.remove('hidden');
     titleInput.value = 'untitled.md';
     markdownEditor.value = '# New Note\n\nStart typing...';
+});
+
+markdownEditor.addEventListener('input', () => {
+    const rawText = markdownEditor.value;
+    markdownPreview.innerHTML = marked.parse(rawText);
 });
 
 loadNoteList();
