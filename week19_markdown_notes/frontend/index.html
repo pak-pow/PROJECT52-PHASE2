@@ -5,6 +5,7 @@
         <title>Week 19: Markdown Notes</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
     <body>
         <div class="app-container">
@@ -21,7 +22,10 @@
                     <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)">
                     <button id="save-note-btn">💾 Save</button>
                 </div>
-                <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
+                <div class="workspace-split">
+                    <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
+                    <div id="welcome-text">Select a note to begin</div>
+                </div>
             </div>
             <h1 id="welcome-text">Select a note to begin...</h1>
             </main>
