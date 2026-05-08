@@ -17,19 +17,22 @@
             </aside>
 
             <main class="editor-pane">
-            <div id="editor-container" class="hidden">
-                <div class="editor-header">
-                    <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)">
-                    <button id="save-note-btn">💾 Save</button>
+                <div id="editor-container" class="hidden">
+                    <div class="editor-header">
+                        <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)">
+                        <button id="save-note-btn">Save</button>
+                        <button id="delete-note-btn">Delete</button>
+                    </div>
+                    <div class="workspace-split">
+                        <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
+                        <div id="markdown-preview" class="markdown-body"></div>
+                    </div>
                 </div>
-                <div class="workspace-split">
-                    <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
-                    <div id="markdown-preview" class="markdown-body"></div>
-                </div>
-            </div>
-            <h1 id="welcome-text">Select a note to begin...</h1>
+                <h1 id="welcome-text">Select a note to begin...</h1>
             </main>
         </div>
+
+        <div id="toast-container"></div>
         
         <script src="app.js" async defer></script>
     </body>
