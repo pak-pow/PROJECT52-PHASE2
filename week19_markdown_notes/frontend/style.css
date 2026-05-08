@@ -155,3 +155,56 @@ body {
     border-radius: 3px;
     font-family: 'Courier New', Courier, monospace;
 }
+
+#delete-note-btn {
+    padding: 0.5rem 1rem;
+    background-color: #e06c75;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#delete-note-btn:hover {
+    background-color: #be5058;
+}
+
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.toast {
+    padding: 1rem 1.5rem;
+    background-color: #1e2128;
+    color: #f3f4f6;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border-left: 4px solid #4CAF50;
+    animation: slideIn 0.3s ease-out forwards;
+    font-weight: 500;
+}
+
+.toast.error {
+    border-left-color: #e06c75; 
+}
+
+.toast.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(120%); opacity: 0; }
+}
