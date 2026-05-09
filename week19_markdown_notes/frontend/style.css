@@ -117,6 +117,13 @@ body {
     border-color: var(--border-color);
     transform: translateX(4px);
 }
+
+.note-item.active {
+    background-color: var(--bg-highlight);
+    border-left: 3px solid var(--accent-blue);
+    padding-left: calc(1rem - 3px);
+}
+
 .hidden {
     display: none !important;
 }
