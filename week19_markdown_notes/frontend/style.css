@@ -45,6 +45,11 @@ body {
     background: var(--text-muted); 
 }
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
 .app-container {
     display: flex;
     height: 100vh;
@@ -61,6 +66,23 @@ body {
     flex-direction: column;
     box-shadow: 2px 0 10px rgba(0,0,0,0.2); 
     z-index: 10;
+}
+
+.editor-pane {
+    flex: 1;
+    padding: 2rem;
+    background-color: var(--bg-base);
+}
+
+.editor-pane > h1 {
+    color: var(--text-muted);
+}
+
+.workspace-split {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    overflow: hidden;
 }
 
 .sidebar h2 {
@@ -84,22 +106,6 @@ body {
     margin-top: 0; 
 }
 
-.editor-pane {
-    flex: 1;
-    padding: 2rem;
-    background-color: var(--bg-main);
-}
-
-.editor-pane h1 {
-    color: #666;
-}
-
-#note-list{
-    list-style-type: none;
-    padding: 0;
-    margin-top: 1.5rem;
-}
-
 .note-item {
     padding: 0.85rem 1rem;
     background-color: transparent;
@@ -121,7 +127,7 @@ body {
 .note-item.active {
     background-color: var(--bg-highlight);
     border-left: 3px solid var(--accent-blue);
-    padding-left: calc(1rem - 3px);
+    padding-left: calc(1rem - 3px); 
 }
 
 .hidden {
@@ -141,9 +147,46 @@ body {
     align-items: center;
 }
 
+#note-title-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    outline: none;
+}
+
+#markdown-editor {
+    flex: 1; 
+    height: 100%;
+    padding: 1rem;
+    font-family: var(--font-code);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    resize: none;
+}
+
+#markdown-preview {
+    flex: 1;
+    height: 100%;
+    padding: 1.5rem;
+    background-color: var(--bg-surface);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    overflow-y: auto;
+    color: var(--text-main);
+}
+
 #save-note-btn, #new-note-btn {
     padding: 0.5rem 1rem;
-    background-color: #4CAF50;
+    background-color: var(--success-green);
     color: white;
     border: none;
     border-radius: 4px;
@@ -153,78 +196,22 @@ body {
 }
 
 #save-note-btn:hover, #new-note-btn:hover {
-    background-color: #45a049;
+    background-color: #238636;
 }
 
-#note-title-input {
-    background: transparent;
+#delete-note-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--danger-red);
+    color: white;
     border: none;
-    border-bottom: 1px solid #2d3139;
-    color: var(--text-main);
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0.5rem 0;
-    outline: none;
-}
-
-#markdown-editor {
-    font-family: var(--font-code);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    background-color: var(--bg-base);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.workspace-split {
-    display: flex;
-    flex: 1;
-    gap: 1rem;
-    overflow: hidden;
-}
-
-#markdown-editor{
-    flex: 1; 
-    height: 100%;
-    padding: 1rem;
-    background-color: #1e2128;
-    border-radius: 6px;
-}
-
-#markdown-preview {
-    flex: 1;
-    height: 100%;
-    padding: 1rem;
-    background-color: #16181d;
-    border-radius: 6px;
-    border: 1px solid #2d3139;
-    overflow-y: auto;
-    color: var(--text-main);
-}
-
-.markdown-body {
-    font-family: var(--font-ui);
-    background-color: var(--bg-base);
-    border: 1px solid var(--border-color);
-}
-
-.markdown-body h1, .markdown-body h2, .markdown-body h3 {
-    margin-top: 0;
-    border-bottom: 1px solid #2d3139;
-    padding-bottom: 0.3rem;
-}
-.markdown-body pre {
-    background-color: #0f1115;
-    padding: 1rem;
     border-radius: 4px;
-    overflow-x: auto;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
 }
-.markdown-body code {
-    background-color: #0f1115;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-family: 'Courier New', Courier, monospace;
+
+#delete-note-btn:hover {
+    background-color: #d13a33;
 }
 
 #markdown-editor:focus,
@@ -235,24 +222,50 @@ body {
     transition: all 0.2s ease-in-out;
 }
 
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
+.markdown-body {
+    font-family: var(--font-ui);
 }
 
-#delete-note-btn {
-    padding: 0.5rem 1rem;
-    background-color: #e06c75;
-    color: white;
-    border: none;
+.markdown-body p, 
+.markdown-body ul, 
+.markdown-body ol, 
+.markdown-body blockquote {
+    margin-bottom: 1rem; 
+    line-height: 1.6;
+}
+
+.markdown-body ul, 
+.markdown-body ol {
+    padding-left: 2rem; 
+}
+
+.markdown-body h1, 
+.markdown-body h2, 
+.markdown-body h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.3rem;
+}
+
+.markdown-body *:first-child {
+    margin-top: 0;
+}
+
+.markdown-body pre {
+    background-color: var(--bg-base);
+    padding: 1rem;
     border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
 }
 
-#delete-note-btn:hover {
-    background-color: #be5058;
+.markdown-body code {
+    background-color: var(--bg-base);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: var(--font-code);
 }
 
 #toast-container {
@@ -267,17 +280,20 @@ body {
 
 .toast {
     padding: 1rem 1.5rem;
-    background-color: #1e2128;
-    color: #f3f4f6;
+    background-color: var(--bg-highlight);
+    color: var(--text-main);
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid var(--success-green);
+    border-top: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     animation: slideIn 0.3s ease-out forwards;
     font-weight: 500;
 }
 
 .toast.error {
-    border-left-color: #e06c75; 
+    border-left-color: var(--danger-red); 
 }
 
 .toast.fade-out {

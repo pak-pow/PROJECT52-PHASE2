@@ -13,6 +13,11 @@ const API_BASE = 'http://127.0.0.1:5000/api/notes';
 let currentNote = null;
 let isDirty = false;
 
+marked.setOptions({
+    breaks: true, 
+    gfm: true
+});
+
 function checkUnsavedChanges() {
     if (isDirty) {
         return confirm("You have unsaved changes. Are you sure you want to leave without saving?");
