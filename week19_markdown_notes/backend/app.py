@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request # type: ignore
+from werkzeug.utils import secure_filename # type: ignore
 import os
 app = Flask(__name__)
 
@@ -26,7 +27,9 @@ def list_notes():
 
 @app.route('/api/notes/<filename>', methods=['GET'])
 def read_notes(filename):
-    filepath = os.path.join(DATA_DIR, filename)
+    
+    safe_filename = secure_filename(filename)
+    filepath = os.path.join(DATA_DIR, safe_filename)
     
     if not os.path.exists(filepath):
         return jsonify({"error": "File not Found"}), 404
@@ -34,14 +37,19 @@ def read_notes(filename):
     with open(filepath, 'r', encoding='utf-8') as file:
         content = file.read()
         
-    return jsonify({"filename": filename, "content": content})
+    return jsonify({"filename": safe_filename, "content": content})
 
 @app.route('/api/notes', methods=['POST'])
 def save_note():
     data = request.get_json()
-    filename = data.get('filename')
+    raw_filename = data.get('filename')
     content = data.get('content')
     
+    filename = secure_filename(raw_filename)
+    
+    if not filename.endswith('.md'):
+        return jsonify({"error": "Invalid file type. Must be .md"}), 400
+        
     filepath = os.path.join(DATA_DIR, filename)
     
     with open(filepath, 'w', encoding='utf-8') as file:
@@ -51,14 +59,15 @@ def save_note():
 
 @app.route('/api/notes/<filename>', methods=['DELETE'])
 def delete_notes(filename):
-    filepath = os.path.join(DATA_DIR, filename)
+    safe_filename = secure_filename(filename)
+    filepath = os.path.join(DATA_DIR, safe_filename)
     
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404
     
     try: 
         os.remove(filepath)
-        return jsonify({"message": f"Successfully deleted {filename}"})
+        return jsonify({"message": f"Successfully deleted {safe_filename}"})
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
