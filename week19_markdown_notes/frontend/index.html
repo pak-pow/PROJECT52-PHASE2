@@ -17,21 +17,27 @@
             <aside class="sidebar">
                 <h2>My Notes</h2>
                 <button id="new-note-btn">New Note</button>
+                <input type="text" id="search-input" placeholder="Search notes...">
                 <ul id="note-list">
                 </ul>
             </aside>
 
             <main class="editor-pane">
                 <div id="editor-container" class="hidden">
+                    
                     <div class="editor-header">
                         <input type="text" id="note-title-input" placeholder="Filename (e.g., my_note.md)">
                         <button id="save-note-btn">Save</button>
                         <button id="delete-note-btn">Delete</button>
                     </div>
+                    
                     <div class="workspace-split">
                         <textarea id="markdown-editor" placeholder="Start typing your markdown here..."></textarea>
                         <div id="markdown-preview" class="markdown-body"></div>
                     </div>
+                    
+                    <div id="word-count">0 words &middot; 0 characters</div>
+                    
                 </div>
                 <h1 id="welcome-text">Select a note to begin...</h1>
             </main>

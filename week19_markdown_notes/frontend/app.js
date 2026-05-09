@@ -8,6 +8,8 @@ const newNoteBtn = document.getElementById('new-note-btn');
 const markdownPreview = document.getElementById('markdown-preview');
 const deleteBtn = document.getElementById('delete-note-btn');
 const toastContainer = document.getElementById('toast-container');
+const searchInput = document.getElementById('search-input');
+const wordCountDisplay = document.getElementById('word-count');
 
 const API_BASE = 'http://127.0.0.1:5000/api/notes';
 let currentNote = null;
@@ -101,6 +103,11 @@ markdownEditor.addEventListener('input', () => {
     isDirty = true;
     const rawText = markdownEditor.value;
     markdownPreview.innerHTML = marked.parse(rawText);
+    
+    const charCount = rawText.length;
+    const wordCount = rawText.trim().split(/\s+/).filter(word => word.length > 0).length;
+    
+    wordCountDisplay.innerHTML = `${wordCount} words &middot; ${charCount} characters`;
 });
 titleInput.addEventListener('input', () => isDirty = true);
 
@@ -119,11 +126,21 @@ saveBtn.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch(API_BASE, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filename, content })
-        });
+        let response;
+        
+        if (currentNote && currentNote !== filename) {
+            response = await fetch(`${API_BASE}/${currentNote}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ new_filename: filename, content: content })
+            });
+        } else {
+            response = await fetch(API_BASE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, content })
+            });
+        }
 
         if (response.ok) {
             isDirty = false;
@@ -134,6 +151,20 @@ saveBtn.addEventListener('click', async () => {
     } catch (error) {
         showToast("Failed to connect to server.", true);
     }
+});
+
+searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.note-item');
+    
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
 });
 
 newNoteBtn.addEventListener('click', () => {

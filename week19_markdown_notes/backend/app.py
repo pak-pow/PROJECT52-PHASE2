@@ -13,7 +13,7 @@ if not os.path.exists(DATA_DIR):
 def add_cors(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS' 
     return response
 
 @app.route('/api/notes', methods=['GET'])
@@ -56,6 +56,35 @@ def save_note():
         file.write(content)
         
     return jsonify({"message": f"Successfully saved {filename}!"})
+
+@app.route('/api/notes/<old_filename>', methods=['PUT'])
+def update_note(old_filename):
+    data = request.get_json()
+    new_filename = data.get('new_filename')
+    content = data.get('content')
+
+    safe_old = secure_filename(old_filename)
+    safe_new = secure_filename(new_filename)
+
+    if not safe_new.endswith('.md'):
+        return jsonify({"error": "Invalid file type. Must be .md"}), 400
+
+    old_filepath = os.path.join(DATA_DIR, safe_old)
+    new_filepath = os.path.join(DATA_DIR, safe_new)
+
+    if not os.path.exists(old_filepath):
+        return jsonify({"error": "Original file not found"}), 404
+
+    try:
+        if safe_old != safe_new:
+            os.rename(old_filepath, new_filepath)
+        
+        with open(new_filepath, 'w', encoding='utf-8') as file:
+            file.write(content)
+            
+        return jsonify({"message": f"Successfully updated to {safe_new}!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/notes/<filename>', methods=['DELETE'])
 def delete_notes(filename):
