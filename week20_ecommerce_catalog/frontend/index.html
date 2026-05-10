@@ -8,6 +8,49 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+
+        <nav class="navbar">
+            <div class="logo">E-commerce</div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for products...">
+            </div>
+            <div class="cart-icon">🛒 Cart (0)</div>
+        </nav>
+        
+        <div class="main-layout">
+        <aside class="sidebar">
+            <h3>Categories</h3>
+            <ul id="category-filters">
+                <li><button class="filter-btn active" data-category="All">All Products</button></li>
+                <li><button class="filter-btn" data-category="Electronics">Electronics</button></li>
+                <li><button class="filter-btn" data-category="Furniture">Furniture</button></li>
+                <li><button class="filter-btn" data-category="Home">Home</button></li>
+                <li><button class="filter-btn" data-category="Books">Books</button></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div class="grid-header">
+                <h2>Showing All Products</h2>
+                <span id="result-count">6 Results</span>
+            </div>
+            
+            <div id="product-grid" class="grid">
+                <div class="product-card dummy">
+                    <div class="product-image">📦</div>
+                    <div class="product-info">
+                        <span class="product-category">Category</span>
+                        <h4 class="product-name">Loading Products...</h4>
+                        <div class="product-footer">
+                            <span class="product-price">$0.00</span>
+                            <button class="add-to-cart-btn">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
         <script src="app.js" async defer></script>
     </body>
 </html>
