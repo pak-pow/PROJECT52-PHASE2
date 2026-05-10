@@ -12,3 +12,10 @@ PRODUCTS = [
     {"id": 5, "name": "Python Crash Course", "category": "Books", "price": 25.99, "image": "📘"},
     {"id": 6, "name": "Gaming Mouse", "category": "Electronics", "price": 60.00, "image": "🖱️"}
 ]
+
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    return jsonify({"products": PRODUCTS})
+
+if __name__ == '__main__':
+    app.run(port = 5000, debug=True)
