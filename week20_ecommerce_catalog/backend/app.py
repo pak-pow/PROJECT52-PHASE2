@@ -19,6 +19,11 @@ def get_db_connection():
 def get_products():
     
     conn = get_db_connection()
+    products = conn.execute('SELECT * FROM products').fetchall()
+    conn.close()
+    
+    product_list = [dict(row) for row in products]
+    return jsonify({"products": product_list})
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)
