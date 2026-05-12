@@ -24,5 +24,25 @@ def initialize_db():
         )
     ''')
     
+    cursor.execute('DELETE FROM products')
+    
+    products = [
+        ("Sony WH-1000XM5", "Electronics", 348.00, "🎧"),
+        ("Mechanical Keyboard", "Electronics", 120.50, "⌨️"),
+        ("Ergonomic Office Chair", "Furniture", 299.99, "🪑"),
+        ("Ceramic Coffee Mug", "Home", 18.00, "☕"),
+        ("Python Crash Course", "Books", 25.99, "📘"),
+        ("Gaming Mouse", "Electronics", 60.00, "🖱️")
+    ]
+
+    cursor.executemany('''
+        INSERT INTO products (name, category, price, image)
+        VALUES (?, ?, ?, ?)
+    ''', products)
+
+    conn.commit()
+    conn.close()
+    print(f"✅ Database initialized successfully at: {DB_PATH}")
+    
 if __name__ == '__main__':
     initialize_db()
