@@ -1,4 +1,4 @@
-from flask import Flask, jsonify #type: ignore
+from flask import Flask, jsonify, request #type: ignore
 from flask_cors import CORS #type: ignore
 import sqlite3
 import os
@@ -24,6 +24,10 @@ def get_products():
 
     product_list = [dict(row) for row in products]
     return jsonify({"products": product_list})
+
+@app.route("/api/checkout", methods=["POST"])
+def process_checkout():
+    pass
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)
