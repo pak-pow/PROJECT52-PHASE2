@@ -11,6 +11,7 @@ const cartOverlay = document.getElementById('cart-overlay');
 const closeCartBtn = document.getElementById('close-cart-btn');
 const cartItemsContainer = document.getElementById('cart-items');
 const cartTotalPrice = document.getElementById('cart-total-price');
+const checkoutBtn = document.getElementById('checkout-btn');
 
 // --- GLOBAL STATE ---
 const API_URL = 'http://127.0.0.1:5000/api/products';
@@ -177,6 +178,55 @@ function renderProducts(products) {
         productGrid.appendChild(card);
     });
 }
+
+
+
+checkoutBtn.addEventListener('click', async () => {
+    // 1. Prevent checking out an empty cart
+    if (cart.length === 0) {
+        alert("Your cart is empty! Add some items first.");
+        return;
+    }
+
+    // 2. Change button text so the user knows it's working
+    const originalText = checkoutBtn.textContent;
+    checkoutBtn.textContent = "Processing...";
+    checkoutBtn.disabled = true;
+
+    // 3. Calculate the final total to send to Python
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    try {
+        // 4. Send the POST request to our new Python endpoint
+        const response = await fetch('http://127.0.0.1:5000/api/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                cart: cart, 
+                total_price: totalPrice 
+            })
+        });
+
+        if (response.ok) {
+            // 5. Success! Clear the cart and reset the UI
+            alert(`Success! Order placed for PHP ${totalPrice.toFixed(2)}.`);
+            cart = []; 
+            updateCartUI();
+            toggleCart(); // Close the sidebar
+        } else {
+            alert("Checkout failed. Please try again.");
+        }
+    } catch (error) {
+        console.error("Checkout Error:", error);
+        alert("Server error. Is Python running?");
+    } finally {
+        // 6. Reset button state
+        checkoutBtn.textContent = originalText;
+        checkoutBtn.disabled = false;
+    }
+});
 
 // --- BOOT UP ---
 fetchProducts();
