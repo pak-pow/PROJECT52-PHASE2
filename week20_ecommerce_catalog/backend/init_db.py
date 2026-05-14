@@ -24,6 +24,14 @@ def initialize_db():
         )
     ''')
     
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total_amount REAL NOT NULL,
+            total_items INTEGER NOT NULL,
+            purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     cursor.execute('DELETE FROM products')
     
     products = [
