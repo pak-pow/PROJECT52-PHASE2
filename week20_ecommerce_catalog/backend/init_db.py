@@ -50,7 +50,7 @@ def initialize_db():
 
     conn.commit()
     conn.close()
-    print(f"✅ Database initialized successfully at: {DB_PATH}")
+    print(f"Database initialized successfully at: {DB_PATH}")
     
 if __name__ == '__main__':
     initialize_db()
