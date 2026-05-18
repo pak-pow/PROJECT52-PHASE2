@@ -52,23 +52,24 @@ messageInput.addEventListener("keypress", (e) => {
   }
 });
 
-// This listens for Python broadcasting a message back to us
-socket.on("message", (msg) => {
-  // Create a new div for the message
-  const messageDiv = document.createElement("div");
+socket.on('chat_message', (data) => {
+  const myCurrentName = usernameInput.value.trim() || 'Anonymous';
+  const isMe = (data.username === myCurrentName);
 
-  // For today, we will style all incoming messages as "received"
-  messageDiv.classList.add("message", "received");
+  const messageDiv = document.createElement('div');
 
-  // Build the HTML structure
+  if (isMe) {
+    messageDiv.classList.add('message', 'sent');
+
+  } else {
+    messageDiv.classList.add('message', 'received');
+
+  }
   messageDiv.innerHTML = `
-        <span class="username">Anonymous</span>
-        <p>${msg}</p>
-    `;
+    <span class="username">${data.username}</span>
+    <p>${data.message}</p>
+  `;
 
-  // Append it to the bottom of our chat window
   chatWindow.appendChild(messageDiv);
-
-  // Auto-scroll the chat window to the very bottom
   chatWindow.scrollTop = chatWindow.scrollHeight;
 });
