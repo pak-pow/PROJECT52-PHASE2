@@ -1,6 +1,6 @@
 from flask import Flask #type:ignore
-from flask_socketio import SocketIO, send
-from flask_cors import CORS
+from flask_socketio import SocketIO, send #type: ignore
+from flask_cors import CORS #type: ignore
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'p52_chat_secret'
