@@ -154,3 +154,20 @@ body {
 #send-btn:hover {
   background-color: #2563eb;
 }
+
+.username-input {
+  background: transparent;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 600;
+  width: 150px;
+  transition: border-color 0.2s;
+}
+
+.username-input:focus {
+  border-color: #3b82f6;
+}
