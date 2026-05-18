@@ -4,6 +4,7 @@ const statusDot = document.querySelector(".status-dot");
 const chatWindow = document.getElementById("chat-window");
 const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
+const usernameInput = document.getElementById('username-input');
 
 // --- WEBSOCKET CONNECTION ---
 const socket = io("http://127.0.0.1:5000");
@@ -26,11 +27,17 @@ socket.on("disconnect", () => {
 
 function sendMessage() {
   const text = messageInput.value.trim();
+  const user = usernameInput.value.trim() || 'Anonymous';
+
   if (text === "") return; // Prevent sending empty blank messages
 
   // Push the text string down the WebSocket tunnel to Python
   socket.send(text);
 
+  socket.emit('chat_message', {
+    username: user,
+    message: text
+  })
   // Clear the input box so you can type the next message
   messageInput.value = "";
 }

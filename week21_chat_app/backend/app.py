@@ -7,10 +7,10 @@ app.config['SECRET_KEY'] = 'p52_chat_secret'
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-@socketio.on('message')
-def handle_message(msg):
-    print(f"Server Received: {msg}")
-    send(msg, broadcast=True)
+@socketio.on('chat_message')
+def handle_chat_message(data):
+    print(f"Server Received: {data}")
+    socketio.emit('chat_message', data)
 
 if __name__ == '__main__':
     socketio.run(app, port=5000, debug=True)
