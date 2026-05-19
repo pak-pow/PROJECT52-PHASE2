@@ -171,3 +171,21 @@ body {
 .username-input:focus {
   border-color: #3b82f6;
 }
+
+.timestamp {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    align-self: flex-end;
+    margin-top: 0.3rem;
+}
+
+.message.sent .timestamp { color: #bfdbfe; }
+
+.typing-indicator {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-style: italic;
+    padding: 0.25rem 1.5rem;
+    min-height: 24px;
+    background-color: #1e293b;
+}
