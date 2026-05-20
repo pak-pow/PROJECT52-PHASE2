@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request #type:ignore
 from flask_socketio import SocketIO, emit #type: ignore
 from flask_cors import CORS #type: ignore
 
