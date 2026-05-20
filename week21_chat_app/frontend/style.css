@@ -173,34 +173,95 @@ body {
 }
 
 .timestamp {
-    font-size: 0.65rem;
-    color: #94a3b8;
-    align-self: flex-end;
-    margin-top: 0.3rem;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  align-self: flex-end;
+  margin-top: 0.3rem;
 }
 
-.message.sent .timestamp { color: #bfdbfe; }
+.message.sent .timestamp {
+  color: #bfdbfe;
+}
 
 .typing-indicator {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-style: italic;
-    padding: 0.25rem 1.5rem;
-    min-height: 24px;
-    background-color: #1e293b;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 0.25rem 1.5rem;
+  min-height: 24px;
+  background-color: #1e293b;
 }
 
 .message.system {
-    align-self: center;
-    max-width: 90%;
-    margin: 0.5rem 0;
+  align-self: center;
+  max-width: 90%;
+  margin: 0.5rem 0;
 }
 
 .message.system p {
-    background-color: transparent;
-    color: #64748b;
-    font-size: 0.8rem;
-    font-style: italic;
-    padding: 0;
-    text-align: center;
+  background-color: transparent;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-style: italic;
+  padding: 0;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.join-screen {
+  width: 100%;
+  max-width: 400px;
+  background-color: #1e293b;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.join-screen h2 {
+  color: #f8fafc;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+#join-username-input {
+  padding: 0.75rem 1.25rem;
+  border-radius: 24px;
+  border: 1px solid #334155;
+  background-color: #0f172a;
+  color: #f8fafc;
+  outline: none;
+  font-size: 1rem;
+  text-align: center;
+}
+#join-username-input:focus {
+  border-color: #3b82f6;
+}
+
+#join-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#join-btn:hover {
+  background-color: #2563eb;
+}
+
+.display-username {
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-left: 0.5rem;
 }
