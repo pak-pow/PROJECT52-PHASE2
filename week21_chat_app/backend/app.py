@@ -1,6 +1,9 @@
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
+from flask import Flask #type:ignore
+from flask_socketio import SocketIO, emit #type: ignore
+from flask_cors import CORS #type: ignore
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'p52_chat_secret'
@@ -17,6 +20,10 @@ def handle_user_join(username):
 @socketio.on('chat_message')
 def handle_chat_message(data):
     socketio.emit('chat_message', data)
+    
+@socketio.on('typing')
+def handle_typing(data):
+    emit('typing', data, broadcast=True, include_self=False)
 
 @socketio.on('typing')
 def handle_typing(data):
