@@ -16,6 +16,9 @@ socket.on("connect", () => {
   connectionStatus.textContent = "Online";
   connectionStatus.classList.add("online");
   statusDot.classList.add("online");
+
+    const user = usernameInput.value.trim() || 'Anonymous';
+    socket.emit('user_join', user);
 });
 
 socket.on("disconnect", () => {
@@ -99,4 +102,12 @@ socket.on('chat_message', (data) => {
 
   chatWindow.appendChild(messageDiv);
   chatWindow.scrollTop = chatWindow.scrollHeight;
+});
+
+socket.on('system_message', (msg) => {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'system');
+    messageDiv.innerHTML = `<p>${msg}</p>`;
+    chatWindow.appendChild(messageDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 });

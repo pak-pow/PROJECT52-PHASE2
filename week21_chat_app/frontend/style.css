@@ -189,3 +189,18 @@ body {
     min-height: 24px;
     background-color: #1e293b;
 }
+
+.message.system {
+    align-self: center;
+    max-width: 90%;
+    margin: 0.5rem 0;
+}
+
+.message.system p {
+    background-color: transparent;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 0;
+    text-align: center;
+}
