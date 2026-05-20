@@ -7,27 +7,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <div class="chat-container">
+    <div id="join-screen" class="join-screen">
+        <h2>Join LiveChat</h2>
+        <input type="text" id="join-username-input" placeholder="Enter your name..." autocomplete="off" autofocus>
+        <button id="join-btn">Join Chat</button>
+    </div>
+
+    <div id="chat-container" class="chat-container hidden">
+        
         <header class="chat-header">
             <div class="header-info">
                 <div class="status-dot"></div>
-                <input type="text" id="username-input" class="username-input" value="Guest" placeholder="Your Name">
+                <span id="display-username" class="display-username">Guest</span>
             </div>
             <span id="connection-status" class="offline">Offline</span>
         </header>
 
-        <div id="chat-window" class="chat-window">
-            <div class="message received">
-                <span class="username">System</span>
-                <p>Welcome to the server. Waiting for Connection</p>
-            </div>
-
-            <div class="message sent">
-                <span class="username">You</span>
-                <p>This is what my message will look like when i send them.</p>
-            </div>
-        </div>
+        <div id="chat-window" class="chat-window"> </div>
 
         <div id="typing-indicator" class="typing-indicator"></div>
 
@@ -39,6 +35,5 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script src="app.js"></script>
-
 </body>
 </html>
