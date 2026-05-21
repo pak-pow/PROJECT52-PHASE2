@@ -21,17 +21,23 @@ def handle_user_join(data):
 
 @socketio.on('chat_message')
 def handle_chat_message(data):
-    socketio.emit('chat_message', data)
-    
+    room = data['room']
+    emit('chat_message', data, to=room)
+
 @socketio.on('typing')
 def handle_typing(data):
-    emit('typing', data, broadcast=True, include_self=False)
+    room = data['room']
+    emit('typing', data, to=room, include_self=False)
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    if request.sid in active_users:
-        username = active_users.pop(request.sid)
-        emit('system_message', f"{username} left the chat", broadcast=True)
+    user_data = active_users.pop(request.sid, None)
+
+    if user_data:
+        username = user_data['username']
+        room = user_data['room']
+        leave_room(room)
+        emit('system_message', f"{username} left the chat", to=room)
 
 if __name__ == '__main__':
     socketio.run(app, port=5000, debug=True)
