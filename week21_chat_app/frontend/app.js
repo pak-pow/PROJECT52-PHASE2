@@ -12,10 +12,10 @@ const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
 const typingIndicator = document.getElementById("typing-indicator");
 
-const joinRoomSelect = document.getElementById('join-room-select');
-const displayRoom = document.getElementById('display-room');
+const joinRoomSelect = document.getElementById("join-room-select");
+const displayRoom = document.getElementById("display-room");
 
-let myRoom = '';
+let myRoom = "";
 let socket;
 let myUsername = "";
 let typingTimer;
@@ -109,11 +109,15 @@ function initializeSocketListeners() {
       username: myUsername,
       message: text,
       timestamp: timeString,
-      room: myRoom
+      room: myRoom,
     });
 
     messageInput.value = "";
-    socket.emit("typing", { username: myUsername, isTyping: false , room: myRoom });
+    socket.emit("typing", {
+      username: myUsername,
+      isTyping: false,
+      room: myRoom,
+    });
   }
 
   sendBtn.addEventListener("click", sendMessage);
@@ -122,6 +126,10 @@ function initializeSocketListeners() {
   });
 
   messageInput.addEventListener("input", () => {
-    socket.emit("typing", { username: myUsername, isTyping: true, room: myRoom });
+    socket.emit("typing", {
+      username: myUsername,
+      isTyping: true,
+      room: myRoom,
+    });
   });
 }
