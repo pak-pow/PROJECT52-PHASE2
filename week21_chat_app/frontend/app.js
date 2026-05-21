@@ -12,6 +12,10 @@ const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
 const typingIndicator = document.getElementById("typing-indicator");
 
+const joinRoomSelect = document.getElementById('join-room-select');
+const displayRoom = document.getElementById('display-room');
+
+let myRoom = '';
 let socket;
 let myUsername = "";
 let typingTimer;
@@ -24,10 +28,13 @@ function startChat() {
   }
 
   myUsername = name;
+  myRoom = joinRoomSelect.value;
 
   joinScreen.classList.add("hidden");
   chatContainer.classList.remove("hidden");
   displayUsername.textContent = myUsername;
+  displayRoom.textContent = `[${myRoom}]`;
+
   socket = io("http://127.0.0.1:5000");
   initializeSocketListeners();
 }
@@ -42,7 +49,8 @@ function initializeSocketListeners() {
     connectionStatus.textContent = "Online";
     connectionStatus.classList.add("online");
     statusDot.classList.add("online");
-    socket.emit("user_join", myUsername);
+
+    socket.emit("user_join", { username: myUsername, room: myRoom });
   });
 
   socket.on("disconnect", () => {
@@ -101,10 +109,11 @@ function initializeSocketListeners() {
       username: myUsername,
       message: text,
       timestamp: timeString,
+      room: myRoom
     });
 
     messageInput.value = "";
-    socket.emit("typing", { username: myUsername, isTyping: false });
+    socket.emit("typing", { username: myUsername, isTyping: false , room: myRoom });
   }
 
   sendBtn.addEventListener("click", sendMessage);
@@ -113,6 +122,6 @@ function initializeSocketListeners() {
   });
 
   messageInput.addEventListener("input", () => {
-    socket.emit("typing", { username: myUsername, isTyping: true });
+    socket.emit("typing", { username: myUsername, isTyping: true, room: myRoom });
   });
 }

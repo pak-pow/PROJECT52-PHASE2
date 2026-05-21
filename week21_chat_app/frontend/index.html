@@ -10,6 +10,13 @@
     <div id="join-screen" class="join-screen">
         <h2>Join LiveChat</h2>
         <input type="text" id="join-username-input" placeholder="Enter your name..." autocomplete="off" autofocus>
+
+        <select id="join-room-select" class="room-select">
+            <option value="General">General</option>
+            <option value="Coding">Coding</option>
+            <option value="Gaming">Gaming</option>
+        </select>
+
         <button id="join-btn">Join Chat</button>
     </div>
 
@@ -19,12 +26,12 @@
             <div class="header-info">
                 <div class="status-dot"></div>
                 <span id="display-username" class="display-username">Guest</span>
+                <span id="display-room" class="display-room"></span>
             </div>
             <span id="connection-status" class="offline">Offline</span>
         </header>
 
         <div id="chat-window" class="chat-window"> </div>
-
         <div id="typing-indicator" class="typing-indicator"></div>
 
         <div class="input-area">
