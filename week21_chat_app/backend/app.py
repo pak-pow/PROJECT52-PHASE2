@@ -1,5 +1,5 @@
 from flask import Flask, request #type:ignore
-from flask_socketio import SocketIO, emit #type: ignore
+from flask_socketio import SocketIO, emit, join_room, leave_room #type: ignore
 from flask_cors import CORS #type: ignore
 
 app = Flask(__name__)
@@ -10,9 +10,14 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 active_users = {}
 
 @socketio.on('user_join')
-def handle_user_join(username):
-    active_users[request.sid] = username
-    emit('system_message', f"{username} joined the chat", broadcast=True)
+def handle_user_join(data):
+    username = data['username']
+    room = data['room']
+
+    active_users[request.sid] = {'username': username, "room": room}
+    join_room(room)
+
+    emit('system_message', f"{username} joined the {room} room", to=room)
 
 @socketio.on('chat_message')
 def handle_chat_message(data):
