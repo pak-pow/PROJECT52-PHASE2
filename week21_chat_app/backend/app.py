@@ -6,8 +6,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'p52_chat_secret'
 
 socketio = SocketIO(app, cors_allowed_origins="*")
-
 active_users = {}
+
+def get_room_roster(room):
+    roster = []
+    for sid, data in active_users.items():
+        if data['room'] == room:
+            roster.append(data['username'])
+            
+    return roster
 
 @socketio.on('user_join')
 def handle_user_join(data):
@@ -18,6 +25,7 @@ def handle_user_join(data):
     join_room(room)
 
     emit('system_message', f"{username} joined the {room} room", to=room)
+    emit('room_roster', get_room_roster(room), to=room)
 
 @socketio.on('chat_message')
 def handle_chat_message(data):
@@ -38,6 +46,7 @@ def handle_disconnect():
         room = user_data['room']
         leave_room(room)
         emit('system_message', f"{username} left the chat", to=room)
+        emit('room_roster', get_room_roster(room), to=room)
 
 if __name__ == '__main__':
     socketio.run(app, port=5000, debug=True)
