@@ -13,6 +13,8 @@ const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
 const typingIndicator = document.getElementById("typing-indicator");
 const joinRoomSelect = document.getElementById("join-room-select");
+const onlineUsersList = document.getElementById("online-users-list");
+const onlineCount = document.getElementById("online-count");
 
 // --- GLOBAL STATE ---
 let myRoom = "";
@@ -81,6 +83,29 @@ function initializeSocketListeners() {
     messageDiv.appendChild(p);
     chatWindow.appendChild(messageDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
+  });
+
+  socket.on("room_roster", (users) => {
+    onlineCount.textContent = users.length;
+    onlineUsersList.innerHTML = "";
+
+    users.forEach((user) => {
+      const li = document.createElement("li");
+      li.classList.add("roster-user");
+
+      const color = getColorForUsername(user);
+
+      const dot = document.createElement("div");
+      dot.classList.add("roster-dot");
+      dot.style.backgroundColor = color;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = user;
+
+      li.appendChild(dot);
+      li.appendChild(nameSpan);
+      onlineUsersList.appendChild(li);
+    });
   });
 
   socket.on("chat_message", (data) => {

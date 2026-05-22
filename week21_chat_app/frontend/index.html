@@ -30,13 +30,23 @@
             </div>
             <span id="connection-status" class="offline">Offline</span>
         </header>
+        <div class="chat-body">
+            
+            <div class="chat-main">
+                <div id="chat-window" class="chat-window"></div>
+                <div id="typing-indicator" class="typing-indicator"></div>
+                <div class="input-area">
+                    <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+                    <button id="send-btn">Send</button>
+                </div>
+            </div>
 
-        <div id="chat-window" class="chat-window"> </div>
-        <div id="typing-indicator" class="typing-indicator"></div>
+            <div class="chat-sidebar">
+                <h3>Online — <span id="online-count">0</span></h3>
+                <ul id="online-users-list">
+                    </ul>
+            </div>
 
-        <div class="input-area">
-            <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
-            <button id="send-btn">Send</button>
         </div>
     </div>
 
