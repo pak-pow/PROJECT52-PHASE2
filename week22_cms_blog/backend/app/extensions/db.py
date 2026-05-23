@@ -22,7 +22,8 @@ def init_db(app):
     db_path = app.config['DATABASE']
     
     if not os.path.exists(db_path):
-        print ("Initializing the Database...") 
+        print ("Initializing the Database...")         
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
         
         with app.app_context():
             db = get_db()
