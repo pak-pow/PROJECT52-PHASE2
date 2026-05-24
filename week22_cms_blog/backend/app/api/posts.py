@@ -19,3 +19,7 @@ def get_posts():
         })
         
     return jsonify(posts_list), 200
+
+@posts_bp.route('/', methods=['POST'])
+def create_post():
+    pass
