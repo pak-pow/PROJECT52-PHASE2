@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify #type: ignore
-from app.models.post import Post
+from app.models import Post
 
 posts_bp = Blueprint('posts', __name__)
 
