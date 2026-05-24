@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify #type: ignore
+from flask import Blueprint, jsonify, request #type: ignore
 from app.models import Post
 
 posts_bp = Blueprint('posts', __name__)
@@ -22,4 +22,19 @@ def get_posts():
 
 @posts_bp.route('/', methods=['POST'])
 def create_post():
-    pass
+    
+    data = request.get_json()
+    
+    if not data or not data.get('title') or not data.get('content') or not data.get('author_id'):
+        return jsonify({"error": "Missing required fields: title, content, author_id"}), 400
+
+    new_post_id = Post.create(
+        title=data['title'],
+        content=data['content'],
+        author_id=data['author_id']
+    )
+
+    return jsonify({
+        "message": "Post created successfully!",
+        "post_id": new_post_id
+    }), 201
