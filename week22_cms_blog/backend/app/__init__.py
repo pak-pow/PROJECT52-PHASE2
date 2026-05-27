@@ -1,10 +1,12 @@
 from flask import Flask #type:ignore
+from flask_cors import CORS 
 from .extensions.db import close_db, init_db
 from .api.posts import posts_bp
 
 def create_app():
     
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object('config.Config')
     
     init_db(app)
