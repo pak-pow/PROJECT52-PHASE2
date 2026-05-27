@@ -4,8 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS Admin Dashboard</title>
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-    
+    <div class="header">
+        <h1>CMS Admin Dashboard</h1>
+        <button id="create-post-btn" class="btn-primary">+ New Post</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="posts-table-body">
+
+        </tbody>
+    </table>
+    <script type="module" src="../src/pages/admin.js"></script>
 </body>
 </html>
