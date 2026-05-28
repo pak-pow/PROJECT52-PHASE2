@@ -22,6 +22,24 @@ async function loadDashboard() {
             </td>
         `;
 
+    const deleteBtn = row.querySelector(".btn-delete");
+
+    deleteBtn.addEventListener("click", async () => {
+      const confirmDelete = confirm(
+        `Are you sure you want to delete "${post.title}"?`,
+      );
+
+      if (confirmDelete) {
+        const success = await apiClient.deletePost(post.id);
+
+        if (success) {
+          loadDashboard();
+        } else {
+          alert("Failed to delete the post. Check the console.");
+        }
+      }
+    });
+
     tableBody.appendChild(row);
   });
 }
