@@ -25,6 +25,29 @@
 
         </tbody>
     </table>
+
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Create New Post</h2>
+            
+            <form id="post-form">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="post-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="post-content" rows="6" required></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" id="cancel-btn" class="btn-cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script type="module" src="../src/pages/admin.js"></script>
 </body>
 </html>
