@@ -25,4 +25,30 @@ export const apiClient = {
       return false;
     }
   },
+
+  async updatePost(id, data) {
+    try {
+      const response = await fetch(`${BASE_URL}/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Update Error:", error);
+      return false;
+    }
+  },
+
+  async deletePost(id) {
+    try {
+      const response = await fetch(`${BASE_URL}/posts/${id}`, {
+        method: "DELETE",
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Delete Error:", error);
+      return false;
+    }
+  },
 };
