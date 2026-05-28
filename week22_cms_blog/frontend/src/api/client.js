@@ -11,4 +11,18 @@ export const apiClient = {
       return [];
     }
   },
+
+  async createPost(data) {
+    try {
+      const response = await fetch(`${BASE_URL}/posts/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Create Error:", error);
+      return false;
+    }
+  },
 };
