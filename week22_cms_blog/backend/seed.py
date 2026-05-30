@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from werkzeug.security import generate_password_hash #type: ignore
 
 # Find the database path safely
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -13,15 +14,23 @@ def seed_database():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # 1. Get the ID of our default Admin user
+    print("Securing admin credentials...")
+    secure_password = generate_password_hash('admin123')
+
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
     admin_user = cursor.fetchone()
-    
+
     if not admin_user:
-        print("Error: Admin user not found.")
-        return
-        
-    author_id = admin_user[0]
+        cursor.execute('''
+            INSERT INTO users (username, password)
+            VALUES (?, ?)
+        ''', ('admin', secure_password))
+        author_id = cursor.lastrowid 
+    else:
+        author_id = admin_user[0]
+        cursor.execute('''
+            UPDATE users SET password = ? WHERE id = ?
+        ''', (secure_password, author_id))
 
     mock_posts = [
         ("My First CMS Post", "This is the content of the first post. The API is working perfectly!", author_id),
@@ -31,13 +40,12 @@ def seed_database():
         ("Hello World!", "Just another mock data post to fill up the database so our frontend looks good.", author_id)
     ]
 
-    # 3. Inject the data
     print("Injecting mock data...")
     cursor.executemany('INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)', mock_posts)
     
     conn.commit()
     conn.close()
-    print(f"Success! {len(mock_posts)} dummy posts added to the database.")
+    print(f"Success! Admin secured and {len(mock_posts)} dummy posts added.")
 
 if __name__ == '__main__':
     seed_database()
