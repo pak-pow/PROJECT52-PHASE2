@@ -13,6 +13,7 @@ CREATE TABLE posts (
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     author_id INTEGER NOT NULL,
+    status TEXT DEFAULT 'draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users (id)
 );

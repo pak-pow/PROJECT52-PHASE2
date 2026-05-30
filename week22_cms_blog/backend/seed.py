@@ -32,15 +32,13 @@ def seed_database():
         ''', (secure_password, author_id))
 
     mock_posts = [
-        ("My First CMS Post", "This is the content of the first post. The API is working perfectly!", author_id),
-        ("Why Python is Awesome", "Flask and the Application Factory pattern make building scalable backends so satisfying.", author_id),
-        ("Week 22 Progress", "Building a custom CMS teaches you exactly how WordPress actually works under the hood.", author_id),
-        ("The Power of SQLite", "It might be a simple file, but SQLite is incredibly fast for local development.", author_id),
-        ("Hello World!", "Just another mock data post to fill up the database so our frontend looks good.", author_id)
+        ("My First CMS Post", "This is the content of the first post.", author_id, 'published'),
+        ("Why Python is Awesome", "Flask is great.", author_id, 'published'),
+        ("Secret Upcoming Feature", "This is a draft! The public shouldn't see this yet.", author_id, 'draft')
     ]
 
     print("Injecting mock data...")
-    cursor.executemany('INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)', mock_posts)
+    cursor.executemany('INSERT INTO posts (title, content, author_id, status) VALUES (?, ?, ?, ?)', mock_posts)
     
     conn.commit()
     conn.close()
