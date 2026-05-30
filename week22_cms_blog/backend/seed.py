@@ -2,7 +2,6 @@ import sqlite3
 import os
 from werkzeug.security import generate_password_hash #type: ignore
 
-# Find the database path safely
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'data', 'database.db')
 
@@ -22,14 +21,14 @@ def seed_database():
 
     if not admin_user:
         cursor.execute('''
-            INSERT INTO users (username, password)
+            INSERT INTO users (username, password_hash)
             VALUES (?, ?)
         ''', ('admin', secure_password))
-        author_id = cursor.lastrowid 
+        author_id = cursor.lastrowid
     else:
         author_id = admin_user[0]
         cursor.execute('''
-            UPDATE users SET password = ? WHERE id = ?
+            UPDATE users SET password_hash = ? WHERE id = ?
         ''', (secure_password, author_id))
 
     mock_posts = [
