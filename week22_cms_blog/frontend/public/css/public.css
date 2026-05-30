@@ -68,5 +68,18 @@ body {
 .post-content {
     line-height: 1.6;
     color: #555;
-    white-space: pre-wrap; 
+    /* REMOVED: white-space: pre-wrap; */
+}
+
+/* Add a little styling specifically for Markdown code blocks! */
+.post-content pre {
+    background: #2d2d2d;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+.post-content code {
+    font-family: 'Consolas', 'Courier New', monospace;
 }

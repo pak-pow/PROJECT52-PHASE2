@@ -21,6 +21,7 @@ function setupModal() {
     const payload = {
       title: document.getElementById("post-title").value,
       content: document.getElementById("post-content").value,
+      status: document.getElementById("post-status").value,
       author_id: 1,
     };
 
@@ -46,17 +47,20 @@ function openModal(post = null) {
   const titleInput = document.getElementById("post-title");
   const contentInput = document.getElementById("post-content");
   const modalTitle = document.getElementById("modal-title");
+  const statusInput = document.getElementById("post-status");
 
   if (post) {
     currentEditId = post.id;
     modalTitle.textContent = "Edit Post";
     titleInput.value = post.title;
     contentInput.value = post.content;
+    statusInput.value = post.status;
   } else {
     currentEditId = null;
     modalTitle.textContent = "Create New Post";
     titleInput.value = "";
     contentInput.value = "";
+    statusInput.value = "draft";
   }
 
   modal.style.display = "flex";
@@ -76,7 +80,7 @@ async function loadDashboard() {
 
     row.innerHTML = `
             <td>${post.id}</td>
-            <td><strong>${post.title}</strong></td>
+            <td><strong>${post.title}</strong> <span style="font-size:0.8em; padding:2px 6px; background:#444; border-radius:4px; margin-left:10px;">${post.status.toUpperCase()}</span></td>
             <td>${new Date(post.created_at).toLocaleDateString()}</td>
             <td>
                 <button class="btn-edit">Edit</button>

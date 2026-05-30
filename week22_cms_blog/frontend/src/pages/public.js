@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadBlogFeed() {
   const feedContainer = document.getElementById("blog-feed");
 
-  const posts = await apiClient.getPosts();
+  const posts = await apiClient.getPosts('published');
 
   feedContainer.innerHTML = "";
 
@@ -21,10 +21,12 @@ async function loadBlogFeed() {
     const article = document.createElement("article");
     article.className = "post-card";
 
+    const parsedContent = marked.parse(post.content);
+
     article.innerHTML = `
             <h2 class="post-title">${post.title}</h2>
             <span class="post-date">Published on ${new Date(post.created_at).toLocaleDateString()}</span>
-            <div class="post-content">${post.content}</div>
+            <div class="post-content">${parsedContent}</div>
         `;
 
     feedContainer.appendChild(article);
