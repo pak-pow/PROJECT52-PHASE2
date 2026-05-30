@@ -21,7 +21,7 @@ async function loadBlogFeed() {
     const article = document.createElement("article");
     article.className = "post-card";
 
-    const parsedContent = marked.parse(post.content);
+    const parsedContent = DOMPurify.sanitize(marked.parse(post.content));
 
     article.innerHTML = `
             <h2 class="post-title">${post.title}</h2>

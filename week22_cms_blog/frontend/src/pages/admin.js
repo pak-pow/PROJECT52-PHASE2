@@ -1,11 +1,63 @@
 import { apiClient } from "../api/client.js";
+import { auth } from "../utils/auth.js";
 
 let currentEditId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadDashboard();
+  if (!auth.isAuthenticated()) {
+    document.getElementById("login-modal").style.display = "flex";
+  } else {
+    document.getElementById("dashboard-container").style.display = "block";
+    loadDashboard();
+  }
   setupModal();
+  setupLogin();
 });
+
+function setupLogin() {
+  const loginForm = document.getElementById("login-form");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = document.getElementById("login-username").value;
+      const pass = document.getElementById("login-password").value;
+      const success = await auth.login(user, pass);
+      if (success) {
+        document.getElementById("login-modal").style.display = "none";
+        document.getElementById("dashboard-container").style.display = "block";
+        loadDashboard();
+        showToast("Logged in successfully!", "success");
+      } else {
+        showToast("Login failed. Check credentials.", "error");
+      }
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      auth.logout();
+      document.getElementById("dashboard-container").style.display = "none";
+      document.getElementById("login-modal").style.display = "flex";
+      showToast("Logged out successfully.", "success");
+    });
+  }
+}
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
 
 function setupModal() {
   const form = document.getElementById("post-form");
@@ -22,7 +74,6 @@ function setupModal() {
       title: document.getElementById("post-title").value,
       content: document.getElementById("post-content").value,
       status: document.getElementById("post-status").value,
-      author_id: 1,
     };
 
     let success = false;
@@ -36,8 +87,9 @@ function setupModal() {
     if (success) {
       closeModal();
       loadDashboard();
+      showToast("Post saved successfully!", "success");
     } else {
-      alert("Error saving post. Check console.");
+      showToast("Error saving post. Check console.", "error");
     }
   });
 }

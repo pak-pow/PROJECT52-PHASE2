@@ -1,3 +1,5 @@
+import { auth } from "../utils/auth.js";
+
 const BASE_URL = "http://127.0.0.1:5000/api";
 
 export const apiClient = {
@@ -17,7 +19,10 @@ export const apiClient = {
     try {
       const response = await fetch(`${BASE_URL}/posts/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${auth.getToken()}`
+        },
         body: JSON.stringify(data),
       });
       return response.ok;
@@ -31,7 +36,10 @@ export const apiClient = {
     try {
       const response = await fetch(`${BASE_URL}/posts/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${auth.getToken()}`
+        },
         body: JSON.stringify(data),
       });
       return response.ok;
@@ -45,6 +53,9 @@ export const apiClient = {
     try {
       const response = await fetch(`${BASE_URL}/posts/${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${auth.getToken()}`
+        }
       });
       return response.ok;
     } catch (error) {
