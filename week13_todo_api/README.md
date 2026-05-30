@@ -1,57 +1,33 @@
-# 📝 Week 13: Todo REST API (Backend)
+# Week 13: REST API for Todo App
 
-Welcome to Week 13 of **PROJECT52**! This project is a fully functional backend REST API built with Python and Flask. It serves as the data engine for a Todo application, handling data validation, Cross-Origin Resource Sharing (CORS), and permanent flat-file storage.
+**Category:** Backend | **Status:** Completed
 
-## 🚀 Features
+## About
 
-- **Complete CRUD Operations:** Create, Read, Update, and Delete tasks.
-- **Persistent Data Storage:** Uses Python's `json` and `os` modules to permanently store state in a physical `todos.json` file. Data survives server reboots.
-- **Input Validation:** Backend logic explicitly rejects empty strings or malformed payloads, returning standard `400 Bad Request` HTTP status codes.
-- **CORS Enabled:** Fully prepared for frontend integration (Week 14) via the `flask-cors` library.
+This project marks the transition from writing standalone scripts to building a proper server. Instead of a monolithic application where logic and display are tangled together, this project is a decoupled data engine — a headless API that speaks purely in JSON and listens for HTTP requests.
 
-## 🛠️ Tech Stack
+The entire application lives in a single `app.py` file, which is intentional. The focus here is on understanding RESTful principles and HTTP semantics, not on project structure. Data is persisted to a `todos.json` file, keeping the setup lightweight and dependency-free.
 
-- **Language:** Python 3
-- **Framework:** Flask
-- **Middleware:** Flask-CORS
-- **Storage:** Local JSON Flat-File
-- **Testing:** Thunder Client (VS Code Extension)
+## What It Does
 
----
+A REST API that allows any client (browser, mobile app, Postman) to create, read, update, and delete todo items via standard HTTP requests.
 
-## 📡 API Endpoints Reference
+## Learning Objectives
 
-Base URL: `http://127.0.0.1:5000`
+- RESTful API design and resource-based URL conventions
+- HTTP methods: `GET`, `POST`, `PUT`, `DELETE` and when to use each
+- Parsing incoming JSON request bodies and returning properly formatted JSON responses
+- HTTP status codes and what they communicate to the client
 
-| Method     | Endpoint      | Description                 | Request Body (JSON)                        |
-| :--------- | :------------ | :-------------------------- | :----------------------------------------- |
-| **GET**    | `/`           | Server Health Check         | `None`                                     |
-| **GET**    | `/todos`      | Retrieve all tasks          | `None`                                     |
-| **POST**   | `/todos`      | Create a new task           | `{"task": "String"}`                       |
-| **PUT**    | `/todos/<id>` | Update task / Mark Complete | `{"task": "String", "completed": Boolean}` |
-| **DELETE** | `/todos/<id>` | Delete a specific task      | `None`                                     |
+## Project Structure
 
----
-
-## 💻 How to Run Locally
-
-**1. Clone the repository and navigate to the directory:**
-
-```bash
-cd VSCODE_PROJECT52/week13_todo_api
+```
+week13_todo_api/
+├── app.py          # Flask application with all CRUD routes
+└── todos.json      # JSON file used for data persistence
 ```
 
-**2. Install required dependencies:**
-Ensure you have Flask and Flask-CORS installed.
+## Tech Stack
 
-```bash
-pip install flask flask-cors
-```
-
-**3. Boot the Server:**
-
-```bash
-python app.py
-```
-
-_The server will initialize on port 5000. If `todos.json` does not exist, the script will automatically generate it in the absolute path directory upon the first POST request._
+- **Backend:** Python, Flask
+- **Storage:** JSON file (no database)

@@ -1,46 +1,34 @@
-# 🖥️ Week 14: Premium Todo App Frontend
+# Week 14: Todo Frontend with Fetch API
 
-Welcome to Week 14 of **PROJECT52**! This project serves as the client-side user interface for the Full-Stack Todo application. It connects directly to the Week 13 Python Flask REST API to perform complete CRUD operations using asynchronous JavaScript, wrapped in a premium, modern UI.
+**Category:** Frontend + Backend Integration | **Status:** Completed
 
-## 🚀 Core Features
+## About
 
-- **Full CRUD Integration:** Communicates with the backend to Create, Read, Update, and Delete tasks in real-time.
-- **Asynchronous Fetch API:** Utilizes modern `async/await` JavaScript to handle network requests without freezing the UI.
-- **Client-Side Filtering:** Features state management to filter tasks by "All", "Active", and "Completed" instantly in the DOM.
-- **Dynamic Empty States:** JavaScript logic intercepts empty arrays to provide contextual, friendly UI messages instead of blank screens.
+After building a headless data engine in Week 13, this project gives it a face. The challenge here is not HTML or CSS — it is JavaScript. The entire UI must communicate with the backend API asynchronously, meaning the page never reloads. Every action the user takes (adding, completing, or deleting a task) is handled in the background via `fetch()` calls, and the DOM is updated programmatically in response.
 
-## 🎨 Premium UI/UX Design
+This is the foundation of how every modern single-page application works.
 
-- **Glassmorphism:** Utilizes CSS `backdrop-filter` to create a frosted glass container over a dynamic, animated gradient background.
-- **Micro-interactions:** Features smooth `slideIn` keyframe animations for DOM rendering and tactile hover transformations for interactive elements.
-- **Modern Typography:** Styled with the highly legible `Inter` font family and gradient text clipping.
+## What It Does
 
-## 🛠️ Tech Stack
+A dynamic, JavaScript-driven Todo interface that consumes the Week 13 REST API. All data fetching, creation, and deletion happen without a page refresh.
 
-- **Structure:** HTML5
-- **Styling:** CSS3 (Flexbox, Glassmorphism, Keyframes)
-- **Logic:** Vanilla JavaScript (ES6+)
-- **Network:** Fetch API
+## Learning Objectives
 
----
+- Asynchronous JavaScript using `async/await` and Promises
+- Making HTTP requests from the browser using the `Fetch API`
+- Dynamically creating, updating, and removing DOM elements based on API responses
+- Handling network errors and API failures gracefully in the UI
 
-## 💻 How to Run Locally
+## Project Structure
 
-**⚠️ CRITICAL PREREQUISITE:** Because this is a decoupled Full-Stack application, the Frontend **will not work** unless the Week 13 Python Backend is actively running.
-
-**1. Boot the Backend Database:**
-Open a terminal, navigate to the API directory, and start the Flask server.
-
-```bash
-cd VSCODE_PROJECT52/week13_todo_api
-python app.py
+```
+week14_todo_frontend/
+├── index.html      # Application shell and markup
+├── app.js          # All API calls and DOM manipulation logic
+└── style.css       # Styling
 ```
 
-_(Ensure it is running on `http://127.0.0.1:5000`)_
+## Tech Stack
 
-**2. Boot the Frontend UI:**
-Open a separate terminal or use your code editor to serve the frontend files.
-If using VS Code, simply right-click `index.html` and select **"Open with Live Server"**.
-
-**3. Test the Connection:**
-If the bridge is successful, the UI will immediately populate with the data stored in the backend's `todos.json` file.
+- **Frontend:** HTML, CSS, Vanilla JavaScript
+- **API:** Fetch API (consuming the Week 13 Flask backend)

@@ -1,47 +1,40 @@
-# 📝 Full-Stack Markdown Notes
+# Week 19: Markdown Note-Taking App
 
-A lightweight, local-first Markdown note-taking application built with Vanilla JavaScript, HTML/CSS, and a Python/Flask REST API. 
+**Category:** Full Stack | **Status:** Completed
 
-Developed as **Week 19** of [Project 52] — a year-long challenge to build one software project every week.
+## About
 
-## ✨ Features
-* **Real-Time Parsing:** Live compilation of GitHub Flavored Markdown (GFM) into HTML using `marked.js`.
-* **Full CRUD API:** Secure Python backend handling Creation, Reading, Updating (Renaming), and Deletion of `.md` files via RESTful routes.
-* **Security First:** Hardened endpoints utilizing `secure_filename` to prevent Path Traversal attacks.
-* **Advanced UI/UX:** * Asynchronous Toast Notification system.
-  * Live Word and Character count telemetry.
-  * Client-side search and filtering capabilities.
-  * Native dark-mode scrollbars and CSS Flexbox split-pane architecture.
-* **Data Loss Prevention:** Global state management intercepts navigation if unsaved changes are detected.
+Developers live in Markdown. This project builds a full-stack note-taking application where notes are written in Markdown, saved as actual `.md` files on the server's filesystem via a Python Flask backend, and rendered as rich HTML in the browser.
 
-## 🛠️ Technology Stack
-* **Frontend:** HTML5, CSS3 (Variables, Flexbox), Vanilla JavaScript (ES6+ Asynchronous Fetch API).
-* **Backend:** Python 3, Flask (RESTful Routing, CORS Management), `werkzeug` (Security).
-* **Parsing Engine:** `marked.js` (via CDN).
+This introduces a class of problems not covered by simple CRUD APIs: file system I/O, persisting data as real files rather than database rows, and the security implications of rendering user-written HTML (XSS).
 
-## 🚀 Local Installation & Setup
+## What It Does
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/pak-pow/PROJECT52-PHASE2
-   cd /PROJECT52-PHASE2/week19_markdown_notes
-    ```
+A note-taking app where users write notes in Markdown syntax. The backend stores them as files on disk and serves them back; the frontend renders them as styled HTML.
 
-2. **Setup the Python Backend:**
-Ensure you have Python installed, then install the required dependencies:
-    ```bash
-    pip install flask flask-cors werkzeug
-    ```
+## Learning Objectives
 
-3. **Boot the API Server:**
-Navigate to the backend directory and run the server:
-    ```bash
-    cd backend
-    python app.py
-    ```
+- File system I/O in Python: reading, writing, and deleting files safely
+- Parsing and converting Markdown to HTML on the frontend
+- Keeping a frontend UI synchronized with the physical state of the server's file system
+- Understanding XSS risks when rendering user-generated HTML content
 
-    *The server will start on `http://127.0.0.1:5000*`
+## Project Structure
 
-4. **Launch the Frontend:**
-Open `frontend/index.html` in any modern web browser (or use VS Code Live Server).
+```
+week19_markdown_notes/
+├── requirements.txt
+├── backend/
+│   ├── app.py          # Flask API for reading/writing .md files
+│   └── data/           # Directory where .md note files are stored
+└── frontend/
+    ├── index.html      # Note editor and preview UI
+    ├── app.js          # Frontend logic: fetch notes, render Markdown
+    └── style.css       # Styling
+```
 
+## Tech Stack
+
+- **Backend:** Python, Flask
+- **Frontend:** HTML, CSS, Vanilla JavaScript, marked.js (Markdown parser)
+- **Storage:** Server-side `.md` files
