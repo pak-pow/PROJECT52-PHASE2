@@ -34,3 +34,10 @@ class Expense:
         )
         db.commit()
         return cursor.lastrowid
+    
+    @staticmethod
+    def delete(expense_id, user_id):
+        """Deletes an expense, ensuring it belongs to the requesting user."""
+        db = get_db()
+        db.execute('DELETE FROM expenses WHERE id = ? AND user_id = ?', (expense_id, user_id))
+        db.commit()
