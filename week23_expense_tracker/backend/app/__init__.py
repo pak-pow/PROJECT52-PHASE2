@@ -1,6 +1,6 @@
-from flask import Flask
-from flask_cors import CORS
-from config import Config
+from flask import Flask #type: ignore
+from flask_cors import CORS #type: ignore
+from config import Config #type: ignore
 from .utils.db import close_db
 from .routes.expenses import expenses_bp 
 
