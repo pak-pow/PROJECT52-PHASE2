@@ -1,11 +1,16 @@
 from flask import Flask
 from flask_cors import CORS
+from config import Config
+from .utils.db import close_db
+from .routes.expenses import expenses_bp 
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
     
-    # We will load config and initialize DB here soon
+    app.config.from_object(Config)
+    app.teardown_appcontext(close_db)
+    app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
     
     @app.route('/api/health')
     def health_check():
