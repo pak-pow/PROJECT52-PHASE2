@@ -13,7 +13,13 @@ class AuthService:
 
     @staticmethod
     def register_user(username, password):
-        """Hashes the password and creates a new user."""
+        """Validates rules, hashes the password, and creates a new user."""
+        clean_username = username.strip()
+        if len(clean_username) < 3:
+            raise ValueError("Username must be at least 3 characters long.")
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters long.")
+
         hashed_pw = generate_password_hash(password)
-        user_id = User.create(username, hashed_pw)
+        user_id = User.create(clean_username, hashed_pw)
         return user_id

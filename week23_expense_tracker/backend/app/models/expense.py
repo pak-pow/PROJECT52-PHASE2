@@ -2,10 +2,17 @@ from app.utils.db import get_db
 
 class Expense:
     @staticmethod
-    def get_all_by_user(user_id):
-        """Fetches the raw, un-aggregated list of expenses for the table view."""
+    def get_all_by_user(user_id, limit=50, offset=0):
+        """Fetches paginated expenses. Explicitly selects columns to prevent user_id data leak."""
         db = get_db()
-        return db.execute('SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC', (user_id,)).fetchall()
+        query = '''
+            SELECT id, amount, category, description, date, created_at
+            FROM expenses
+            WHERE user_id = ?
+            ORDER BY date DESC
+            LIMIT ? OFFSET ?
+        '''
+        return db.execute(query, (user_id, limit, offset)).fetchall()
 
     @staticmethod
     def get_aggregated_by_category(user_id, month=None, year=None):
