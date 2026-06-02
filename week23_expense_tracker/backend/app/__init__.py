@@ -15,7 +15,7 @@ def create_app():
     
     app.teardown_appcontext(close_db)
     app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
-    app.register_blueprint(auth_bp, url_prefix='api/auth')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
     
     @app.route('/api/health')
     def health_check():
