@@ -4,7 +4,7 @@ export const apiClient = async (endpoint, options = {}) => {
     const token = localStorage.getItem('jwt_token');
     const headers = {
         'Content-Type': 'application/json',
-        ...(token && {'Authorization': `Bearer &{token}`})
+        ...(token && {'Authorization': `Bearer ${token}`})
     };
 
     const config = {
@@ -21,7 +21,7 @@ export const apiClient = async (endpoint, options = {}) => {
         if (response.status == 401) {
             console.error("Session expired or unauthorized. Logging out.");
             localStorage.removeItem('jwt_token');
-            window.location.href = '/login.html';
+            window.location.href = '/public/login.html';
             return null;
         }
         

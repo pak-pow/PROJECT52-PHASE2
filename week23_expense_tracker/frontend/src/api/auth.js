@@ -26,7 +26,7 @@ export const AuthService = {
 
     logout: () => {
         localStorage.removeItem('jwt_token');
-        window.location.href = '/login.html';
+        window.location.href = '/public/login.html';
     },
 
     isAuthenticated: () => {
