@@ -3,7 +3,7 @@ import { ExpenseService } from '../api/expenses.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!AuthService.isAuthenticated()) {
-        window.location.href = '/public/login.html';
+        window.location.href = 'login.html';
         return;
     }
 

@@ -2,7 +2,7 @@ import { AuthService } from '../api/auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     if (AuthService.isAuthenticated()) {
-        window.location.href = '/public/index.html';
+        window.location.href = 'index.html';
         return;
     }
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await AuthService.login(username, password);
-            window.location.href = '/public/index.html';
+            window.location.href = 'index.html';
         } catch (error) {
             showError(error.message || "Invalid credentials.");
         }

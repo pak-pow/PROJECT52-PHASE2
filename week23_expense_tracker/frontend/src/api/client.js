@@ -21,7 +21,7 @@ export const apiClient = async (endpoint, options = {}) => {
         if (response.status == 401) {
             console.error("Session expired or unauthorized. Logging out.");
             localStorage.removeItem('jwt_token');
-            window.location.href = '/public/login.html';
+            window.location.href = 'login.html';
             return null;
         }
         

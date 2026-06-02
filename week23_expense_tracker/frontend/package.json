@@ -1,8 +1,5 @@
 {
   "name": "week23-expense-tracker-frontend",
   "version": "1.0.0",
-  "description": "Expense Tracker Frontend — Week 23, Project 52 Phase 2",
-  "scripts": {
-    "dev": "npx live-server --root=. --open=public/login.html --port=3000 --cors"
-  }
+  "description": "Expense Tracker Frontend — Week 23, Project 52 Phase 2"
 }
