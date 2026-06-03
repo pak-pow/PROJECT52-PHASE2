@@ -8,33 +8,36 @@
 </head>
 <body>
 
-    <div class="auth-card">
-        <h2>Welcome Back</h2>
-        
-        <div id="errorMessage" class="message error-box hidden">
-            <span id="errorText"></span>
-        </div>
-        
-        <div id="successMessage" class="message success-box hidden">
-            <span id="successText"></span>
-        </div>
+    <div class="login-wrapper">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            <p class="auth-subtitle">Sign in to your account</p>
 
-        <form id="authForm">
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input id="username" type="text" placeholder="Username" required>
+            <div id="errorMessage" class="message error-box hidden">
+                <span id="errorText"></span>
             </div>
-            
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input id="password" type="password" placeholder="******************" required>
+
+            <div id="successMessage" class="message success-box hidden">
+                <span id="successText"></span>
             </div>
-            
-            <div class="button-group">
-                <button type="button" id="loginBtn" class="btn btn-primary">Sign In</button>
-                <button type="button" id="registerBtn" class="btn btn-secondary">Register</button>
-            </div>
-        </form>
+
+            <form id="authForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" placeholder="Enter your username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" id="loginBtn" class="btn btn-primary">Sign In</button>
+                    <button type="button" id="registerBtn" class="btn btn-secondary">Register</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script type="module" src="../src/pages/login.js"></script>
