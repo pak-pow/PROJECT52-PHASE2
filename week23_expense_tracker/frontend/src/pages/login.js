@@ -6,54 +6,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const loginForm = document.getElementById('loginForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
     const errorBox = document.getElementById('errorMessage');
     const errorText = document.getElementById('errorText');
-    const successBox = document.getElementById('successMessage');
-    const successText = document.getElementById('successText');
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
 
     const showError = (msg) => {
         errorText.textContent = msg;
         errorBox.classList.remove('hidden');
-        successBox.classList.add('hidden');
     };
 
-    const showSuccess = (msg) => {
-        successText.textContent = msg;
-        successBox.classList.remove('hidden');
-        errorBox.classList.add('hidden');
-    };
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    loginBtn.addEventListener('click', async () => {
         const username = usernameInput.value;
         const password = passwordInput.value;
 
-        if (!username || !password) return showError("Please enter both fields.");
+        if (!username || !password) return showError('Please enter both fields.');
 
         try {
+            submitBtn.textContent = 'Signing in...';
+            submitBtn.disabled = true;
+
             await AuthService.login(username, password);
             window.location.href = 'index.html';
         } catch (error) {
-            showError(error.message || "Invalid credentials.");
-        }
-    });
-
-    registerBtn.addEventListener('click', async () => {
-        const username = usernameInput.value;
-        const password = passwordInput.value;
-
-        if (!username || !password) return showError("Please enter both fields.");
-
-        try {
-            await AuthService.register(username, password);
-            showSuccess("Registration successful! You can now sign in.");
-            usernameInput.value = '';
-            passwordInput.value = '';
-        } catch (error) {
-            showError(error.message || "Registration failed.");
+            showError(error.message || 'Invalid credentials.');
+            submitBtn.textContent = 'Sign In';
+            submitBtn.disabled = false;
         }
     });
 });

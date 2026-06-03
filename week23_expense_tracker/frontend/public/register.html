@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker | Register</title>
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+
+            <div id="errorMessage" class="message error-box hidden">
+                <span id="errorText"></span>
+            </div>
+
+            <div id="successMessage" class="message success-box hidden">
+                <span id="successText"></span>
+            </div>
+
+            <form id="registerForm">
+                <div class="input-group">
+                    <label for="username">Choose a Username</label>
+                    <input id="username" type="text" placeholder="Min 3 characters" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Choose a Password</label>
+                    <input id="password" type="password" placeholder="Min 8 characters" required>
+                </div>
+
+                <button type="submit" class="btn btn-secondary w-full" style="margin-top: 1rem;">Register</button>
+            </form>
+
+            <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: #64748b;">
+                Already have an account? <a href="login.html" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Sign in</a>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../src/pages/register.js"></script>
+</body>
+</html>
