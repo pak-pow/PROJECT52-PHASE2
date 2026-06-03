@@ -65,7 +65,10 @@
             <div class="right-column-stack">
                 
                 <section class="card">
-                    <h3>Spending Breakdown</h3>
+                    <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                        Spending Breakdown
+                        <span id="totalSpendingBadge" style="color: #3b82f6; font-size: 1.1rem; font-weight: 700;"></span>
+                    </h3>
                     <div class="chart-container">
                         <canvas id="expenseChart"></canvas>
                     </div>
@@ -79,6 +82,7 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Category</th>
+                                    <th>Description</th>
                                     <th>Amount</th>
                                     <th>Action</th>
                                 </tr>

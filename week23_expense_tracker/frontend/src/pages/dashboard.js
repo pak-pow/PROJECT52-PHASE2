@@ -117,12 +117,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── 6. Load & render expenses ─────────────────────────────────────────────
     const loadExpenses = async () => {
         try {
-            expenseTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:#94a3b8;">Loading...</td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#94a3b8;">Loading...</td></tr>';
 
             const [expenses, summary] = await Promise.all([
                 ExpenseService.getAll(),
                 ExpenseService.getSummary()
             ]);
+
+            // Calculate total spending
+            const totalSpending = summary.reduce((sum, row) => sum + row.total_amount, 0);
+            const totalBadge = document.getElementById('totalSpendingBadge');
+            if (totalBadge) {
+                totalBadge.textContent = `Total: ${formatAmount(totalSpending)}`;
+            }
 
             // Dynamically populate new categories from backend into the dropdown
             summary.forEach(row => {
@@ -143,13 +150,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             expenseTableBody.innerHTML = '';
 
             if (expenses.length === 0) {
-                expenseTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:#94a3b8;">No expenses yet. Add one above!</td></tr>';
+                expenseTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#94a3b8;">No expenses yet. Add one above!</td></tr>';
             } else {
                 expenses.forEach(exp => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${exp.date}</td>
                         <td>${exp.category}</td>
+                        <td style="color: #64748b; font-size: 0.8rem;">${exp.description || '<span style="color: #cbd5e1; font-style: italic;">No description</span>'}</td>
                         <td><strong>${formatAmount(exp.amount)}</strong></td>
                         <td><button class="delete-btn" data-id="${exp.id}">Delete</button></td>
                     `;
@@ -169,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderChart(summary);
 
         } catch (error) {
-            expenseTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:#ef4444;">Failed to load data. Is the backend running?</td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#ef4444;">Failed to load data. Is the backend running?</td></tr>';
         }
     };
 
