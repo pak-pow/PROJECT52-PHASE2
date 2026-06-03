@@ -142,6 +142,44 @@ body {
     width: auto;
 }
 
+/* --------------------------------------------------------------------------
+   Currency selector
+   -------------------------------------------------------------------------- */
+.currency-selector-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.currency-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #334155;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.35rem 2rem 0.35rem 0.75rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    /* Custom dropdown arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    max-width: 185px;
+}
+
+.currency-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.currency-select:hover {
+    border-color: #cbd5e1;
+}
+
+
 .w-full {
     width: 100%;
     flex: none;
