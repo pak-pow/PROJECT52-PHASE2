@@ -386,3 +386,61 @@ body {
     border-color: #fca5a5;
     color: #7f1d1d;
 }
+
+/* --------------------------------------------------------------------------
+   12. UTILITY & COMPONENT CLASSES (Replaced Inline Styles)
+   -------------------------------------------------------------------------- */
+.breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-badge {
+    color: #3b82f6;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #94a3b8;
+}
+
+.error-state {
+    text-align: center;
+    padding: 2rem;
+    color: #ef4444;
+}
+
+.desc-cell {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.no-desc {
+    color: #cbd5e1;
+    font-style: italic;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.auth-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
