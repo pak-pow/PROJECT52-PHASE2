@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const expenseTableBody = document.getElementById('expenseTableBody');
     const addExpenseForm = document.getElementById('addExpenseForm');
     const currencySelect = document.getElementById('currencySelect');
+    const categorySelect = document.getElementById('category');
+    const customCategoryGroup = document.getElementById('customCategoryGroup');
+    const customCategoryInput = document.getElementById('customCategory');
 
     // ── 1. Populate the currency dropdown ────────────────────────────────────
     const active = getActiveCurrency();
@@ -41,7 +44,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Failed to load user profile');
     }
 
-    // ── 4. Chart setup ────────────────────────────────────────────────────────
+    // ── 4. Category Dropdown Logic ────────────────────────────────────────────
+    categorySelect.addEventListener('change', () => {
+        if (categorySelect.value === '__new__') {
+            customCategoryGroup.classList.remove('hidden');
+            customCategoryInput.required = true;
+            customCategoryInput.focus();
+        } else {
+            customCategoryGroup.classList.add('hidden');
+            customCategoryInput.required = false;
+        }
+    });
+
+    // Set of base categories already in the HTML to prevent duplicates
+    const baseCategories = new Set(['Food', 'Rent', 'Utilities', 'Transport', 'Entertainment']);
+
+    // ── 5. Chart setup ────────────────────────────────────────────────────────
     let expenseChart = null;
 
     function renderChart(summaryData) {
@@ -96,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ── 5. Load & render expenses ─────────────────────────────────────────────
+    // ── 6. Load & render expenses ─────────────────────────────────────────────
     const loadExpenses = async () => {
         try {
             expenseTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:#94a3b8;">Loading...</td></tr>';
@@ -105,6 +123,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ExpenseService.getAll(),
                 ExpenseService.getSummary()
             ]);
+
+            // Dynamically populate new categories from backend into the dropdown
+            summary.forEach(row => {
+                if (!baseCategories.has(row.category)) {
+                    baseCategories.add(row.category);
+                    
+                    // Insert before the "+ Add New Category" option
+                    const newOption = document.createElement('option');
+                    newOption.value = row.category;
+                    newOption.textContent = row.category;
+                    
+                    const addNewOption = categorySelect.querySelector('option[value="__new__"]');
+                    categorySelect.insertBefore(newOption, addNewOption);
+                }
+            });
 
             // Render table
             expenseTableBody.innerHTML = '';
@@ -140,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    // ── 6. Add expense form ───────────────────────────────────────────────────
+    // ── 7. Add expense form ───────────────────────────────────────────────────
     addExpenseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -148,16 +181,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         submitBtn.textContent = 'Saving...';
         submitBtn.disabled = true;
 
+        let finalCategory = categorySelect.value;
+        if (finalCategory === '__new__') {
+            finalCategory = customCategoryInput.value.trim();
+        }
+
         const expenseData = {
             amount: parseFloat(document.getElementById('amount').value),
-            category: document.getElementById('category').value,
+            category: finalCategory,
             date: document.getElementById('date').value,
             description: document.getElementById('description').value
         };
 
         try {
             await ExpenseService.create(expenseData);
+            
+            // Reset form but keep selected category unless it was a new one
+            const currentCat = categorySelect.value;
             addExpenseForm.reset();
+            
+            if (currentCat !== '__new__') {
+                categorySelect.value = currentCat;
+            } else {
+                categorySelect.value = '';
+                customCategoryGroup.classList.add('hidden');
+                customCategoryInput.required = false;
+            }
+            
             loadExpenses();
         } catch (error) {
             alert(error.message || 'Failed to add expense.');
