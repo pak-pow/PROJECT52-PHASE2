@@ -223,3 +223,17 @@ body {
 .text-red:hover {
     text-decoration: underline;
 }
+
+.right-column-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

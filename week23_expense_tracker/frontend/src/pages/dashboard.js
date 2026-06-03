@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const expenseTableBody = document.getElementById('expenseTableBody');
     const addExpenseForm = document.getElementById('addExpenseForm');
 
+    let expenseChartInstance = null;
+
     logoutBtn.addEventListener('click', () => {
         AuthService.logout();
     });
@@ -23,15 +25,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("Failed to load user profile");
     }
 
+    const renderChart = async () => {
+        try {
+            const summaryData = await ExpenseService.getSummary();
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+
+            if (expenseChartInstance) {
+                expenseChartInstance.destroy();
+            }
+
+            const labels = summaryData.map(item => item.category);
+            const data = summaryData.map(item => item.total_amount);
+
+            expenseChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Failed to render chart:", error);
+        }
+    };
+
     const loadExpenses = async () => {
         try {
             expenseTableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
             const expenses = await ExpenseService.getAll();
             
-            expenseTableBody.innerHTML = ''; 
+            expenseTableBody.innerHTML = '';
             
             if (expenses.length === 0) {
                 expenseTableBody.innerHTML = '<tr><td colspan="4">No expenses found. Add one!</td></tr>';
+                renderChart(); 
                 return;
             }
 
@@ -54,6 +95,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             });
 
+            renderChart(); 
+
         } catch (error) {
             expenseTableBody.innerHTML = '<tr><td colspan="4" style="color:red;">Failed to load data.</td></tr>';
         }
@@ -72,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             await ExpenseService.create(expenseData);
             addExpenseForm.reset(); 
-            loadExpenses();         
+            loadExpenses();
         } catch (error) {
             alert(error.message || "Failed to add expense.");
         }
