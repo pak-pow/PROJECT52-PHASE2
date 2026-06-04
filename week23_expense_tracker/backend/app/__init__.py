@@ -13,6 +13,9 @@ def create_app():
     app.config.from_object(Config)
     jwt = JWTManager(app)
     
+    from .extensions import limiter
+    limiter.init_app(app)
+    
     app.teardown_appcontext(close_db)
     app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
