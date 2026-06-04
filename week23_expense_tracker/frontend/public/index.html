@@ -75,7 +75,21 @@
                 </section>
 
                 <section class="card">
-                    <h3>Recent Expenses</h3>
+                    <div class="breakdown-header mb-4">
+                        <h3 class="mb-0">Recent Expenses</h3>
+                        <button id="exportCsvBtn" class="btn btn-secondary btn-sm">⬇ Download CSV</button>
+                    </div>
+                    
+                    <div class="filter-bar">
+                        <input type="date" id="filterStartDate" class="filter-input" title="Start Date">
+                        <input type="date" id="filterEndDate" class="filter-input" title="End Date">
+                        <select id="filterCategory" class="filter-input">
+                            <option value="All">All Categories</option>
+                        </select>
+                        <button id="applyFilterBtn" class="btn btn-primary btn-sm">Filter</button>
+                        <button id="clearFilterBtn" class="btn btn-secondary btn-sm clear-filter-btn">Clear</button>
+                    </div>
+
                     <div class="table-container">
                         <table class="expense-table">
                             <thead>

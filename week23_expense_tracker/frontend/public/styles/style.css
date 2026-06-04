@@ -428,6 +428,14 @@ body {
     margin-top: 1rem;
 }
 
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
 .auth-footer {
     margin-top: 1.5rem;
     text-align: center;
@@ -443,4 +451,32 @@ body {
 
 .auth-link:hover {
     text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   13. FILTER BAR & EXPORT
+   -------------------------------------------------------------------------- */
+.filter-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.filter-input {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    color: #475569;
+    outline: none;
+}
+.filter-input:focus {
+    border-color: #3b82f6;
+}
+
+.clear-filter-btn {
+    background-color: transparent;
+    border: 1px solid #e2e8f0;
 }
