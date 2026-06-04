@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
     const errorBox = document.getElementById('errorMessage');
     const errorText = document.getElementById('errorText');
     const successBox = document.getElementById('successMessage');
@@ -32,8 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const username = usernameInput.value;
         const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
-        if (!username || !password) return showError('Please enter both fields.');
+        if (!username || !password || !confirmPassword) return showError('Please fill in all fields.');
+        if (password !== confirmPassword) return showError('Passwords do not match.');
 
         try {
             submitBtn.textContent = 'Registering...';

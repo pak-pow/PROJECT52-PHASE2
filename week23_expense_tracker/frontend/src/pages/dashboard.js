@@ -3,6 +3,23 @@ import { ExpenseService } from '../api/expenses.js';
 import { CURRENCIES, getActiveCurrency, setActiveCurrency, formatAmount } from '../utils/currency.js';
 import { getBudgets, setBudget, checkBudgets } from '../utils/budget.js';
 
+// ── Helpers ────────────────────────────────────────────────────────
+const escapeHtml = (str) => {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+};
+
+const sanitizeCsvField = (val) => {
+    const str = String(val || '');
+    // Prefix with single quote if it starts with a formula character
+    return /^[=+\-@\t\r]/.test(str) ? `'${str}` : str;
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
     if (!AuthService.isAuthenticated()) {
         window.location.href = 'login.html';
@@ -178,16 +195,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 expenses.forEach(exp => {
                     const row = document.createElement('tr');
+                    const safeCategory = escapeHtml(exp.category);
+                    const safeDesc = escapeHtml(exp.description);
+                    const safeDate = escapeHtml(exp.date);
+                    
                     row.innerHTML = `
-                        <td>${exp.date}</td>
-                        <td>${exp.category}</td>
-                        <td class="desc-cell">${exp.description || '<span class="no-desc">No description</span>'}</td>
+                        <td>${safeDate}</td>
+                        <td>${safeCategory}</td>
+                        <td class="desc-cell">${safeDesc || '<span class="no-desc">No description</span>'}</td>
                         <td><strong>${formatAmount(exp.amount)}</strong></td>
                         <td><button class="edit-btn" data-id="${exp.id}"
                                     data-amount="${exp.amount}"
-                                    data-category="${exp.category}"
-                                    data-date="${exp.date}"
-                                    data-description="${exp.description || ''}">Edit</button></td>
+                                    data-category="${escapeHtml(exp.category)}"
+                                    data-date="${escapeHtml(exp.date)}"
+                                    data-description="${escapeHtml(exp.description || '')}">Edit</button></td>
                         <td><button class="delete-btn" data-id="${exp.id}">Delete</button></td>
                     `;
                     expenseTableBody.appendChild(row);
@@ -196,6 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Wire delete buttons
                 document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
+                        if (!confirm("Are you sure you want to delete this expense? This action cannot be undone.")) return;
                         const id = e.target.getAttribute('data-id');
                         await ExpenseService.delete(id);
                         loadExpenses(currentFilters());
@@ -338,13 +360,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             budgetListEl.innerHTML = '<p class="no-desc" style="font-size:0.8rem;margin-top:0.5rem;">No limits set yet.</p>';
             return;
         }
-        budgetListEl.innerHTML = categories.map(cat => `
+        budgetListEl.innerHTML = categories.map(cat => {
+            const safeCat = escapeHtml(cat);
+            return `
             <div class="budget-list-item">
-                <span class="budget-cat">${cat}</span>
+                <span class="budget-cat">${safeCat}</span>
                 <span class="budget-limit">${formatAmount(budgets[cat])}/mo</span>
-                <button class="budget-remove-btn" data-cat="${cat}" title="Remove limit">&times;</button>
+                <button class="budget-remove-btn" data-cat="${safeCat}" title="Remove limit">&times;</button>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         budgetListEl.querySelectorAll('.budget-remove-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -365,9 +390,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const clampedPct = Math.min(w.percent, 100);
             const icon = w.exceeded ? '🚨' : '⚠️';
             const cls = w.exceeded ? 'exceeded' : 'warning';
+            const safeCat = escapeHtml(w.category);
             const label = w.exceeded
-                ? `<strong>${w.category}</strong>: over budget! Spent ${formatAmount(w.spent)} of ${formatAmount(w.limit)}`
-                : `<strong>${w.category}</strong>: ${w.percent}% used (${formatAmount(w.spent)} of ${formatAmount(w.limit)})`;
+                ? `<strong>${safeCat}</strong>: over budget! Spent ${formatAmount(w.spent)} of ${formatAmount(w.limit)}`
+                : `<strong>${safeCat}</strong>: ${w.percent}% used (${formatAmount(w.spent)} of ${formatAmount(w.limit)})`;
             return `
                 <div class="budget-warning-banner ${cls}">
                     <span class="budget-icon">${icon}</span>
@@ -445,8 +471,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             expenses.forEach(exp => {
                 const row = [
                     exp.date, 
-                    `"${exp.category}"`, 
-                    `"${exp.description || ''}"`, 
+                    `"${sanitizeCsvField(exp.category)}"`, 
+                    `"${sanitizeCsvField(exp.description)}"`, 
                     exp.amount
                 ];
                 csvRows.push(row.join(','));
