@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify #type: ignore
 from app.services.auth_service import AuthService
 from app.models.user import User
 from flask_jwt_extended import jwt_required, get_jwt_identity #type: ignore
+from app.extensions import limiter
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
+@limiter.limit("10 per minute")
 def register():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
@@ -20,6 +22,7 @@ def register():
         return jsonify({"error": str(e)}), 400
 
 @auth_bp.route('/login', methods=['POST'])
+@limiter.limit("10 per minute")
 def login():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
