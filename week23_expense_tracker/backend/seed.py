@@ -15,10 +15,13 @@ def seed_database():
 
     cursor = conn.cursor()
 
+    import secrets
     print("Securing admin credentials...")
-    secure_password = generate_password_hash('admin123')
+    random_password = secrets.token_hex(6) # 12 character hex string
+    secure_password = generate_password_hash(random_password)
     cursor.execute('INSERT INTO users (username, password_hash) VALUES (?, ?)', ('admin', secure_password))
     admin_id = cursor.lastrowid
+    print(f"Generated admin credentials: admin / {random_password}")
 
     mock_expenses = [
         (admin_id, 1200.00, 'Rent', 'May Rent', '2026-05-01'),
