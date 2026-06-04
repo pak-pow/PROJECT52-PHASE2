@@ -283,22 +283,22 @@ class TestSummary:
         assert data[1]["category"] == "Food"
         assert data[1]["total_amount"] == 30.00
 
-    def test_summary_month_filter(self, client, auth_headers):
-        """?month=05 should only aggregate May expenses, ignoring June."""
+    def test_summary_date_range_filter(self, client, auth_headers):
+        """?start_date=&end_date= should only aggregate expenses within the range."""
         make_expense(client, auth_headers, amount=100, category="Food", date="2026-05-15")
         make_expense(client, auth_headers, amount=200, category="Food", date="2026-06-15")
 
-        res = client.get('/api/expenses/summary?month=05&year=2026', headers=auth_headers)
+        res = client.get('/api/expenses/summary?start_date=2026-05-01&end_date=2026-05-31', headers=auth_headers)
         data = res.get_json()
         assert len(data) == 1
         assert data[0]["total_amount"] == 100.00
 
-    def test_summary_year_filter(self, client, auth_headers):
-        """?year=2026 should only aggregate 2026 expenses."""
+    def test_summary_start_date_filter(self, client, auth_headers):
+        """?start_date=2026-01-01 should exclude expenses before that date."""
         make_expense(client, auth_headers, amount=100, category="Food", date="2026-05-01")
         make_expense(client, auth_headers, amount=500, category="Food", date="2025-05-01")
 
-        res = client.get('/api/expenses/summary?year=2026', headers=auth_headers)
+        res = client.get('/api/expenses/summary?start_date=2026-01-01', headers=auth_headers)
         data = res.get_json()
         assert data[0]["total_amount"] == 100.00
 
