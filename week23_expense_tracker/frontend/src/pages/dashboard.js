@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const clearFilterBtn = document.getElementById('clearFilterBtn');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
 
+    const editModal = document.getElementById('editModal');
+    const editExpenseForm = document.getElementById('editExpenseForm');
+    const editCategory = document.getElementById('editCategory');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+
     // ── 1. Populate the currency dropdown ────────────────────────────────────
     const active = getActiveCurrency();
     CURRENCIES.forEach(c => {
@@ -123,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── 6. Load & render expenses ─────────────────────────────────────────────
     const loadExpenses = async (filters = {}) => {
         try {
-            expenseTableBody.innerHTML = '<tr><td colspan="5" class="empty-state">Loading...</td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading...</td></tr>';
 
             const [expenses, summary] = await Promise.all([
                 ExpenseService.getAll(filters),
@@ -137,18 +143,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 totalBadge.textContent = `Total: ${formatAmount(totalSpending)}`;
             }
 
-            // Dynamically populate new categories from backend into the dropdown
+            // Dynamically populate new categories in both dropdowns
             summary.forEach(row => {
                 if (!baseCategories.has(row.category)) {
                     baseCategories.add(row.category);
-                    
-                    // Insert before the "+ Add New Category" option
+
+                    // Add form dropdown
+                    const addNewOption = categorySelect.querySelector('option[value="__new__"]');
                     const newOption = document.createElement('option');
                     newOption.value = row.category;
                     newOption.textContent = row.category;
-                    
-                    const addNewOption = categorySelect.querySelector('option[value="__new__"]');
                     categorySelect.insertBefore(newOption, addNewOption);
+
+                    // Edit modal dropdown
+                    const editOption = document.createElement('option');
+                    editOption.value = row.category;
+                    editOption.textContent = row.category;
+                    editCategory.appendChild(editOption);
                 }
             });
 
@@ -156,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             expenseTableBody.innerHTML = '';
 
             if (expenses.length === 0) {
-                expenseTableBody.innerHTML = '<tr><td colspan="5" class="empty-state">No expenses yet. Add one above!</td></tr>';
+                expenseTableBody.innerHTML = '<tr><td colspan="6" class="empty-state">No expenses yet. Add one above!</td></tr>';
             } else {
                 expenses.forEach(exp => {
                     const row = document.createElement('tr');
@@ -165,16 +176,36 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td>${exp.category}</td>
                         <td class="desc-cell">${exp.description || '<span class="no-desc">No description</span>'}</td>
                         <td><strong>${formatAmount(exp.amount)}</strong></td>
+                        <td><button class="edit-btn" data-id="${exp.id}"
+                                    data-amount="${exp.amount}"
+                                    data-category="${exp.category}"
+                                    data-date="${exp.date}"
+                                    data-description="${exp.description || ''}">Edit</button></td>
                         <td><button class="delete-btn" data-id="${exp.id}">Delete</button></td>
                     `;
                     expenseTableBody.appendChild(row);
                 });
 
+                // Wire delete buttons
                 document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const id = e.target.getAttribute('data-id');
                         await ExpenseService.delete(id);
-                        loadExpenses();
+                        loadExpenses(currentFilters());
+                    });
+                });
+
+                // Wire edit buttons
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const b = e.target;
+                        openEditModal({
+                            id: b.dataset.id,
+                            amount: b.dataset.amount,
+                            category: b.dataset.category,
+                            date: b.dataset.date,
+                            description: b.dataset.description
+                        });
                     });
                 });
             }
@@ -186,9 +217,64 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateFilterDropdown(summary);
 
         } catch (error) {
-            expenseTableBody.innerHTML = '<tr><td colspan="5" class="error-state">Failed to load data. Is the backend running?</td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="6" class="error-state">Failed to load data. Is the backend running?</td></tr>';
         }
     };
+
+    // Helper to read current filter state
+    const currentFilters = () => {
+        const f = {
+            start_date: filterStartDate.value,
+            end_date: filterEndDate.value,
+            category: filterCategory.value
+        };
+        Object.keys(f).forEach(key => !f[key] && delete f[key]);
+        return f;
+    };
+
+    // ── Edit Modal ──────────────────────────────────────────────────
+    const openEditModal = (expense) => {
+        document.getElementById('editExpenseId').value = expense.id;
+        document.getElementById('editAmount').value = expense.amount;
+        document.getElementById('editDate').value = expense.date;
+        document.getElementById('editDescription').value = expense.description;
+        editCategory.value = expense.category;
+        editModal.showModal();
+    };
+
+    closeEditModal.addEventListener('click', () => editModal.close());
+    cancelEditBtn.addEventListener('click', () => editModal.close());
+
+    // Close modal if user clicks the backdrop
+    editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) editModal.close();
+    });
+
+    editExpenseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = editExpenseForm.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+
+        const id = document.getElementById('editExpenseId').value;
+        const payload = {
+            amount: parseFloat(document.getElementById('editAmount').value),
+            category: editCategory.value,
+            date: document.getElementById('editDate').value,
+            description: document.getElementById('editDescription').value
+        };
+
+        try {
+            await ExpenseService.update(id, payload);
+            editModal.close();
+            loadExpenses(currentFilters());
+        } catch (err) {
+            alert(err.message || 'Failed to update expense.');
+        } finally {
+            submitBtn.textContent = 'Save Changes';
+            submitBtn.disabled = false;
+        }
+    });
 
     // ── 7. Add expense form ───────────────────────────────────────────────────
     addExpenseForm.addEventListener('submit', async (e) => {
