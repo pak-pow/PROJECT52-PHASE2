@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const filterStartDate = document.getElementById('filterStartDate');
     const filterEndDate = document.getElementById('filterEndDate');
     const filterCategory = document.getElementById('filterCategory');
-    const applyFilterBtn = document.getElementById('applyFilterBtn');
     const clearFilterBtn = document.getElementById('clearFilterBtn');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
 
@@ -246,7 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         filterCategory.value = currentVal || 'All';
     };
 
-    applyFilterBtn.addEventListener('click', () => {
+    const applyFilters = () => {
         const filters = {
             start_date: filterStartDate.value,
             end_date: filterEndDate.value,
@@ -254,7 +253,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
         Object.keys(filters).forEach(key => !filters[key] && delete filters[key]);
         loadExpenses(filters);
-    });
+    };
+
+    filterStartDate.addEventListener('change', applyFilters);
+    filterEndDate.addEventListener('change', applyFilters);
+    filterCategory.addEventListener('change', applyFilters);
 
     clearFilterBtn.addEventListener('click', () => {
         filterStartDate.value = '';
