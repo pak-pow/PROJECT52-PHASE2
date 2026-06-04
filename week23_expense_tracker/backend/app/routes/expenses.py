@@ -57,7 +57,19 @@ def get_expenses():
     limit = request.args.get('limit', 50, type=int)
     offset = (page - 1) * limit
 
-    raw_expenses = Expense.get_all_by_user(current_user_id, limit, offset)
+    # Filtering
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    category = request.args.get('category')
+
+    raw_expenses = Expense.get_all_by_user(
+        current_user_id, 
+        limit=limit, 
+        offset=offset,
+        start_date=start_date,
+        end_date=end_date,
+        category=category
+    )
     return jsonify([dict(row) for row in raw_expenses]), 200
 
 
@@ -66,11 +78,15 @@ def get_expenses():
 def get_expense_summary():
     current_user_id = get_jwt_identity()
 
-    # Optional date filtering: ?month=05&year=2026
-    month = request.args.get('month')
-    year = request.args.get('year')
+    # Optional date filtering
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
-    summary_data = Expense.get_aggregated_by_category(current_user_id, month, year)
+    summary_data = Expense.get_aggregated_by_category(
+        current_user_id,
+        start_date=start_date,
+        end_date=end_date
+    )
     return jsonify([dict(row) for row in summary_data]), 200
 
 

@@ -2,31 +2,44 @@ from app.utils.db import get_db
 
 class Expense:
     @staticmethod
-    def get_all_by_user(user_id, limit=50, offset=0):
+    def get_all_by_user(user_id, limit=50, offset=0, start_date=None, end_date=None, category=None):
         """Fetches paginated expenses. Explicitly selects columns to prevent user_id data leak."""
         db = get_db()
         query = '''
             SELECT id, amount, category, description, date, created_at
             FROM expenses
             WHERE user_id = ?
-            ORDER BY date DESC
-            LIMIT ? OFFSET ?
         '''
-        return db.execute(query, (user_id, limit, offset)).fetchall()
+        params = [user_id]
+
+        if start_date:
+            query += " AND date >= ?"
+            params.append(start_date)
+        if end_date:
+            query += " AND date <= ?"
+            params.append(end_date)
+        if category and category != 'All':
+            query += " AND category = ?"
+            params.append(category)
+
+        query += " ORDER BY date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+        return db.execute(query, tuple(params)).fetchall()
 
     @staticmethod
-    def get_aggregated_by_category(user_id, month=None, year=None):
-        """Groups expenses by category and sums totals. Supports optional month/year filtering."""
+    def get_aggregated_by_category(user_id, start_date=None, end_date=None):
+        """Groups expenses by category and sums totals. Supports optional date filtering."""
         db = get_db()
         query = "SELECT category, SUM(amount) as total_amount FROM expenses WHERE user_id = ?"
         params = [user_id]
 
-        if month:
-            query += " AND strftime('%m', date) = ?"
-            params.append(f"{int(month):02d}")  # Ensures format is '05', not '5'
-        if year:
-            query += " AND strftime('%Y', date) = ?"
-            params.append(str(year))
+        if start_date:
+            query += " AND date >= ?"
+            params.append(start_date)
+        if end_date:
+            query += " AND date <= ?"
+            params.append(end_date)
 
         query += " GROUP BY category ORDER BY total_amount DESC"
         return db.execute(query, tuple(params)).fetchall()
