@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const customCategoryGroup = document.getElementById('customCategoryGroup');
     const customCategoryInput = document.getElementById('customCategory');
 
+    const filterStartDate = document.getElementById('filterStartDate');
+    const filterEndDate = document.getElementById('filterEndDate');
+    const filterCategory = document.getElementById('filterCategory');
+    const applyFilterBtn = document.getElementById('applyFilterBtn');
+    const clearFilterBtn = document.getElementById('clearFilterBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
     // ── 1. Populate the currency dropdown ────────────────────────────────────
     const active = getActiveCurrency();
     CURRENCIES.forEach(c => {
@@ -115,13 +122,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ── 6. Load & render expenses ─────────────────────────────────────────────
-    const loadExpenses = async () => {
+    const loadExpenses = async (filters = {}) => {
         try {
             expenseTableBody.innerHTML = '<tr><td colspan="5" class="empty-state">Loading...</td></tr>';
 
             const [expenses, summary] = await Promise.all([
-                ExpenseService.getAll(),
-                ExpenseService.getSummary()
+                ExpenseService.getAll(filters),
+                ExpenseService.getSummary(filters)
             ]);
 
             // Calculate total spending
@@ -175,6 +182,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Render chart
             renderChart(summary);
+            
+            // Update filter dropdown
+            updateFilterDropdown(summary);
 
         } catch (error) {
             expenseTableBody.innerHTML = '<tr><td colspan="5" class="error-state">Failed to load data. Is the backend running?</td></tr>';
@@ -222,6 +232,79 @@ document.addEventListener('DOMContentLoaded', async () => {
         } finally {
             submitBtn.textContent = 'Save Expense';
             submitBtn.disabled = false;
+        }
+    });
+
+    // ── 8. Filters & Export ───────────────────────────────────────────────────
+    const updateFilterDropdown = (summaryData) => {
+        const currentVal = filterCategory.value;
+        filterCategory.innerHTML = '<option value="All">All Categories</option>';
+        summaryData.forEach(item => {
+            const opt = new Option(item.category, item.category);
+            filterCategory.add(opt);
+        });
+        filterCategory.value = currentVal || 'All';
+    };
+
+    applyFilterBtn.addEventListener('click', () => {
+        const filters = {
+            start_date: filterStartDate.value,
+            end_date: filterEndDate.value,
+            category: filterCategory.value
+        };
+        Object.keys(filters).forEach(key => !filters[key] && delete filters[key]);
+        loadExpenses(filters);
+    });
+
+    clearFilterBtn.addEventListener('click', () => {
+        filterStartDate.value = '';
+        filterEndDate.value = '';
+        filterCategory.value = 'All';
+        loadExpenses();
+    });
+
+    exportCsvBtn.addEventListener('click', async () => {
+        try {
+            exportCsvBtn.textContent = "Exporting...";
+            
+            const filters = {
+                start_date: filterStartDate.value,
+                end_date: filterEndDate.value,
+                category: filterCategory.value
+            };
+            Object.keys(filters).forEach(key => !filters[key] && delete filters[key]);
+            
+            const expenses = await ExpenseService.getAll(filters);
+            if (expenses.length === 0) return alert("No data to export!");
+
+            const headers = ['Date', 'Category', 'Description', 'Amount'];
+            const csvRows = [headers.join(',')];
+            
+            expenses.forEach(exp => {
+                const row = [
+                    exp.date, 
+                    `"${exp.category}"`, 
+                    `"${exp.description || ''}"`, 
+                    exp.amount
+                ];
+                csvRows.push(row.join(','));
+            });
+            const csvString = csvRows.join('\n');
+
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `expenses_export_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+        } catch (error) {
+            alert("Export failed.");
+        } finally {
+            exportCsvBtn.textContent = "⬇ Download CSV";
         }
     });
 
