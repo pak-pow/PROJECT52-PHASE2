@@ -1,6 +1,7 @@
 import { AuthService } from '../api/auth.js';
 import { ExpenseService } from '../api/expenses.js';
 import { CURRENCIES, getActiveCurrency, setActiveCurrency, formatAmount } from '../utils/currency.js';
+import { getBudgets, setBudget, checkBudgets } from '../utils/budget.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!AuthService.isAuthenticated()) {
@@ -28,6 +29,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const editCategory = document.getElementById('editCategory');
     const closeEditModal = document.getElementById('closeEditModal');
     const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+    const budgetForm = document.getElementById('budgetForm');
+    const budgetCategorySelect = document.getElementById('budgetCategory');
+    const budgetAmountInput = document.getElementById('budgetAmount');
+    const budgetListEl = document.getElementById('budgetList');
+    const budgetWarningsEl = document.getElementById('budgetWarnings');
 
     // ── 1. Populate the currency dropdown ────────────────────────────────────
     const active = getActiveCurrency();
@@ -216,6 +223,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Update filter dropdown
             updateFilterDropdown(summary);
 
+            // Check budgets and render warnings
+            renderBudgetWarnings(summary);
+
         } catch (error) {
             expenseTableBody.innerHTML = '<tr><td colspan="6" class="error-state">Failed to load data. Is the backend running?</td></tr>';
         }
@@ -319,6 +329,69 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitBtn.disabled = false;
         }
     });
+
+    // ── Budget Limits ───────────────────────────────────────────────
+    const renderBudgetList = () => {
+        const budgets = getBudgets();
+        const categories = Object.keys(budgets);
+        if (categories.length === 0) {
+            budgetListEl.innerHTML = '<p class="no-desc" style="font-size:0.8rem;margin-top:0.5rem;">No limits set yet.</p>';
+            return;
+        }
+        budgetListEl.innerHTML = categories.map(cat => `
+            <div class="budget-list-item">
+                <span class="budget-cat">${cat}</span>
+                <span class="budget-limit">${formatAmount(budgets[cat])}/mo</span>
+                <button class="budget-remove-btn" data-cat="${cat}" title="Remove limit">&times;</button>
+            </div>
+        `).join('');
+
+        budgetListEl.querySelectorAll('.budget-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setBudget(btn.dataset.cat, 0);
+                renderBudgetList();
+                loadExpenses(currentFilters());
+            });
+        });
+    };
+
+    const renderBudgetWarnings = (summary) => {
+        const warnings = checkBudgets(summary);
+        if (warnings.length === 0) {
+            budgetWarningsEl.innerHTML = '';
+            return;
+        }
+        budgetWarningsEl.innerHTML = warnings.map(w => {
+            const clampedPct = Math.min(w.percent, 100);
+            const icon = w.exceeded ? '🚨' : '⚠️';
+            const cls = w.exceeded ? 'exceeded' : 'warning';
+            const label = w.exceeded
+                ? `<strong>${w.category}</strong>: over budget! Spent ${formatAmount(w.spent)} of ${formatAmount(w.limit)}`
+                : `<strong>${w.category}</strong>: ${w.percent}% used (${formatAmount(w.spent)} of ${formatAmount(w.limit)})`;
+            return `
+                <div class="budget-warning-banner ${cls}">
+                    <span class="budget-icon">${icon}</span>
+                    <span style="flex:1">${label}</span>
+                    <div class="budget-progress-bar">
+                        <div class="budget-progress-fill" style="width:${clampedPct}%"></div>
+                    </div>
+                </div>`;
+        }).join('');
+    };
+
+    budgetForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const cat = budgetCategorySelect.value;
+        const amount = parseFloat(budgetAmountInput.value);
+        if (!cat || isNaN(amount) || amount <= 0) return;
+        setBudget(cat, amount);
+        budgetForm.reset();
+        renderBudgetList();
+        loadExpenses(currentFilters());
+    });
+
+    // Initial budget list render
+    renderBudgetList();
 
     // ── 8. Filters & Export ───────────────────────────────────────────────────
     const updateFilterDropdown = (summaryData) => {
