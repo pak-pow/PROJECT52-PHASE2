@@ -315,6 +315,13 @@ body {
     gap: 2rem;
 }
 
+/* Left column stacks Log form above Budget Limits card */
+.left-column-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 /* --------------------------------------------------------------------------
    9. CHART
    -------------------------------------------------------------------------- */
@@ -582,7 +589,7 @@ body {
         padding: 4.5rem 1rem 2rem;
     }
 
-    /* Single-column layout */
+    /* Single-column layout — both left-column-stack and right-column-stack stack vertically */
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
