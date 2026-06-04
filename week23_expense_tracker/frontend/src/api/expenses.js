@@ -1,19 +1,20 @@
 import { apiClient } from './client.js';
 
 export const ExpenseService = {
-    getAll: async (page = 1, limit = 50) => {
-        return await apiClient(`/expenses/?page=${page}&limit=${limit}`);
+    getAll: async (filters = {}) => {
+        // Build the query string (e.g., ?start_date=2026-06-01&category=Food)
+        const queryParams = new URLSearchParams(filters).toString();
+        const url = queryParams ? `/expenses/?${queryParams}` : '/expenses/';
+        return await apiClient(url);
     },
 
-    getSummary: async (month = null, year = null) => {
-        let url = '/expenses/summary';
-        const params = new URLSearchParams();
-        if (month) params.append('month', month);
-        if (year) params.append('year', year);
+    getSummary: async (filters = {}) => {
+        const queryParams = new URLSearchParams({
+            ...(filters.start_date && { start_date: filters.start_date }),
+            ...(filters.end_date && { end_date: filters.end_date })
+        }).toString();
         
-        if (params.toString()) {
-            url += `?${params.toString()}`;
-        }
+        const url = queryParams ? `/expenses/summary?${queryParams}` : '/expenses/summary';
         return await apiClient(url);
     },
 
