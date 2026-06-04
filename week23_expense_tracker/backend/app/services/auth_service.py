@@ -15,8 +15,14 @@ class AuthService:
     def register_user(username, password):
         """Validates rules, hashes the password, and creates a new user."""
         clean_username = username.strip()
+        import re
         if len(clean_username) < 3:
             raise ValueError("Username must be at least 3 characters long.")
+        if len(clean_username) > 32:
+            raise ValueError("Username must be at most 32 characters long.")
+        if not re.match(r'^[a-zA-Z0-9_.\-]+$', clean_username):
+            raise ValueError("Username may only contain letters, numbers, underscores, dots, and hyphens.")
+            
         if len(password) < 8:
             raise ValueError("Password must be at least 8 characters long.")
 

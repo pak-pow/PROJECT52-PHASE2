@@ -21,4 +21,11 @@ def create_app():
     def health_check():
         return {"status": "healthy", "service": "Expense Tracker API"}
         
+    @app.after_request
+    def set_security_headers(response):
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['Referrer-Policy'] = 'no-referrer'
+        return response
+
     return app
