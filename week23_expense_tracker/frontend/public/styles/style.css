@@ -381,14 +381,14 @@ body {
 }
 
 .expense-table th {
-  padding: 0 1rem 0.625rem;
+  padding: 0 1rem 0.75rem;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 1px solid var(--border-soft);
-  background-color: var(--table-header);
+  border-bottom: 2px solid var(--border-soft);
+  background: transparent;
 }
 
 .expense-table td {
@@ -403,7 +403,7 @@ body {
 }
 
 .expense-table tbody tr:hover td {
-  background-color: #fafbfc;
+  background-color: var(--table-header);
 }
 
 /* --------------------------------------------------------------------------
