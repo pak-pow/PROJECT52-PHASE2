@@ -2,6 +2,7 @@ import { AuthService } from '../api/auth.js';
 import { ExpenseService } from '../api/expenses.js';
 import { CURRENCIES, getActiveCurrency, setActiveCurrency, formatAmount } from '../utils/currency.js';
 import { getBudgets, setBudget, checkBudgets } from '../utils/budget.js';
+import { ThemeManager } from '../utils/theme.js';
 
 // ── Helpers ────────────────────────────────────────────────────────
 const escapeHtml = (str) => {
@@ -24,6 +25,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!AuthService.isAuthenticated()) {
         window.location.href = 'login.html';
         return;
+    }
+
+    // Initialize Theme
+    ThemeManager.init();
+    
+    // Wire up the button
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            ThemeManager.toggle();
+            // Re-render chart to pick up dark colors
+            if (window.expenseSummaryData) {
+                renderChart(window.expenseSummaryData);
+            }
+        });
     }
 
     const welcomeMessage = document.getElementById('welcomeMessage');
@@ -112,6 +128,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (expenseChart) expenseChart.destroy();
 
+        const rootStyle = getComputedStyle(document.documentElement);
+        const cardBg = rootStyle.getPropertyValue('--bg-card').trim() || '#ffffff';
+        const textMuted = rootStyle.getPropertyValue('--text-muted').trim() || '#64748b';
+
         expenseChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -120,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     data: values,
                     backgroundColor: palette.slice(0, labels.length),
                     borderWidth: 2,
-                    borderColor: '#ffffff',
+                    borderColor: cardBg,
                     hoverOffset: 6,
                 }]
             },
@@ -134,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         labels: {
                             padding: 16,
                             font: { size: 12 },
-                            color: '#64748b',
+                            color: textMuted,
                         }
                     },
                     tooltip: {
@@ -159,6 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ExpenseService.getAll(filters),
                 ExpenseService.getSummary(filters)
             ]);
+            window.expenseSummaryData = summary;
 
             // Calculate total spending
             const totalSpending = summary.reduce((sum, row) => sum + row.total_amount, 0);

@@ -1,56 +1,36 @@
-# Week 23: Expense Tracker with Charts
+# 📊 Expense Analytics Dashboard (Project 52 - Week 23)
 
-**Category:** Full Stack | **Status:** In Progress
+A full-stack, enterprise-grade financial dashboard built to track, visualize, and export personal expenses. Built with a focus on strict architectural patterns, robust security, and high-performance UI/UX.
 
-## About
+![UI Preview](https://via.placeholder.com/800x400.png?text=Expense+Tracker+Dashboard) *(Note: Replace with an actual screenshot!)*
 
-Transitioning from a CMS to an Expense Tracker introduces two concepts that are everywhere in enterprise software but rarely taught together: **data aggregation** and **data visualization**.
+## 🚀 Features
+* **JWT Authentication:** Secure user registration and login flows with hashed passwords and token-based session management.
+* **Real-Time Visual Analytics:** Interactive Doughnut charts powered by `Chart.js` that update instantly upon data mutation.
+* **Dynamic Filtering:** Query the database in real-time by date ranges and auto-learned custom categories.
+* **Client-Side Localization:** Native `Intl.NumberFormat` integration supporting 10 global fiat currencies with persistent state caching.
+* **Data Portability:** Instantly export filtered data views to a clean CSV format.
+* **Premium UI/UX:** Responsive CSS Grid layout, strict form debouncing to prevent double-posting, and a persistent Dark Mode toggle.
 
-This project is not just a list of numbers. Raw expense records are grouped and summed by category using SQL aggregate functions (`GROUP BY`, `SUM()`), turned into structured data by the API, and then rendered as interactive charts on the frontend using Chart.js. The result is a financial analytics dashboard that turns a pile of transactions into a clear, visual breakdown of spending.
+## 🛠️ Tech Stack
+* **Backend:** Python, Flask, SQLite3, Werkzeug (Security), Flask-JWT-Extended
+* **Frontend:** Vanilla JavaScript (ES6 Modules), HTML5, Custom CSS3 (No Frameworks)
+* **Libraries:** Chart.js
 
-The backend uses the most advanced scaffold in the project so far — the Application Factory pattern with a full separation of concerns across `config/`, `models/`, `routes/`, `services/`, `middlewares/`, and `utils/` directories. The frontend mirrors this modularity with a `src/` directory containing `api/`, `pages/`, `components/`, and `utils/` folders.
+## 🏗️ Architectural Highlights
+* **MVC Pattern:** Strict separation of Database Models, API Routes, and Business Logic.
+* **Single Responsibility Principle:** Monolithic frontend scripts were decoupled into dedicated modules (`login.js`, `currency.js`, `theme.js`).
+* **Performance:** Network waterfall optimization using `Promise.all()` for simultaneous data fetching. Canvas lifecycle management to prevent memory leaks during re-renders.
 
-## What It Does
-
-A personal finance tracker where users log expenses with categories, amounts, and dates. The dashboard aggregates spending by category and renders the data as dynamic charts that update in real time as new entries are added.
-
-## Learning Objectives
-
-- SQL data aggregation: `GROUP BY`, `SUM()`, `ORDER BY`, and date-range filtering
-- Using `DECIMAL(10,2)` for financial precision (avoiding float rounding errors)
-- Integrating Chart.js to render pie charts and bar graphs from API data
-- Designing a modular Flask backend with the Application Factory pattern
-
-## Project Structure
-
-```
-week23_expense_tracker/
-├── backend/
-│   ├── run.py              # Application entry point
-│   ├── schema.sql          # Database schema (users + expenses tables)
-│   ├── seed.py             # Seed script
-│   ├── data/               # SQLite database file
-│   ├── tests/              # Pytest test suite
-│   └── app/
-│       ├── __init__.py     # Application factory
-│       ├── config/         # Configuration loader
-│       ├── models/         # Database query functions (expense.py)
-│       ├── routes/         # API route handlers (expenses.py)
-│       ├── services/       # Business logic layer
-│       ├── middlewares/    # Auth and request middleware
-│       └── utils/          # Shared helpers
-└── frontend/
-    ├── public/             # Static HTML entry point
-    └── src/
-        ├── main.js         # Frontend entry point
-        ├── api/            # API client (client.js)
-        ├── pages/          # Page-level logic
-        ├── components/     # Reusable UI components
-        └── utils/          # Shared frontend utilities
-```
-
-## Tech Stack
-
-- **Backend:** Python, Flask, Flask-JWT-Extended, Flask-CORS, bcrypt
-- **Database:** SQLite
-- **Frontend:** HTML, CSS, Vanilla JavaScript (ES Modules), Chart.js
+## ⚙️ Local Installation
+1. **Clone the repo:** `git clone https://github.com/yourusername/expense-tracker.git`
+2. **Setup Python Environment:**
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/Scripts/activate  # (Windows: venv\Scripts\activate)
+   pip install -r requirements.txt
+   ```
+3. **Initialize Database:** `python seed.py`
+4. **Run Server:** `python run.py`
+5. **Run Frontend:** Open `frontend/public/login.html` via Live Server.
