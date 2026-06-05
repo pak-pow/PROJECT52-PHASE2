@@ -550,12 +550,22 @@ body {
 
 /* Native <dialog> element */
 .edit-modal {
-  border: none;
+  /* ── Centering fix: browsers default dialog to top-left ── */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  /* ── Appearance ── */
+  border: 1px solid var(--border-soft);
   border-radius: 0.75rem;
   padding: 0;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.18);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
   width: 100%;
   max-width: 26rem;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .edit-modal::backdrop {
@@ -565,6 +575,8 @@ body {
 
 .edit-modal-card {
   padding: 1.75rem;
+  background-color: var(--bg-card);
+  border-radius: 0.75rem;
 }
 
 .edit-modal-header {
@@ -584,7 +596,7 @@ body {
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
   padding: 0 0.25rem;
