@@ -2,7 +2,8 @@
 
 A full-stack, enterprise-grade financial dashboard built to track, visualize, and export personal expenses. Built with a focus on strict architectural patterns, robust security, and high-performance UI/UX.
 
-![UI Preview](https://via.placeholder.com/800x400.png?text=Expense+Tracker+Dashboard) *(Note: Replace with an actual screenshot!)*
+![Day7.1](../../PROJECT52/Picture/week23/day7.1.png)
+![Day7.2](../../PROJECT52/Picture/week23/day7.2.png)
 
 ## 🚀 Features
 * **JWT Authentication:** Secure user registration and login flows with hashed passwords and token-based session management.
