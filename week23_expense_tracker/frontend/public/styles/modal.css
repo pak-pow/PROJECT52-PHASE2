@@ -1,0 +1,72 @@
+/* ==========================================================================
+   modal.css — Edit Expense Modal Dialog
+   ========================================================================== */
+
+/* Native <dialog> element */
+.edit-modal {
+  /* Centering fix: browsers default dialog to top-left */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  /* Appearance */
+  border: 1px solid var(--border-soft);
+  border-radius: 0.75rem;
+  padding: 0;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 26rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.edit-modal::backdrop {
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.edit-modal-card {
+  padding: 1.75rem;
+  background-color: var(--bg-card);
+  border-radius: 0.75rem;
+}
+
+.edit-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.edit-modal-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.25rem;
+  transition: color 0.15s;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-main);
+}
+
+.edit-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.edit-modal-actions .btn {
+  flex: 1;
+}

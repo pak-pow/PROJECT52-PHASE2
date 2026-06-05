@@ -1,0 +1,24 @@
+/* ==========================================================================
+   variables.css — CSS Custom Properties (Theme Tokens)
+   All color tokens for light and dark mode live here.
+   ========================================================================== */
+
+:root {
+    /* Light Mode (Default) */
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-soft: #e2e8f0;
+    --table-header: #f1f5f9;
+}
+
+[data-theme="dark"] {
+    /* Dark Mode */
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-soft: #334155;
+    --table-header: #0f172a;
+}

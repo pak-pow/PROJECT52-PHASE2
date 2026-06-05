@@ -1,0 +1,84 @@
+/* ==========================================================================
+   responsive.css — Media Queries (Mobile & Tablet Breakpoints)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tablet: max-width 768px — single-column dashboard
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+
+  .nav-user {
+    gap: 0.5rem;
+  }
+
+  /* Hide the welcome text to save space */
+  #welcomeMessage {
+    display: none;
+  }
+
+  .dashboard-container {
+    padding: 4.5rem 1rem 2rem;
+  }
+
+  /* Single-column layout */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Filter bar wraps gracefully */
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+
+  .filter-input {
+    flex: 1 1 120px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phone: max-width 480px — tighten further
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.75rem;
+    height: 3rem;
+  }
+
+  .nav-brand {
+    font-size: 0.875rem;
+  }
+
+  .dashboard-container {
+    padding: 4rem 0.75rem 1.5rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  /* Hide the description column on tiny screens to prevent overflow */
+  .expense-table th:nth-child(3),
+  .expense-table td:nth-child(3) {
+    display: none;
+  }
+
+  /* Make action buttons smaller */
+  .edit-btn,
+  .delete-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  /* Auth card fills most of the screen */
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  /* Edit modal fills the screen on phones */
+  .edit-modal {
+    max-width: 95vw;
+  }
+}
