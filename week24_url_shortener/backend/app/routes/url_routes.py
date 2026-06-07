@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, redirect
+from flask import Blueprint, request, jsonify, redirect #type: ignore
 from app.services import url_service
 
 url_bp = Blueprint('url', __name__)
