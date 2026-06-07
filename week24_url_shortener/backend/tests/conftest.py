@@ -1,7 +1,10 @@
-import pytest
+import pytest #type:ignore
 import os
 from app import create_app
 from app.utils.db import init_db
+import app.utils.db as db_module
+import sqlite3
+from flask import g #type:ignore
 
 SCHEMA_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'data', 'schema.sql')
@@ -16,11 +19,6 @@ def app():
     })
 
     with test_app.app_context():
-        # Override DB to in-memory for tests
-        import app.utils.db as db_module
-        import sqlite3
-        from flask import g
-
         def get_test_db():
             if 'db' not in g:
                 g.db = sqlite3.connect(':memory:')
