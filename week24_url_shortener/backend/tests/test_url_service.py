@@ -41,3 +41,23 @@ def test_resolve_url_increments_clicks(app):
         
         updated_record = url_model.find_by_code(short_code)
         assert updated_record['clicks'] == 2 # type: ignore
+
+def test_custom_alias_success(app):
+    """Pass a custom alias and ensure it creates the URL exactly as requested."""
+    with app.app_context():
+        record = url_service.shorten_url("https://www.google.com", custom_alias="summer-sale")
+        assert record['short_code'] == "summer-sale"
+        assert record['original_url'] == "https://www.google.com"
+
+def test_custom_alias_collision(app):
+    """Create a URL with an alias. Try to create another URL with the same alias and assert that it raises a KeyError."""
+    with app.app_context():
+        url_service.shorten_url("https://www.apple.com", custom_alias="my-sale")
+        with pytest.raises(KeyError, match="That custom alias is already taken."):
+            url_service.shorten_url("https://www.microsoft.com", custom_alias="my-sale")
+
+def test_custom_alias_invalid_format(app):
+    """Pass an alias with spaces or symbols like 'my alias@!' and assert it raises a ValueError."""
+    with app.app_context():
+        with pytest.raises(ValueError, match="Alias must be 3-20 characters, letters, numbers, or hyphens."):
+            url_service.shorten_url("https://www.tesla.com", custom_alias="my alias@!")

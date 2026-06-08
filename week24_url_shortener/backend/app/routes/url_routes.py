@@ -14,8 +14,10 @@ def shorten():
     if not data or 'url' not in data:
         return jsonify({'error': 'Request body must include a "url" field.'}), 400
 
+    custom_alias = data.get('custom_alias') # Grab it if it exists, otherwise it's None
+
     try:
-        record = url_service.shorten_url(data['url'])
+        record = url_service.shorten_url(data['url'], custom_alias)
         return jsonify({
             'short_code': record['short_code'],
             'short_url':  f"{request.host_url}{record['short_code']}",
@@ -24,7 +26,9 @@ def shorten():
             'created_at': record['created_at'],
         }), 201
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': str(e)}), 400 # Bad request (invalid url/alias format)
+    except KeyError as e:
+        return jsonify({'error': str(e)}), 409 # Conflict (Alias taken)
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +38,7 @@ def shorten():
 @url_bp.route('/<string:short_code>', methods=['GET'])
 def redirect_to_url(short_code):
     # Guard: don't swallow routes that are clearly not short codes
-    if len(short_code) > 10 or not short_code.isalnum():
+    if len(short_code) > 20 or not all(c.isalnum() or c == '-' for c in short_code):
         return jsonify({'error': 'Invalid short code.'}), 400
 
     try:

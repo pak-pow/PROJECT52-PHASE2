@@ -1,13 +1,14 @@
 from urllib.parse import urlparse
 from app.models import url_model
 from app.utils.base62 import encode
-
+import re
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _is_valid_url(url: str) -> bool:
+
+def is_valid_url(url: str) -> bool:
     """Basic URL validation — must have a scheme (http/https) and a netloc."""
     try:
         result = urlparse(url)
@@ -15,59 +16,45 @@ def _is_valid_url(url: str) -> bool:
     except Exception:
         return False
 
+def is_valid_alias(alias: str) -> bool:
+    """Ensure the custom alias is safe (alphanumeric and hyphens, 3-20 chars)."""
+    return bool(re.match(r'^[a-zA-Z0-9-]{3,20}$', alias))
+
 
 # ---------------------------------------------------------------------------
 # Public Service API
 # ---------------------------------------------------------------------------
 
-def shorten_url(original_url: str) -> dict:
-    """
-    Main business logic for shortening a URL.
+def shorten_url(original_url: str, custom_alias: str = None) -> dict: # type: ignore
+    if not original_url:
+        raise ValueError("URL cannot be empty.")
+    if not is_valid_url(original_url):
+        raise ValueError("Invalid URL format. Must include http:// or https://")
 
-    Steps:
-      1. Validate the URL.
-      2. Check if it's already been shortened (return existing record if so).
-      3. Insert a placeholder row to get the auto-increment ID.
-      4. Encode that ID with Base62 to produce the short code.
-      5. Update the row with the short code and return it.
+    # --- PATH A: CUSTOM ALIAS ---
+    if custom_alias:
+        if not is_valid_alias(custom_alias):
+            raise ValueError("Alias must be 3-20 characters, letters, numbers, or hyphens.")
+        
+        # Check for collision
+        existing_alias = url_model.find_by_code(custom_alias)
+        if existing_alias:
+            raise KeyError("That custom alias is already taken.") # Using KeyError to represent 409 Conflict later
+            
+        # Insert directly with the custom alias! 
+        # (Your model's insert_url needs to handle this directly now)
+        return url_model.insert_url(original_url, custom_alias)
 
-    Returns:
-        The URL record dict: {id, original_url, short_code, clicks, created_at}
+    # --- PATH B: STANDARD BASE62 ENCODING ---
+    existing_entry = url_model.find_by_original_url(original_url)
+    if existing_entry:
+        return existing_entry
 
-    Raises:
-        ValueError: If the URL is invalid.
-    """
-    original_url = original_url.strip()
-
-    if not _is_valid_url(original_url):
-        raise ValueError("Invalid URL. Must start with http:// or https://")
-
-    # Return existing record if URL was already shortened
-    existing = url_model.find_by_original_url(original_url)
-    if existing:
-        return existing
-
-    # Insert a temporary placeholder to obtain the auto-increment ID
-    from app.utils.db import get_db
-    db = get_db()
-    cursor = db.execute(
-        "INSERT INTO urls (original_url, short_code) VALUES (?, ?)",
-        (original_url, '__placeholder__')
-    )
-    db.commit()
-    new_id = cursor.lastrowid
-
-    # Encode the ID into a Base62 short code
-    short_code = encode(new_id)
-
-    # Update the row with the real short code
-    db.execute(
-        "UPDATE urls SET short_code = ? WHERE id = ?",
-        (short_code, new_id)
-    )
-    db.commit()
-
-    return url_model.find_by_id(new_id)
+    record = url_model.insert_url(original_url, "PENDING")
+    short_code = encode(record['id'])
+    url_model.update_short_code(record['id'], short_code)
+    
+    return url_model.find_by_id(record['id']) # type: ignore
 
 
 def resolve_url(short_code: str) -> dict:

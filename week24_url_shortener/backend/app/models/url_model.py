@@ -11,6 +11,16 @@ def insert_url(original_url: str, short_code: str) -> dict:
     return find_by_id(cursor.lastrowid) # type: ignore
 
 
+def update_short_code(url_id: int, short_code: str) -> None:
+    """Update the short code for an existing URL record."""
+    db = db_utils.get_db()
+    db.execute(
+        "UPDATE urls SET short_code = ? WHERE id = ?",
+        (short_code, url_id)
+    )
+    db.commit()
+
+
 def find_by_code(short_code: str) -> dict | None:
     """Look up a URL record by its short code. Returns None if not found."""
     db = db_utils.get_db()
