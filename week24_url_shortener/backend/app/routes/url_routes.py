@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, redirect #type: ignore
 from app.services import url_service
+from app.services.url_service import AliasTakenError
 
 url_bp = Blueprint('url', __name__)
 
@@ -27,7 +28,7 @@ def shorten():
         }), 201
     except ValueError as e:
         return jsonify({'error': str(e)}), 400 # Bad request (invalid url/alias format)
-    except KeyError as e:
+    except AliasTakenError as e:
         return jsonify({'error': str(e)}), 409 # Conflict (Alias taken)
 
 

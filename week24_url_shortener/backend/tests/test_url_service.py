@@ -1,6 +1,7 @@
 import pytest #type:ignore
 from app.services import url_service
 from app.models import url_model
+from app.services.url_service import AliasTakenError
 
 def test_invalid_url_rejected(app):
     """Ensure strings without http:// or https:// are rejected."""
@@ -50,10 +51,10 @@ def test_custom_alias_success(app):
         assert record['original_url'] == "https://www.google.com"
 
 def test_custom_alias_collision(app):
-    """Create a URL with an alias. Try to create another URL with the same alias and assert that it raises a KeyError."""
+    """Create a URL with an alias. Try to create another URL with the same alias and assert that it raises an AliasTakenError."""
     with app.app_context():
         url_service.shorten_url("https://www.apple.com", custom_alias="my-sale")
-        with pytest.raises(KeyError, match="That custom alias is already taken."):
+        with pytest.raises(AliasTakenError, match="That custom alias is already taken."):
             url_service.shorten_url("https://www.microsoft.com", custom_alias="my-sale")
 
 def test_custom_alias_invalid_format(app):

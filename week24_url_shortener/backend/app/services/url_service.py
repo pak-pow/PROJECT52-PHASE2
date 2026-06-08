@@ -1,6 +1,10 @@
 from urllib.parse import urlparse
 from app.models import url_model
 from app.utils.base62 import encode
+
+class AliasTakenError(Exception):
+    pass
+
 import re
 
 # ---------------------------------------------------------------------------
@@ -39,7 +43,7 @@ def shorten_url(original_url: str, custom_alias: str = None) -> dict: # type: ig
         # Check for collision
         existing_alias = url_model.find_by_code(custom_alias)
         if existing_alias:
-            raise KeyError("That custom alias is already taken.") # Using KeyError to represent 409 Conflict later
+            raise AliasTakenError("That custom alias is already taken.") 
             
         # Insert directly with the custom alias! 
         # (Your model's insert_url needs to handle this directly now)
