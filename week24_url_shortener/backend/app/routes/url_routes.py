@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, redirect #type: ignore
 from app.services import url_service
 from app.services.url_service import AliasTakenError
+from app import limiter
 
 url_bp = Blueprint('url', __name__)
 
@@ -10,6 +11,7 @@ url_bp = Blueprint('url', __name__)
 # Accepts a long URL and returns a short code.
 # ---------------------------------------------------------------------------
 @url_bp.route('/api/shorten', methods=['POST'])
+@limiter.limit("5 per minute")
 def shorten():
     data = request.get_json(silent=True)
     if not data or 'url' not in data:
@@ -37,6 +39,7 @@ def shorten():
 # Redirects the browser to the original URL (301 Permanent Redirect).
 # ---------------------------------------------------------------------------
 @url_bp.route('/<string:short_code>', methods=['GET'])
+@limiter.limit("50 per minute")
 def redirect_to_url(short_code):
     # Guard: don't swallow routes that are clearly not short codes
     if len(short_code) > 20 or not all(c.isalnum() or c == '-' for c in short_code):
@@ -54,6 +57,7 @@ def redirect_to_url(short_code):
 # Returns all shortened URLs and their click counts.
 # ---------------------------------------------------------------------------
 @url_bp.route('/api/stats', methods=['GET'])
+@limiter.limit("5 per minute")
 def stats():
     records = url_service.get_stats()
     return jsonify(records), 200
