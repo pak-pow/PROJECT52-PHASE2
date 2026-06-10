@@ -35,8 +35,19 @@ def test_self_destructing_link_returns_410(client):
     
     post_res = client.post('/api/shorten', json={
         'url': 'https://www.topsecret.com',
-        'expires_in_hours': -1 
+        'expires_in_hours': -1
     })
-    short_code = post_res.get_json()['short_code']
+    
+    data = post_res.get_json()
+    print("\n--- DEBUG INFO ---")
+    print(f"POST Response Data: {data}") # Let's see what the database actually saved
+    
+    short_code = data['short_code']
     get_res = client.get(f'/{short_code}')
+    
+    print(f"GET Status Code: {get_res.status_code}")
+    if get_res.status_code != 410:
+         print(f"GET Headers: {get_res.headers}") # If it redirected, where did it go?
+    print("------------------\n")
+
     assert get_res.status_code == 410

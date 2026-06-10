@@ -81,8 +81,12 @@ def resolve_url(short_code: str) -> dict:
     if not record:
         raise KeyError(f"Short code '{short_code}' not found.")
 
-    if record['expires_at']: 
+    if record['expires_at']:
         expiration_date = datetime.fromisoformat(record['expires_at'])
+        
+        if expiration_date.tzinfo is None:
+            expiration_date = expiration_date.replace(tzinfo=timezone.utc)
+            
         if datetime.now(timezone.utc) > expiration_date:
             raise ExpiredURLError("This link has self-destructed.")
 
