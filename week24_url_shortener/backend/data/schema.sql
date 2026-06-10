@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS urls (
     original_url TEXT      NOT NULL,
     short_code   VARCHAR(10) UNIQUE NOT NULL,
     clicks       INTEGER   DEFAULT 0,
-    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at   TIMESTAMP NULL
 );
 
