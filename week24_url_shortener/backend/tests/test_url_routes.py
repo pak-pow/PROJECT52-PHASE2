@@ -28,3 +28,15 @@ def test_rate_limiting_blocks_spam(client):
 
     res = client.post('/api/shorten', json={'url': 'https://www.example.com/spam'})
     assert res.status_code == 429
+    
+    
+def test_self_destructing_link_returns_410(client):
+    """Ensure expired links return a 410 Gone status."""
+    
+    post_res = client.post('/api/shorten', json={
+        'url': 'https://www.topsecret.com',
+        'expires_in_hours': -1 
+    })
+    short_code = post_res.get_json()['short_code']
+    get_res = client.get(f'/{short_code}')
+    assert get_res.status_code == 410
