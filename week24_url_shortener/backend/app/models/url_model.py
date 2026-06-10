@@ -1,11 +1,11 @@
 from app.utils import db as db_utils 
 
-def insert_url(original_url: str, short_code: str) -> dict:
+def insert_url(original_url: str, short_code: str, expires_at: str = None) -> dict: # type: ignore
     """Insert a new URL record and return the created row."""
     db = db_utils.get_db() 
     cursor = db.execute(
-        "INSERT INTO urls (original_url, short_code) VALUES (?, ?)",
-        (original_url, short_code)
+        "INSERT INTO urls (original_url, short_code, expires_at) VALUES (?, ?, ?)",
+        (original_url, short_code, expires_at)
     )
     db.commit()
     return find_by_id(cursor.lastrowid) # type: ignore
