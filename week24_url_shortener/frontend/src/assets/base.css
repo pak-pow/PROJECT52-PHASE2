@@ -11,3 +11,11 @@ body {
   line-height: 1.5;
   padding: 2rem;
 }
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.hidden {
+  display: none !important;
+}

@@ -15,7 +15,7 @@
         
         <header>
             <h1>URL Engine</h1>
-            <p style="color: var(--text-muted)">Project 52 | Phase 2</p>
+            <p class="text-muted">Project 52 | Phase 2</p>
         </header>
 
         <div class="card">
@@ -36,15 +36,15 @@
                     </div>
                 </div>
 
-                <div id="form-error" class="error-message"></div>
-                <button type="submit" style="margin-top: 1rem;">Generate Short Link</button>
+                <div id="form-error" class="error-message hidden"></div>
+                <button type="submit" class="btn-submit">Generate Short Link</button>
             </form>
         </div>
 
-        <div class="card" id="result-card" style="display: none; text-align: center; border: 1px solid var(--primary-color);">
-            <h3 style="color: var(--text-muted); margin-bottom: 0.5rem;">Your Link is Ready</h3>
-            <a id="short-url-result" href="#" target="_blank" style="font-size: 1.5rem; color: var(--primary-color); text-decoration: none; font-weight: bold;"></a>
-            <p id="death-clock-display" style="color: var(--error-color); font-size: 0.875rem; margin-top: 0.5rem;"></p>
+        <div class="card result-card hidden" id="result-card">
+            <h3 class="text-muted header-sm">Your Link is Ready</h3>
+            <a id="short-url-result" href="#" target="_blank" class="result-link"></a>
+            <p id="death-clock-display" class="death-clock-text"></p>
         </div>
 
     </div>
