@@ -9,5 +9,9 @@ if __name__ == '__main__':
     with app.app_context():
         init_db()
 
-    debug = os.environ.get('FLASK_ENV') == 'development'
+    # FIX: Debug mode is now controlled by the FLASK_DEBUG env var (standard Flask convention).
+    # FLASK_DEBUG=1 → debug on (development only).
+    # FLASK_DEBUG=0 or unset → debug off (safe for production).
+    # Never use FLASK_ENV to infer debug mode.
+    debug = os.environ.get('FLASK_DEBUG', '0') == '1'
     app.run(debug=debug, port=5000)

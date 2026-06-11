@@ -1,22 +1,24 @@
-from flask import Flask #type: ignore
-from flask_cors import CORS #type: ignore
-from flask_limiter import Limiter #type: ignore
-from flask_limiter.util import get_remote_address #type: ignore
+from flask import Flask  # type: ignore
+from flask_cors import CORS  # type: ignore
+from flask_limiter import Limiter  # type: ignore
+from flask_limiter.util import get_remote_address  # type: ignore
 from config import Config
 from app.utils.db import close_db
 
 limiter = Limiter(
-    key_func = get_remote_address,
+    key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"],
-    storage_uri = "memory://"
+    storage_uri="memory://"
 )
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app, origins=["http://127.0.0.1:5500", "http://localhost:5500"])
-    
+    # FIX: Load CORS origins from Config so they are controlled by env vars
+    CORS(app, origins=Config.CORS_ORIGINS)
+
     limiter.init_app(app)
     app.teardown_appcontext(close_db)
 
