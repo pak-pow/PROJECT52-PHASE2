@@ -6,14 +6,16 @@
     <title>URL Engine — Project 52</title>
     <meta name="description" content="URL Engine: shorten long links into clean, shareable short URLs with optional custom aliases and expiry times.">
 
-    <!-- CSP: only fetch from our own Flask backend -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' http://127.0.0.1:5000;">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 
     <link rel="stylesheet" href="../src/assets/variables.css">
     <link rel="stylesheet" href="../src/assets/base.css">
     <link rel="stylesheet" href="../src/assets/layout.css">
     <link rel="stylesheet" href="../src/assets/components.css">
+
 </head>
 <body>
 
@@ -31,7 +33,7 @@
             <form id="shorten-form" novalidate>
 
                 <div class="input-group">
-                    <label for="url">Original URL <span style="color:var(--error-color)">*</span></label>
+                    <label for="url">Original URL <span class="required-star">*</span></label>
                     <input type="url" id="url" placeholder="https://www.example.com/very/long/path" autocomplete="off" required>
                 </div>
 
