@@ -35,3 +35,49 @@ def init_db():
     with open(SCHEMA_PATH, 'r') as f:
         db.executescript(f.read())
     db.commit()
+    _migrate_db(db)
+
+
+def _migrate_db(db):
+    """
+    Apply incremental schema migrations on top of the existing database.
+
+    SQLite does NOT support modifying column constraints after creation, so
+    we use a table-rebuild approach (the official SQLite recommended method)
+    when the live schema is stale.
+
+    This prevents the common dev pitfall where schema.sql is updated but
+    CREATE TABLE IF NOT EXISTS is a no-op on an already-existing table,
+    leaving the app running against an outdated schema.
+    """
+    # Check if short_code still has a NOT NULL constraint (old schema)
+    cols = db.execute("PRAGMA table_info(urls)").fetchall()
+    col_map = {col['name']: col for col in cols}
+
+    short_code_col = col_map.get('short_code')
+    if short_code_col and short_code_col['notnull'] == 1:
+        # Rebuild urls table with the correct (nullable short_code) schema
+        db.executescript("""
+            PRAGMA foreign_keys=OFF;
+
+            CREATE TABLE IF NOT EXISTS urls_new (
+                id           INTEGER   PRIMARY KEY AUTOINCREMENT,
+                original_url TEXT      NOT NULL,
+                short_code   VARCHAR(20) UNIQUE,
+                clicks       INTEGER   DEFAULT 0,
+                created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at   TIMESTAMP NULL
+            );
+
+            INSERT INTO urls_new (id, original_url, short_code, clicks, created_at, expires_at)
+            SELECT id, original_url, short_code, clicks, created_at, expires_at FROM urls;
+
+            DROP TABLE urls;
+            ALTER TABLE urls_new RENAME TO urls;
+
+            CREATE INDEX IF NOT EXISTS idx_short_code ON urls (short_code);
+
+            PRAGMA foreign_keys=ON;
+        """)
+        db.commit()
+
