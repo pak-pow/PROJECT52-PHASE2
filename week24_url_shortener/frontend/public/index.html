@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    
+    <link rel="stylesheet" href="../src/assets/variables.css">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/layout.css">
+    <link rel="stylesheet" href="../src/assets/components.css">
+</head>
+<body>
+    <div class="container">
+        
+        <header>
+            <h1>URL Engine</h1>
+            <p style="color: var(--text-muted)">Project 52 | Phase 2</p>
+        </header>
+
+        <div class="card">
+            <form id="shorten-form">
+                <div class="input-group">
+                    <label for="url">Original URL *</label>
+                    <input type="url" id="url" placeholder="https://www.example.com" required>
+                </div>
+
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label for="custom-alias">Custom Alias (Optional)</label>
+                        <input type="text" id="custom-alias" placeholder="summer-sale">
+                    </div>
+                    <div class="input-group">
+                        <label for="expires-in">Expires In (Hours - Optional)</label>
+                        <input type="number" id="expires-in" placeholder="24" min="1">
+                    </div>
+                </div>
+
+                <div id="form-error" class="error-message"></div>
+                <button type="submit" style="margin-top: 1rem;">Generate Short Link</button>
+            </form>
+        </div>
+
+        <div class="card" id="result-card" style="display: none; text-align: center; border: 1px solid var(--primary-color);">
+            <h3 style="color: var(--text-muted); margin-bottom: 0.5rem;">Your Link is Ready</h3>
+            <a id="short-url-result" href="#" target="_blank" style="font-size: 1.5rem; color: var(--primary-color); text-decoration: none; font-weight: bold;"></a>
+            <p id="death-clock-display" style="color: var(--error-color); font-size: 0.875rem; margin-top: 0.5rem;"></p>
+        </div>
+
+    </div>
+
+    <script type="module" src="../src/main.js"></script>
+</body>
+</html>
