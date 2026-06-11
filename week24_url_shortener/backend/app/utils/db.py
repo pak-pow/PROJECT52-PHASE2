@@ -15,7 +15,7 @@ def get_db():
     """Open a new database connection if there isn't one in the current context."""
     if 'db' not in g:
         os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-        g.db = sqlite3.connect(DB_PATH, detect_types=sqlite3.PARSE_DECLTYPES)
+        g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
         g.db.execute("PRAGMA journal_mode=WAL")   # Better concurrency
         g.db.execute("PRAGMA foreign_keys=ON")

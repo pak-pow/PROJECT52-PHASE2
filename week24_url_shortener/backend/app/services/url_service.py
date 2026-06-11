@@ -35,6 +35,11 @@ def is_valid_alias(alias: str) -> bool:
     return bool(re.match(r'^[a-zA-Z0-9-]{3,20}$', alias))
 
 
+def normalize_url(url: str) -> str:
+    """Normalize URL by stripping leading/trailing whitespace and trailing slashes."""
+    return url.strip().rstrip('/')
+
+
 # ---------------------------------------------------------------------------
 # Public Service API
 # ---------------------------------------------------------------------------
@@ -67,7 +72,28 @@ def shorten_url(original_url: str, custom_alias: str = None, expires_in_hours: i
         # Check for collision before inserting
         existing_alias = url_model.find_by_code(custom_alias)
         if existing_alias:
-            raise AliasTakenError("That custom alias is already taken.")
+            # Check if the existing alias is expired
+            is_expired = False
+            if existing_alias.get('expires_at'):
+                expiration_date = datetime.fromisoformat(existing_alias['expires_at'])
+                if expiration_date.tzinfo is None:
+                    expiration_date = expiration_date.replace(tzinfo=timezone.utc)
+                if datetime.now(timezone.utc) > expiration_date:
+                    is_expired = True
+
+            if is_expired:
+                # Reclaim expired alias by deleting it first
+                from app.utils import db as db_utils
+                db = db_utils.get_db()
+                db.execute("DELETE FROM urls WHERE id = ?", (existing_alias['id'],))
+                db.commit()
+                existing_alias = None
+            else:
+                # Active alias. Check if it points to the same URL (normalized)
+                if normalize_url(existing_alias['original_url']) == normalize_url(original_url):
+                    return existing_alias
+                else:
+                    raise AliasTakenError("That custom alias is already taken.")
 
         return url_model.insert_url_with_alias(original_url, custom_alias, expires_at)
 

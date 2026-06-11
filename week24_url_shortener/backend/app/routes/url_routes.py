@@ -3,6 +3,7 @@ from app.services import url_service
 from app.services.url_service import AliasTakenError, ExpiredURLError
 from app import limiter
 from config import Config
+import traceback as _tb
 
 url_bp = Blueprint('url', __name__)
 
@@ -36,9 +37,17 @@ def shorten():
             'expires_at':   record.get('expires_at'),
         }), 201
     except ValueError as e:
+        print("\n=== ValueError TRACEBACK ===")
+        _tb.print_exc()
+        print("==========================\n")
         return jsonify({'error': str(e)}), 400      # Bad request (invalid url/alias/type)
     except AliasTakenError as e:
         return jsonify({'error': str(e)}), 409      # Conflict (alias already taken)
+    except Exception as e:
+        print("\n=== UNEXPECTED ERROR TRACEBACK ===")
+        _tb.print_exc()
+        print("==================================\n")
+        return jsonify({'error': f'Internal error: {type(e).__name__}: {e}'}), 500
 
 
 # ---------------------------------------------------------------------------

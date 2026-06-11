@@ -134,3 +134,33 @@ def test_pending_alias_does_not_cause_dos(app):
         record = url_service.shorten_url("https://www.innocent.com")
         assert record['short_code'] is not None
         assert record['short_code'] != "PENDING"
+
+
+def test_custom_alias_same_url_success(app):
+    """Creating the same custom alias twice for the same URL (ignoring trailing slashes/whitespace) must succeed and return the existing record."""
+    with app.app_context():
+        r1 = url_service.shorten_url("https://www.apple.com/", custom_alias="apple-alias")
+        r2 = url_service.shorten_url("  https://www.apple.com  ", custom_alias="apple-alias")
+        assert r1['id'] == r2['id']
+        assert r1['short_code'] == r2['short_code']
+
+
+def test_custom_alias_expired_reclaimed(app):
+    """Creating an alias that is already taken but has expired must delete the expired record and succeed."""
+    with app.app_context():
+        # Insert a record that is already expired
+        from datetime import datetime, timedelta, timezone
+        from app.utils import db as db_utils
+        
+        db = db_utils.get_db()
+        expired_time = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+        db.execute(
+            "INSERT INTO urls (original_url, short_code, expires_at) VALUES (?, ?, ?)",
+            ("https://www.old-url.com", "reclaim-me", expired_time)
+        )
+        db.commit()
+
+        # Reclaim the alias with a new URL
+        record = url_service.shorten_url("https://www.new-url.com", custom_alias="reclaim-me")
+        assert record['short_code'] == "reclaim-me"
+        assert record['original_url'] == "https://www.new-url.com"

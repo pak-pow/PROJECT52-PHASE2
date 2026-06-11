@@ -1,10 +1,18 @@
 import { createShortLink } from './api/url_api.js';
 
+// SVG Icons templates
+const COPY_SVG = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+const CHECK_SVG = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+const LIGHTNING_SVG = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`;
+const SPINNER_SVG = `<svg class="icon animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;"><circle cx="12" cy="12" r="10" stroke="rgba(255, 255, 255, 0.25)" fill="none"></circle><path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor"></path></svg>`;
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ── DOM refs ────────────────────────────────────────────────
     const form          = document.getElementById('shorten-form');
     const submitBtn     = document.getElementById('submit-btn');
+    const submitBtnIcon = document.getElementById('submit-btn-icon');
+    const submitBtnText = document.getElementById('submit-btn-text');
     const errorBox      = document.getElementById('form-error');
 
     const modal         = document.getElementById('result-modal');
@@ -22,8 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const expiryText    = document.getElementById('expiry-text');
 
     // ── Helpers ─────────────────────────────────────────────────
-    function showError(msg) {
-        errorBox.textContent = msg;
+    function showError(msg, linkUrl = null) {
+        errorBox.innerHTML = '';
+        
+        // Inline Alert/Warning SVG
+        const warningSvg = `<svg class="icon icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+        
+        const svgSpan = document.createElement('span');
+        svgSpan.style.display = 'inline-flex';
+        svgSpan.style.alignItems = 'center';
+        svgSpan.innerHTML = warningSvg;
+        errorBox.appendChild(svgSpan);
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = msg;
+        errorBox.appendChild(textSpan);
+
+        if (linkUrl) {
+            errorBox.appendChild(document.createTextNode(' '));
+            const a = document.createElement('a');
+            a.href = linkUrl;
+            a.target = '_blank';
+            a.textContent = linkUrl;
+            a.style.color = 'var(--warning-color)';
+            a.style.textDecoration = 'underline';
+            a.style.fontWeight = '600';
+            errorBox.appendChild(a);
+        }
         errorBox.classList.remove('hidden');
     }
 
@@ -53,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Reset copy button state
-        copyIcon.textContent = '📋';
+        copyIcon.innerHTML = COPY_SVG;
         copyText.textContent = 'Copy';
         copyBtn.classList.remove('copied');
 
@@ -78,11 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.execCommand('copy');
             document.body.removeChild(ta);
         }
-        copyIcon.textContent = '✅';
+        copyIcon.innerHTML = CHECK_SVG;
         copyText.textContent = 'Copied!';
         copyBtn.classList.add('copied');
         setTimeout(() => {
-            copyIcon.textContent = '📋';
+            copyIcon.innerHTML = COPY_SVG;
             copyText.textContent = 'Copy';
             copyBtn.classList.remove('copied');
         }, 2500);
@@ -125,7 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aliasInput)         payload.custom_alias    = aliasInput;
         if (expiresInHours)     payload.expires_in_hours = expiresInHours;
 
-        submitBtn.textContent = '⏳ Generating…';
+        submitBtnIcon.innerHTML = SPINNER_SVG;
+        submitBtnText.textContent = 'Generating…';
         submitBtn.disabled    = true;
 
         try {
@@ -134,10 +168,16 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(data, expiresInHours);
 
         } catch (err) {
-            showError(err.message);
+            if (err.message.includes('already taken') && aliasInput) {
+                const baseRedirectUrl = 'http://127.0.0.1:5000';
+                showError(err.message + ' View existing link:', `${baseRedirectUrl}/${aliasInput}`);
+            } else {
+                showError(err.message);
+            }
 
         } finally {
-            submitBtn.textContent = '⚡ Generate Short Link';
+            submitBtnIcon.innerHTML = LIGHTNING_SVG;
+            submitBtnText.textContent = 'Generate Short Link';
             submitBtn.disabled    = false;
         }
     });

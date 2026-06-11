@@ -23,7 +23,11 @@
 
         <!-- ── Header ──────────────────────────────────────────────── -->
         <header class="site-header">
-            <span class="logo-icon">⚡</span>
+            <span class="logo-icon">
+                <svg class="icon icon-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 32px; height: 32px; color: var(--primary-color);">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+            </span>
             <h1>URL Engine</h1>
             <p>Project 52 &middot; Phase 2 &mdash; Week 24</p>
         </header>
@@ -56,8 +60,13 @@
 
                 <div id="form-error" class="error-message hidden"></div>
 
-                <button type="submit" class="btn-submit" id="submit-btn">
-                    ⚡ Generate Short Link
+                <button type="submit" class="btn-submit" id="submit-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span id="submit-btn-icon" class="btn-icon-wrapper" style="display: inline-flex; align-items: center;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </span>
+                    <span id="submit-btn-text">Generate Short Link</span>
                 </button>
 
             </form>
@@ -73,7 +82,12 @@
 
             <div class="modal-header">
                 <div class="modal-title">
-                    <div class="success-icon">✅</div>
+                    <div class="success-icon" style="color: var(--success-color);">
+                        <svg class="icon success-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
                     <h2 id="modal-heading">Your link is ready!</h2>
                 </div>
                 <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
@@ -84,8 +98,13 @@
                 <!-- Short URL box with copy button -->
                 <div class="short-url-box">
                     <a id="short-url-link" href="#" target="_blank" rel="noopener noreferrer">—</a>
-                    <button class="btn-copy" id="copy-btn" title="Copy to clipboard">
-                        <span id="copy-icon">📋</span>
+                    <button class="btn-copy" id="copy-btn" title="Copy to clipboard" style="display: inline-flex; align-items: center; gap: 0.375rem;">
+                        <span id="copy-icon" class="copy-icon-wrapper" style="display: inline-flex; align-items: center;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </span>
                         <span id="copy-text">Copy</span>
                     </button>
                 </div>
@@ -100,13 +119,23 @@
                         <span class="meta-label">Clicks:</span>
                         <span class="meta-value" id="meta-clicks">0</span>
                     </div>
-                    <div id="expiry-badge" class="expiry-badge hidden">
-                        ⏳ <span id="expiry-text"></span>
+                    <div id="expiry-badge" class="expiry-badge hidden" style="display: inline-flex; align-items: center; gap: 0.375rem;">
+                        <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span id="expiry-text"></span>
                     </div>
                 </div>
 
                 <!-- New link button -->
-                <button class="btn-new" id="new-link-btn">+ Shorten another link</button>
+                <button class="btn-new" id="new-link-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.375rem;">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Shorten another link
+                </button>
 
             </div>
         </div>
