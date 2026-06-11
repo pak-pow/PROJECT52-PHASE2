@@ -1,21 +1,26 @@
-* {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-color);
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+  background-attachment: fixed;
   color: var(--text-main);
-  line-height: 1.5;
-  padding: 2rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 2rem 1rem;
 }
 
-.text-muted {
-  color: var(--text-muted);
-}
+.text-muted { color: var(--text-muted); }
+.text-subtle { color: var(--text-subtle); }
 
-.hidden {
-  display: none !important;
-}
+/* ── Utility ─────────────────────────────────────────────────── */
+.hidden { display: none !important; }

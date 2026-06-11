@@ -3,51 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
-    
+    <title>URL Engine — Project 52</title>
+    <meta name="description" content="URL Engine: shorten long links into clean, shareable short URLs with optional custom aliases and expiry times.">
+
+    <!-- CSP: only fetch from our own Flask backend -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' http://127.0.0.1:5000;">
+
     <link rel="stylesheet" href="../src/assets/variables.css">
     <link rel="stylesheet" href="../src/assets/base.css">
     <link rel="stylesheet" href="../src/assets/layout.css">
     <link rel="stylesheet" href="../src/assets/components.css">
 </head>
 <body>
-    <div class="container">
-        
-        <header>
+
+    <div class="page-wrapper">
+
+        <!-- ── Header ──────────────────────────────────────────────── -->
+        <header class="site-header">
+            <span class="logo-icon">⚡</span>
             <h1>URL Engine</h1>
-            <p class="text-muted">Project 52 | Phase 2</p>
+            <p>Project 52 &middot; Phase 2 &mdash; Week 24</p>
         </header>
 
+        <!-- ── Shorten Form Card ────────────────────────────────────── -->
         <div class="card">
-            <form id="shorten-form">
+            <form id="shorten-form" novalidate>
+
                 <div class="input-group">
-                    <label for="url">Original URL *</label>
-                    <input type="url" id="url" placeholder="https://www.example.com" required>
+                    <label for="url">Original URL <span style="color:var(--error-color)">*</span></label>
+                    <input type="url" id="url" placeholder="https://www.example.com/very/long/path" autocomplete="off" required>
                 </div>
 
                 <div class="grid-2">
                     <div class="input-group">
-                        <label for="custom-alias">Custom Alias (Optional)</label>
-                        <input type="text" id="custom-alias" placeholder="summer-sale">
+                        <label for="custom-alias">
+                            Custom Alias
+                            <span class="label-hint">(optional)</span>
+                        </label>
+                        <input type="text" id="custom-alias" placeholder="summer-sale" maxlength="20">
                     </div>
                     <div class="input-group">
-                        <label for="expires-in">Expires In (Hours - Optional)</label>
-                        <input type="number" id="expires-in" placeholder="24" min="1">
+                        <label for="expires-in">
+                            Expires In
+                            <span class="label-hint">(hours, optional)</span>
+                        </label>
+                        <input type="number" id="expires-in" placeholder="24" min="1" max="8760">
                     </div>
                 </div>
 
                 <div id="form-error" class="error-message hidden"></div>
-                <button type="submit" class="btn-submit">Generate Short Link</button>
+
+                <button type="submit" class="btn-submit" id="submit-btn">
+                    ⚡ Generate Short Link
+                </button>
+
             </form>
         </div>
 
-        <div class="card result-card hidden" id="result-card">
-            <h3 class="text-muted header-sm">Your Link is Ready</h3>
-            <a id="short-url-result" href="#" target="_blank" class="result-link"></a>
-            <p id="death-clock-display" class="death-clock-text"></p>
+    </div><!-- /.page-wrapper -->
+
+
+    <!-- ── Result Modal ─────────────────────────────────────────────── -->
+    <div class="modal-backdrop" id="result-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+
+        <div class="modal">
+
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="success-icon">✅</div>
+                    <h2 id="modal-heading">Your link is ready!</h2>
+                </div>
+                <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Short URL box with copy button -->
+                <div class="short-url-box">
+                    <a id="short-url-link" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="btn-copy" id="copy-btn" title="Copy to clipboard">
+                        <span id="copy-icon">📋</span>
+                        <span id="copy-text">Copy</span>
+                    </button>
+                </div>
+
+                <!-- Meta info -->
+                <div class="modal-meta">
+                    <div class="meta-row">
+                        <span class="meta-label">Original:</span>
+                        <span class="meta-value" id="meta-original">—</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Clicks:</span>
+                        <span class="meta-value" id="meta-clicks">0</span>
+                    </div>
+                    <div id="expiry-badge" class="expiry-badge hidden">
+                        ⏳ <span id="expiry-text"></span>
+                    </div>
+                </div>
+
+                <!-- New link button -->
+                <button class="btn-new" id="new-link-btn">+ Shorten another link</button>
+
+            </div>
         </div>
 
-    </div>
+    </div><!-- /#result-modal -->
 
     <script type="module" src="../src/main.js"></script>
 </body>
