@@ -1,4 +1,4 @@
-import { createShortLink, getStats } from './api/url_api.js';
+import { createShortLink, getStats, checkHealth } from './api/url_api.js';
 
 // SVG Icons templates
 const COPY_SVG = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
@@ -28,6 +28,99 @@ document.addEventListener('DOMContentLoaded', () => {
     const metaClicks    = document.getElementById('meta-clicks');
     const expiryBadge   = document.getElementById('expiry-badge');
     const expiryText    = document.getElementById('expiry-text');
+
+    // ── Offline Banner refs ──────────────────────────────────────
+    const offlineBanner      = document.getElementById('offline-banner');
+    const offlineBannerBody  = offlineBanner.querySelector('.offline-banner__body');
+    const offlineRetryStatus = document.getElementById('offline-retry-status');
+
+    // ── Connection Monitor ───────────────────────────────────────
+    // Polls /api/health every POLL_INTERVAL ms when the banner is visible.
+    // Shows an amber "offline" banner on failure and a green "reconnected"
+    // flash when the server becomes reachable again.
+    const POLL_INTERVAL_MS = 10_000; // 10 seconds
+    let isOffline = false;
+    let pollTimer = null;
+    let countdownTimer = null;
+    let retrySecondsLeft = 0;
+
+    function startCountdown(seconds) {
+        retrySecondsLeft = seconds;
+        clearInterval(countdownTimer);
+        countdownTimer = setInterval(() => {
+            retrySecondsLeft -= 1;
+            if (retrySecondsLeft <= 0) {
+                offlineRetryStatus.textContent = 'Retrying now…';
+                clearInterval(countdownTimer);
+            } else {
+                offlineRetryStatus.textContent = `Retrying in ${retrySecondsLeft}s…`;
+            }
+        }, 1000);
+    }
+
+    function showOfflineBanner() {
+        offlineBanner.classList.remove('hidden', 'offline-banner--reconnected');
+        offlineBannerBody.querySelector('strong').textContent = 'Backend Offline';
+        offlineBannerBody.querySelector('span').innerHTML =
+            'Cannot reach the server at <code>127.0.0.1:5000</code>. Run <code>python run.py</code> to start it.';
+        startCountdown(POLL_INTERVAL_MS / 1000);
+    }
+
+    function showReconnectedBanner() {
+        offlineBanner.classList.add('offline-banner--reconnected');
+        offlineBannerBody.querySelector('strong').textContent = 'Back Online';
+        offlineBannerBody.querySelector('span').innerHTML =
+            'Connected to <code>127.0.0.1:5000</code>. Everything is working again.';
+        offlineRetryStatus.textContent = '';
+        clearInterval(countdownTimer);
+
+        // Auto-dismiss after 3 s
+        setTimeout(() => {
+            offlineBanner.classList.add('hidden');
+        }, 3000);
+    }
+
+    async function checkConnection() {
+        const alive = await checkHealth();
+
+        if (!alive && !isOffline) {
+            // Transition → offline
+            isOffline = true;
+            showOfflineBanner();
+            // Disable the form while offline
+            submitBtn.disabled = true;
+
+            // Start polling
+            pollTimer = setInterval(async () => {
+                const back = await checkHealth();
+                if (back) {
+                    // Transition → reconnected
+                    isOffline = false;
+                    clearInterval(pollTimer);
+                    showReconnectedBanner();
+                    submitBtn.disabled = false;
+                    loadStats(); // Refresh the table now that we're back
+                } else {
+                    showOfflineBanner(); // Reset countdown
+                }
+            }, POLL_INTERVAL_MS);
+
+        } else if (alive && isOffline) {
+            // Already handled inside the interval above, but guard for the
+            // initial load edge-case where a previous poll resolved first.
+            isOffline = false;
+            clearInterval(pollTimer);
+            showReconnectedBanner();
+            submitBtn.disabled = false;
+        }
+        // alive && !isOffline → do nothing (normal case)
+    }
+
+    // Run the first check immediately on page load
+    checkConnection();
+
+    const statsBody = document.getElementById('stats-body');
+    const refreshBtn = document.getElementById('refresh-stats');
 
     // ── Helpers ─────────────────────────────────────────────────
     function showError(msg, linkUrl = null) {

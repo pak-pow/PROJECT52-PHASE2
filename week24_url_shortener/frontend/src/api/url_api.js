@@ -26,3 +26,20 @@ export async function getStats() {
 
     return data;
 }
+
+/**
+ * Pings the backend health endpoint.
+ * Returns true if the server is reachable, false otherwise.
+ */
+export async function checkHealth() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/health', {
+            method: 'GET',
+            // Short timeout so the banner appears quickly
+            signal: AbortSignal.timeout(3000),
+        });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}

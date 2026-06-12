@@ -81,3 +81,13 @@ def redirect_to_url(short_code):
 def stats():
     records = url_service.get_stats()
     return jsonify(records), 200
+
+
+# ---------------------------------------------------------------------------
+# GET /api/health
+# Lightweight ping used by the frontend to detect server availability.
+# No rate-limit applied — the frontend polls every 10 s when offline.
+# ---------------------------------------------------------------------------
+@url_bp.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'}), 200
