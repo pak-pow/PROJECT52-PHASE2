@@ -47,6 +47,13 @@ def find_by_code(short_code: str) -> dict | None:
     return dict(row) if row else None
 
 
+def delete_by_id(url_id: int) -> None:
+    """Permanently delete a URL record by primary key (used when a link self-destructs)."""
+    db = db_utils.get_db()
+    db.execute("DELETE FROM urls WHERE id = ?", (url_id,))
+    db.commit()
+
+
 def find_by_original_url(original_url: str) -> dict | None:
     """
     Check if an active (non-expired) URL has already been shortened.
@@ -86,9 +93,19 @@ def increment_clicks(short_code: str) -> None:
 
 
 def get_all_urls() -> list[dict]:
-    """Return all URL records (including original_url) ordered by most recently created."""
+    """
+    Return all active (non-expired) URL records, ordered by most recently created.
+    Expired links are excluded — they self-destruct on access and should not appear
+    in the analytics table.
+    """
     db = db_utils.get_db()
     rows = db.execute(
-        "SELECT id, short_code, original_url, clicks, created_at, expires_at FROM urls ORDER BY created_at DESC"
+        """
+        SELECT id, short_code, original_url, clicks, created_at, expires_at
+        FROM urls
+        WHERE expires_at IS NULL
+           OR expires_at > strftime('%Y-%m-%dT%H:%M:%S', 'now')
+        ORDER BY created_at DESC
+        """
     ).fetchall()
     return [dict(row) for row in rows]

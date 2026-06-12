@@ -122,6 +122,7 @@ def resolve_url(short_code: str) -> dict:
     Raises:
         KeyError: If the short code doesn't exist.
         ExpiredURLError: If the link has passed its expiration date.
+            The record is permanently deleted before this is raised.
     """
     record = url_model.find_by_code(short_code)
     if not record:
@@ -132,10 +133,13 @@ def resolve_url(short_code: str) -> dict:
         if expiration_date.tzinfo is None:
             expiration_date = expiration_date.replace(tzinfo=timezone.utc)
         if datetime.now(timezone.utc) > expiration_date:
+            # Self-destruct: permanently remove the record, then report the error.
+            url_model.delete_by_id(record['id'])
             raise ExpiredURLError("This link has self-destructed.")
 
     url_model.increment_clicks(short_code)
     return record
+
 
 
 def get_stats() -> list[dict]:
