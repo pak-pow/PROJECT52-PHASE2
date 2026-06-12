@@ -139,5 +139,5 @@ def resolve_url(short_code: str) -> dict:
 
 
 def get_stats() -> list[dict]:
-    """Return click analytics for all URLs. original_url is excluded by the model."""
+    """Return click analytics for all URLs, including original_url."""
     return url_model.get_all_urls()

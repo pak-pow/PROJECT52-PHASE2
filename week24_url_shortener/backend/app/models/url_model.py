@@ -86,9 +86,9 @@ def increment_clicks(short_code: str) -> None:
 
 
 def get_all_urls() -> list[dict]:
-    """Return all URL records ordered by most recently created."""
+    """Return all URL records (including original_url) ordered by most recently created."""
     db = db_utils.get_db()
     rows = db.execute(
-        "SELECT id, short_code, clicks, created_at, expires_at FROM urls ORDER BY created_at DESC"
+        "SELECT id, short_code, original_url, clicks, created_at, expires_at FROM urls ORDER BY created_at DESC"
     ).fetchall()
     return [dict(row) for row in rows]
