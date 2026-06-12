@@ -1,4 +1,4 @@
-import { createShortLink } from './api/url_api.js';
+import { createShortLink, getStats } from './api/url_api.js';
 
 // SVG Icons templates
 const COPY_SVG = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
@@ -31,19 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Helpers ─────────────────────────────────────────────────
     function showError(msg, linkUrl = null) {
-        errorBox.innerHTML = '';
+        // Warning SVG (styled via .error-message .icon-alert in components.css)
+        const warningSvg = `<svg class="icon icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
         
-        // Inline Alert/Warning SVG
-        const warningSvg = `<svg class="icon icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-        
-        const svgSpan = document.createElement('span');
-        svgSpan.style.display = 'inline-flex';
-        svgSpan.style.alignItems = 'center';
-        svgSpan.innerHTML = warningSvg;
-        errorBox.appendChild(svgSpan);
+        errorBox.innerHTML = warningSvg;
 
         const textSpan = document.createElement('span');
-        textSpan.textContent = msg;
+        textSpan.textContent = ' ' + msg;
         errorBox.appendChild(textSpan);
 
         if (linkUrl) {
@@ -52,9 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
             a.href = linkUrl;
             a.target = '_blank';
             a.textContent = linkUrl;
-            a.style.color = 'var(--warning-color)';
-            a.style.textDecoration = 'underline';
-            a.style.fontWeight = '600';
             errorBox.appendChild(a);
         }
         errorBox.classList.remove('hidden');
@@ -64,6 +55,53 @@ document.addEventListener('DOMContentLoaded', () => {
         errorBox.textContent = '';
         errorBox.classList.add('hidden');
     }
+
+    const statsBody = document.getElementById('stats-body');
+    const refreshBtn = document.getElementById('refresh-stats');
+
+    // Function to fetch and render the table
+    async function loadStats() {
+        try {
+            const records = await getStats();
+            statsBody.innerHTML = ''; // Clear current rows
+
+            if (records.length === 0) {
+                statsBody.innerHTML = `<tr><td colspan="4" class="empty-state">No links generated yet.</td></tr>`;
+                return;
+            }
+
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                
+                // Format the created_at timestamp nicely
+                let formattedDate = record.created_at;
+                if (formattedDate && formattedDate.includes(' ')) {
+                    formattedDate = formattedDate.split(' ')[0];
+                } else if (formattedDate && formattedDate.includes('T')) {
+                    formattedDate = formattedDate.split('T')[0];
+                }
+                
+                row.innerHTML = `
+                    <td><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
+                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${record.original_url}">
+                        <a href="${record.original_url}" target="_blank" rel="noopener noreferrer" style="color: inherit;">${record.original_url}</a>
+                    </td>
+                    <td style="font-weight: bold; color: var(--text-main);">${record.clicks}</td>
+                    <td style="color: var(--text-muted);">${formattedDate}</td>
+                `;
+                statsBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Failed to load stats:", error);
+            statsBody.innerHTML = `<tr><td colspan="4" class="error-message" style="text-align: center; border: none; background: transparent; color: var(--error-color);">Failed to load analytics data.</td></tr>`;
+        }
+    }
+
+    // Initial load
+    loadStats();
+
+    // Wire up the refresh button
+    refreshBtn.addEventListener('click', loadStats);
 
     function openModal(data, expiresInHours) {
         const shortUrl = data.short_url;
@@ -166,6 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await createShortLink(payload);
             form.reset();
             openModal(data, expiresInHours);
+            loadStats(); // Refresh the analytics table to show the new link
 
         } catch (err) {
             if (err.message.includes('already taken') && aliasInput) {

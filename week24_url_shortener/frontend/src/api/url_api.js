@@ -15,3 +15,14 @@ export async function createShortLink(payload) {
 
     return data;
 }
+
+export async function getStats() {
+    const response = await fetch(`${API_BASE_URL}/stats`);
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || `HTTP Error: ${response.status}`);
+    }
+
+    return data;
+}

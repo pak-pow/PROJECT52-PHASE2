@@ -107,12 +107,18 @@
   width: 36px;
   height: 36px;
   background: var(--success-bg);
+  color: var(--success-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   flex-shrink: 0;
+}
+
+.modal-title .success-icon .icon {
+  width: 20px;
+  height: 20px;
 }
 
 .modal-title h2 {
@@ -252,11 +258,35 @@
   font-size: 0.875rem;
   font-weight: 500;
   transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
 }
 
 .btn-new:hover {
   background: var(--border-color);
   color: var(--text-main);
+}
+
+.btn-new .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.expiry-badge .icon-clock {
+  width: 14px;
+  height: 14px;
+}
+
+.copy-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.copy-icon-wrapper .icon {
+  width: 14px;
+  height: 14px;
 }
 
 @media (max-width: 480px) {
