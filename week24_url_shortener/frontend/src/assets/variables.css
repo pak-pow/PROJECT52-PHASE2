@@ -16,20 +16,26 @@
   --border-color: #1e293b;
   --border-subtle: #334155;
   --border-focus: #6366f1;
-  --border-radius: 12px;
-  --border-radius-sm: 8px;
+
+  /* Radius scale — larger values everywhere for a softer feel */
+  --border-radius-xs:  6px;
+  --border-radius-sm: 10px;
+  --border-radius:    16px;
+  --border-radius-lg: 20px;
+  --border-radius-xl: 28px;
+
   --transition: 0.2s ease;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
   --shadow-md: 0 8px 30px rgba(0,0,0,0.5);
   --shadow-lg: 0 25px 60px rgba(0,0,0,0.7);
 
   /* Typography scale */
-  --font-xs: 0.75rem;
-  --font-sm: 0.8125rem;
+  --font-xs:   0.75rem;
+  --font-sm:   0.8125rem;
   --font-base: 0.875rem;
-  --font-md: 0.9375rem;
-  --font-lg: 1.125rem;
-  --font-xl: 1.25rem;
+  --font-md:   0.9375rem;
+  --font-lg:   1.125rem;
+  --font-xl:   1.25rem;
 
   /* Spacing */
   --space-xs: 0.375rem;
