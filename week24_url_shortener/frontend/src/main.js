@@ -180,6 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
     checkConnection();
 
     // ── Modal ─────────────────────────────────────────────────────
+    // Guard: track when the modal was opened so accidental backdrop clicks
+    // or stray keyboard events within the first 400 ms cannot close it.
+    let modalOpenedAt = 0;
+
     function openModal(data, expiresInHours) {
         const shortUrl = data.short_url;
         shortUrlLink.href        = shortUrl;
@@ -198,11 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
         copyIcon.innerHTML   = COPY_SVG;
         copyText.textContent = 'Copy';
         copyBtn.classList.remove('copied');
+        modalOpenedAt = Date.now();
         modal.classList.add('open');
     }
 
     function closeModal() {
+        // Ignore close requests that arrive within 400 ms of the modal opening.
+        // This prevents stray events (queued clicks, focus events) from
+        // instantly dismissing the modal right after a successful submission.
+        if (Date.now() - modalOpenedAt < 400) return;
         modal.classList.remove('open');
+        // Re-enable the submit button now that the user has dismissed the modal.
+        submitBtn.disabled = false;
     }
 
     // ── Copy to clipboard ─────────────────────────────────────────
@@ -237,8 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── Form submit ───────────────────────────────────────────────
+    let isSubmitting = false;  // guard against double-submission
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;  // ignore re-entrant submissions
+        isSubmitting = true;
         clearError();
 
         const urlInput       = document.getElementById('url').value.trim();
@@ -248,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!urlInput) {
             showError('Please enter a URL.');
+            isSubmitting = false;
             return;
         }
 
@@ -259,10 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtnText.textContent = 'Generating…';
         submitBtn.disabled = true;
 
+        let succeeded = false;
         try {
             const data = await createShortLink(payload);
-            form.reset();
+            succeeded = true;
             openModal(data, expiresInHours);
+            form.reset();   // reset AFTER modal opens so focus moves to modal
             loadStats();
         } catch (err) {
             if (err.message.includes('already taken') && aliasInput) {
@@ -271,9 +289,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 showError(err.message);
             }
         } finally {
+            isSubmitting = false;
             submitBtnIcon.innerHTML  = LIGHTNING_SVG;
             submitBtnText.textContent = 'Generate Short Link';
-            submitBtn.disabled = false;
+            // Only re-enable the button if the modal is NOT showing.
+            // When the modal IS open, the button will be re-enabled by closeModal
+            // (via the "Shorten another link" button flow) so the form is ready
+            // for the next entry without disrupting the modal.
+            if (!succeeded) {
+                submitBtn.disabled = false;
+            }
         }
     });
 });
