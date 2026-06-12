@@ -120,6 +120,24 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     refreshBtn.addEventListener('click', loadStats);
 
+    // Optimistically update clicks in UI and sync with server when a short link is clicked
+    statsBody.addEventListener('click', (e) => {
+        const link = e.target.closest('.col-code a');
+        if (link) {
+            const row = link.closest('tr');
+            const clicksCell = row.querySelector('.col-clicks');
+            if (clicksCell) {
+                const currentClicks = parseInt(clicksCell.textContent, 10) || 0;
+                clicksCell.innerHTML = `<span class="pulse-highlight">${currentClicks + 1}</span>`;
+            }
+            // Sync with backend after 1 second (allows redirect to record click on server)
+            setTimeout(loadStats, 1000);
+        }
+    });
+
+    // Refresh stats in the background whenever the user switches back to this tab (window focus)
+    window.addEventListener('focus', loadStats);
+
     // ── Connection Monitor ────────────────────────────────────────
     // On page load, pings /api/health. If unreachable: shows the offline modal
     // with a live countdown and disables the form.

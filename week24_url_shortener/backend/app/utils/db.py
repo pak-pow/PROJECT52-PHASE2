@@ -1,12 +1,15 @@
 import sqlite3
 import os
+import tempfile
 from flask import g
 
 # Anchor everything to the backend/ directory
 # db.py lives at: backend/app/utils/db.py
 # So 2 levels up (.., ..) reaches backend/
 BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-DB_PATH     = os.path.join(BACKEND_DIR, 'data', 'database.db')
+# Use a system temp directory for the SQLite database so that writes to it
+# do not trigger VS Code Live Server file change detection and reload the browser page.
+DB_PATH     = os.environ.get('DATABASE_PATH') or os.path.join(tempfile.gettempdir(), 'project52_url_shortener.db')
 SCHEMA_PATH = os.path.join(BACKEND_DIR, 'data', 'schema.sql')
 
 

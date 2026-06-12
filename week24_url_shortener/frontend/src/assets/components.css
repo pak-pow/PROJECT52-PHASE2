@@ -298,6 +298,17 @@ input:focus {
   line-height: 1;
 }
 
+@keyframes pulse-highlight-green {
+  0% { transform: scale(1); color: var(--success-color); text-shadow: 0 0 8px var(--success-color); }
+  50% { transform: scale(1.25); color: var(--success-color); text-shadow: 0 0 12px var(--success-color); }
+  100% { transform: scale(1); color: var(--text-main); text-shadow: none; }
+}
+
+.pulse-highlight {
+  display: inline-block;
+  animation: pulse-highlight-green 0.8s ease-out;
+}
+
 /* Empty / error states */
 .empty-state {
   text-align: center;
