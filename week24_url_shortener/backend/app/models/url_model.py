@@ -92,6 +92,15 @@ def increment_clicks(short_code: str) -> None:
     db.commit()
 
 
+def delete_expired_urls() -> None:
+    """Permanently delete all expired URL records from the database."""
+    db = db_utils.get_db()
+    db.execute(
+        "DELETE FROM urls WHERE expires_at IS NOT NULL AND expires_at < strftime('%Y-%m-%dT%H:%M:%S', 'now')"
+    )
+    db.commit()
+
+
 def get_all_urls() -> list[dict]:
     """
     Return all active (non-expired) URL records, ordered by most recently created.

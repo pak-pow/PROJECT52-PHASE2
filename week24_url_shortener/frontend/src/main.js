@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsBody     = document.getElementById('stats-body');
     const refreshBtn    = document.getElementById('refresh-stats');
 
-    // ── Offline Banner refs ───────────────────────────────────────
+    // ── Connection Monitor refs ───────────────────────────────────
     const offlineBanner      = document.getElementById('offline-banner');
     const offlineBannerBody  = offlineBanner.querySelector('.offline-banner__body');
     const offlineRetryStatus = document.getElementById('offline-retry-status');
+    const offlineModal       = document.getElementById('offline-modal');
+    const offlineModalRetry  = document.getElementById('offline-modal-retry-text');
 
     // ── Helpers ───────────────────────────────────────────────────
     function showError(msg, linkUrl = null) {
@@ -81,13 +83,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     formattedDate = formattedDate.split(dateSep)[0];
                 }
 
+                // Expiry info badge
+                let expiryInfo = '';
+                if (record.expires_at) {
+                    const expiryDate = new Date(record.expires_at);
+                    const now = new Date();
+                    const diffMs = expiryDate - now;
+                    if (diffMs > 0) {
+                        const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+                        expiryInfo = `<div class="table-expiry-badge" title="Expires at ${record.expires_at}">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:2px"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            ${diffHours}h left
+                        </div>`;
+                    }
+                }
+
                 row.innerHTML = `
                     <td class="col-code"><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
                     <td class="col-url" title="${record.original_url}">
                         <a href="${record.original_url}" target="_blank" rel="noopener noreferrer">${record.original_url}</a>
                     </td>
                     <td class="col-clicks">${record.clicks}</td>
-                    <td class="col-date">${formattedDate}</td>
+                    <td class="col-date">
+                        <div class="col-date-text">${formattedDate}</div>
+                        ${expiryInfo}
+                    </td>
                 `;
                 statsBody.appendChild(row);
             });
@@ -101,10 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshBtn.addEventListener('click', loadStats);
 
     // ── Connection Monitor ────────────────────────────────────────
-    // On page load, pings /api/health. If unreachable: shows an amber
-    // "Backend Offline" banner with a live countdown and disables the form.
-    // Polls every 10 s; when the server comes back it flashes a green
-    // "Back Online" banner for 3 s then dismisses itself automatically.
+    // On page load, pings /api/health. If unreachable: shows the offline modal
+    // with a live countdown and disables the form.
+    // Polls every 10 s; when the server comes back it hides the modal and re-enables.
     const POLL_INTERVAL_MS = 10_000;
     let isOffline        = false;
     let pollTimer        = null;
@@ -117,23 +136,31 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownTimer = setInterval(() => {
             retrySecondsLeft -= 1;
             if (retrySecondsLeft <= 0) {
-                offlineRetryStatus.textContent = 'Retrying now…';
+                if (offlineModalRetry) offlineModalRetry.textContent = 'Retrying now…';
+                if (offlineRetryStatus) offlineRetryStatus.textContent = 'Retrying now…';
                 clearInterval(countdownTimer);
             } else {
-                offlineRetryStatus.textContent = `Retrying in ${retrySecondsLeft}s…`;
+                if (offlineModalRetry) offlineModalRetry.textContent = `Retrying connection in ${retrySecondsLeft}s…`;
+                if (offlineRetryStatus) offlineRetryStatus.textContent = `Retrying in ${retrySecondsLeft}s…`;
             }
         }, 1000);
     }
 
-    function showOfflineBanner() {
+    function showOfflineState() {
         offlineBanner.classList.remove('hidden', 'offline-banner--reconnected');
         offlineBannerBody.querySelector('strong').textContent = 'Backend Offline';
         offlineBannerBody.querySelector('span').innerHTML =
             'Cannot reach the server at <code>127.0.0.1:5000</code>. Run <code>python run.py</code> to start it.';
+
+        offlineModal.classList.add('open');
+        if (offlineModalRetry) offlineModalRetry.textContent = `Retrying connection in ${POLL_INTERVAL_MS / 1000}s…`;
+
         startCountdown(POLL_INTERVAL_MS / 1000);
     }
 
-    function showReconnectedBanner() {
+    function showReconnectedState() {
+        offlineModal.classList.remove('open');
+
         offlineBanner.classList.remove('hidden');
         offlineBanner.classList.add('offline-banner--reconnected');
         offlineBannerBody.querySelector('strong').textContent = 'Back Online';
@@ -148,9 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const alive = await checkHealth();
 
         if (!alive && !isOffline) {
-            // Just went offline
             isOffline = true;
-            showOfflineBanner();
+            showOfflineState();
             submitBtn.disabled = true;
 
             pollTimer = setInterval(async () => {
@@ -158,26 +184,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (back) {
                     isOffline = false;
                     clearInterval(pollTimer);
-                    showReconnectedBanner();
+                    showReconnectedState();
                     submitBtn.disabled = false;
                     loadStats();
                 } else {
-                    showOfflineBanner(); // resets the countdown
+                    showOfflineState();
                 }
             }, POLL_INTERVAL_MS);
 
         } else if (alive && isOffline) {
-            // Edge-case: came back online between polls
             isOffline = false;
             clearInterval(pollTimer);
-            showReconnectedBanner();
+            showReconnectedState();
             submitBtn.disabled = false;
         }
-        // alive && !isOffline → server is fine, do nothing
     }
 
-    // Run immediately on load
     checkConnection();
+
+    // Periodically monitor connection when online
+    setInterval(async () => {
+        if (!isOffline) {
+            const alive = await checkHealth();
+            if (!alive) {
+                checkConnection();
+            }
+        }
+    }, 15000);
 
     // ── Modal ─────────────────────────────────────────────────────
     // Guard: track when the modal was opened so accidental backdrop clicks
@@ -189,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shortUrlLink.href        = shortUrl;
         shortUrlLink.textContent = shortUrl;
         metaOriginal.textContent = data.original_url;
+        metaOriginal.href        = data.original_url;
         metaOriginal.title       = data.original_url;
         metaClicks.textContent   = data.clicks ?? 0;
 

@@ -164,7 +164,7 @@
                 <div class="modal-meta">
                     <div class="meta-row">
                         <span class="meta-label">Original:</span>
-                        <span class="meta-value" id="meta-original">—</span>
+                        <a class="meta-value" id="meta-original" href="#" target="_blank" rel="noopener noreferrer">—</a>
                     </div>
                     <div class="meta-row">
                         <span class="meta-label">Clicks:</span>
@@ -192,6 +192,37 @@
         </div>
 
     </div><!-- /#result-modal -->
+
+    <!-- ── Offline Modal ────────────────────────────────────────────── -->
+    <div class="modal-backdrop modal-backdrop--offline" id="offline-modal" role="dialog" aria-modal="true" aria-labelledby="offline-heading">
+        <div class="modal modal--offline">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="warning-icon">
+                        <svg class="icon warning-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h2 id="offline-heading">Connection Lost</h2>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="offline-message">
+                    Cannot reach the backend server at <code>127.0.0.1:5000</code>.
+                </p>
+                <div class="offline-instructions">
+                    <p>Please ensure the Flask server is running. You can start it by running this command in your terminal:</p>
+                    <pre class="command-box"><code>python run.py</code></pre>
+                </div>
+                <div class="offline-status">
+                    <div class="spinner-small"></div>
+                    <span id="offline-modal-retry-text">Retrying connection in 10s…</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="../src/main.js"></script>
 </body>
