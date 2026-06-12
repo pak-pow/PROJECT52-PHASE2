@@ -66,15 +66,33 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadStats() {
         try {
             const records = await getStats();
-            statsBody.innerHTML = '';
 
             if (records.length === 0) {
                 statsBody.innerHTML = `<tr><td colspan="4" class="empty-state">No links generated yet.</td></tr>`;
                 return;
             }
 
-            records.forEach(record => {
-                const row = document.createElement('tr');
+            // Remove empty state if it was showing
+            const emptyState = statsBody.querySelector('.empty-state');
+            if (emptyState) {
+                statsBody.innerHTML = '';
+            }
+
+            // Keep track of active codes to remove any that were deleted/expired
+            const activeCodes = new Set(records.map(r => r.short_code));
+            Array.from(statsBody.querySelectorAll('tr')).forEach(row => {
+                const code = row.getAttribute('data-code');
+                if (code && !activeCodes.has(code)) {
+                    row.remove();
+                }
+            });
+
+            if (statsBody.children.length === 0 && records.length > 0) {
+                statsBody.innerHTML = '';
+            }
+
+            records.forEach((record, index) => {
+                let row = statsBody.querySelector(`tr[data-code="${record.short_code}"]`);
 
                 // Keep only the date portion of the timestamp
                 let formattedDate = record.created_at || '—';
@@ -98,22 +116,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                row.innerHTML = `
-                    <td class="col-code"><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
-                    <td class="col-url" title="${record.original_url}">
-                        <a href="${record.original_url}" target="_blank" rel="noopener noreferrer">${record.original_url}</a>
-                    </td>
-                    <td class="col-clicks">${record.clicks}</td>
-                    <td class="col-date">
+                if (!row) {
+                    // Create new row
+                    row = document.createElement('tr');
+                    row.setAttribute('data-code', record.short_code);
+                    row.innerHTML = `
+                        <td class="col-code"><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
+                        <td class="col-url" title="${record.original_url}">
+                            <a href="${record.original_url}" target="_blank" rel="noopener noreferrer">${record.original_url}</a>
+                        </td>
+                        <td class="col-clicks">${record.clicks}</td>
+                        <td class="col-date">
+                            <div class="col-date-text">${formattedDate}</div>
+                            ${expiryInfo}
+                        </td>
+                    `;
+                    // Maintain ordering (records are sorted DESC by created_at)
+                    if (index === 0) {
+                        statsBody.prepend(row);
+                    } else {
+                        statsBody.appendChild(row);
+                    }
+                } else {
+                    // Update cells in-place
+                    const clicksCell = row.querySelector('.col-clicks');
+                    const oldClicks = parseInt(clicksCell.textContent, 10) || 0;
+                    if (oldClicks !== record.clicks) {
+                        clicksCell.innerHTML = `<span class="pulse-highlight">${record.clicks}</span>`;
+                    }
+
+                    const dateCell = row.querySelector('.col-date');
+                    const newDateHtml = `
                         <div class="col-date-text">${formattedDate}</div>
                         ${expiryInfo}
-                    </td>
-                `;
-                statsBody.appendChild(row);
+                    `;
+                    if (dateCell.innerHTML.trim() !== newDateHtml.trim()) {
+                        dateCell.innerHTML = newDateHtml;
+                    }
+                }
             });
+
+            if (statsBody.children.length === 0) {
+                statsBody.innerHTML = `<tr><td colspan="4" class="empty-state">No links generated yet.</td></tr>`;
+            }
         } catch (error) {
             console.error('Failed to load stats:', error);
-            statsBody.innerHTML = `<tr><td colspan="4" class="table-error">Failed to load analytics data.</td></tr>`;
+            if (statsBody.children.length === 0 || statsBody.querySelector('.empty-state')) {
+                statsBody.innerHTML = `<tr><td colspan="4" class="table-error">Failed to load analytics data.</td></tr>`;
+            }
         }
     }
 
@@ -137,6 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Refresh stats in the background whenever the user switches back to this tab (window focus)
     window.addEventListener('focus', loadStats);
+
+    // Periodically poll stats in the background every 3 seconds when the tab is visible
+    setInterval(() => {
+        if (document.visibilityState === 'visible' && !isOffline) {
+            loadStats();
+        }
+    }, 3000);
 
     // ── Connection Monitor ────────────────────────────────────────
     // On page load, pings /api/health. If unreachable: shows the offline modal
