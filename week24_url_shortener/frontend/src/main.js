@@ -73,27 +73,26 @@ document.addEventListener('DOMContentLoaded', () => {
             records.forEach(record => {
                 const row = document.createElement('tr');
                 
-                // Format the created_at timestamp nicely
-                let formattedDate = record.created_at;
-                if (formattedDate && formattedDate.includes(' ')) {
-                    formattedDate = formattedDate.split(' ')[0];
-                } else if (formattedDate && formattedDate.includes('T')) {
-                    formattedDate = formattedDate.split('T')[0];
+                // Format the created_at timestamp: keep only the date part
+                let formattedDate = record.created_at || '—';
+                const dateSep = formattedDate.includes('T') ? 'T' : ' ';
+                if (formattedDate.includes(dateSep)) {
+                    formattedDate = formattedDate.split(dateSep)[0];
                 }
-                
+
                 row.innerHTML = `
-                    <td><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
-                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${record.original_url}">
-                        <a href="${record.original_url}" target="_blank" rel="noopener noreferrer" style="color: inherit;">${record.original_url}</a>
+                    <td class="col-code"><a href="http://127.0.0.1:5000/${record.short_code}" target="_blank" rel="noopener noreferrer">/${record.short_code}</a></td>
+                    <td class="col-url" title="${record.original_url}">
+                        <a href="${record.original_url}" target="_blank" rel="noopener noreferrer">${record.original_url}</a>
                     </td>
-                    <td style="font-weight: bold; color: var(--text-main);">${record.clicks}</td>
-                    <td style="color: var(--text-muted);">${formattedDate}</td>
+                    <td class="col-clicks">${record.clicks}</td>
+                    <td class="col-date">${formattedDate}</td>
                 `;
                 statsBody.appendChild(row);
             });
         } catch (error) {
             console.error("Failed to load stats:", error);
-            statsBody.innerHTML = `<tr><td colspan="4" class="error-message" style="text-align: center; border: none; background: transparent; color: var(--error-color);">Failed to load analytics data.</td></tr>`;
+            statsBody.innerHTML = `<tr><td colspan="4" class="table-error">Failed to load analytics data.</td></tr>`;
         }
     }
 
