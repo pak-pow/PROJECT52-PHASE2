@@ -127,8 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </td>
                         <td class="col-clicks">${record.clicks}</td>
                         <td class="col-date">
-                            <div class="col-date-text">${formattedDate}</div>
-                            ${expiryInfo}
+                            <div class="date-wrapper">
+                                <div class="col-date-text">${formattedDate}</div>
+                                ${expiryInfo}
+                            </div>
                         </td>
                     `;
                     // Maintain ordering (records are sorted DESC by created_at)
@@ -147,8 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const dateCell = row.querySelector('.col-date');
                     const newDateHtml = `
-                        <div class="col-date-text">${formattedDate}</div>
-                        ${expiryInfo}
+                        <div class="date-wrapper">
+                            <div class="col-date-text">${formattedDate}</div>
+                            ${expiryInfo}
+                        </div>
                     `;
                     if (dateCell.innerHTML.trim() !== newDateHtml.trim()) {
                         dateCell.innerHTML = newDateHtml;

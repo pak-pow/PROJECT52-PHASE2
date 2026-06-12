@@ -278,6 +278,10 @@ input:focus {
   color: var(--text-muted);
   font-size: var(--font-xs);
   white-space: nowrap;
+  vertical-align: middle;
+}
+
+.stats-table .col-date .date-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
