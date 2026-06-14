@@ -24,5 +24,9 @@ def validate_recipe_data(data: dict) -> dict: # type: ignore
     }
     
 def allowed_file(filename: str, allowed_extensions: str) -> bool: #type:ignore
-    pass
     
+    if not filename or '.' not in filename:
+        return False
+    
+    ext = filename.rsplit('.', 1)[1].lower()
+    return ext in allowed_extensions
