@@ -3,4 +3,15 @@ import os
 class ValidationError(Exception): pass
 
 def validate_recipe_data(data: dict) -> dict: # type: ignore
-    pass
+    
+    # makes sure that the incoming payload has all the required fields
+    required_fields = [
+        'title',
+        'description',
+        'ingredients',
+        'instructions'
+        ]
+    
+    for field in required_fields:
+        if field not in data or not str(data[field]).strip():
+            raise ValidationError(f"{field} is required and cannot be empty")
