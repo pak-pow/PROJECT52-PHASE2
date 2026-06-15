@@ -39,10 +39,10 @@ def create_recipe():
     try:
         new_recipe = recipe_model.insert_recipe(
             title=clean_data['title'],
-            description=clean_data['description'],
-            ingredients=clean_data['ingredients'],
-            instructions=clean_data['instructions'],
-            image_filename=image_filename
+            description = clean_data['description'],
+            ingredients = clean_data['ingredients'],
+            instructions = clean_data['instructions'],
+            image_filename = image_filename # type: ignore
         )
         return jsonify(new_recipe), 201
     except Exception as e:
