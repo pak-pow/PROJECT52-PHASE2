@@ -1,6 +1,6 @@
 import os 
 import uuid
-from flask import Blueprint, request, jsonify, current_app #type: ignore
+from flask import Blueprint, request, jsonify, current_app, send_from_directory #type: ignore
 from werkzeug.utils import secure_filename #type: ignore
 from app.services import recipe_service
 from app.models import recipe_model
@@ -47,3 +47,20 @@ def create_recipe():
         return jsonify(new_recipe), 201
     except Exception as e:
         return jsonify({'error': 'Database error occurred.'}), 500
+
+@recipe_bp.route('/api/recipes', methods=['GET'])
+def list_recipes():
+    try:
+        recipes = recipe_model.get_all_recipes()
+        
+        # In a production app, we would add pagination here (e.g., limit 20 per page)
+        return jsonify(recipes), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch recipes from the database.'}), 500
+
+@recipe_bp.route('/uploads/<filename>', methods=['GET'])
+def get_uploaded_image(filename):
+    """
+    Safely streams an image from the server's upload directory to the browser.
+    """
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
