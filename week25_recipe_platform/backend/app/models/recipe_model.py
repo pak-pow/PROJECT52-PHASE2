@@ -26,3 +26,9 @@ def get_all_recipes() -> list:
     
     # Convert the SQLite Row objects into a list of standard Python dictionaries
     return [dict(row) for row in cursor.fetchall()]
+
+def delete_recipe(recipe_id: int) -> bool: #type: ignore
+    conn = db.get_db()
+    cursor = conn.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
+    conn.commit()
+    return cursor.rowcount > 0
