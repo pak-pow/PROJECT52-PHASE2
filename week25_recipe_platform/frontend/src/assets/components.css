@@ -21,8 +21,9 @@ button {
   background-color: var(--danger-color);
   color: white;
   padding: 0.5rem 0.75rem;
-  float: right;
+  align-self: flex-end; 
   font-size: 0.875rem;
+  margin-bottom: 1rem;
 }
 
 .delete-btn:hover {

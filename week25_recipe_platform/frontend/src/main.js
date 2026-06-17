@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const imgSrc = recipe.image_filename 
                     ? `http://127.0.0.1:5000/uploads/${recipe.image_filename}` 
-                    : 'https://via.placeholder.com/300x200?text=No+Image';
+                    : 'https://placehold.co/600x400/1e293b/94a3b8?text=No+Image';
 
                 card.innerHTML = `
                     <button class="delete-btn" data-id="${recipe.id}">Delete</button>
