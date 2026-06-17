@@ -64,3 +64,29 @@ def get_uploaded_image(filename):
     Safely streams an image from the server's upload directory to the browser.
     """
     return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+
+@recipe_bp.route('/api/recipes/<int:recipe_id>', methods=['GET'])
+def get_single_recipe(recipe_id):
+    recipe = recipe_model.get_recipe_by_id(recipe_id)
+
+    if not recipe:
+        return jsonify({'error': 'Recipe not found'}), 404
+    return jsonify(recipe), 200
+
+@recipe_bp.route('/api/recipes/<int:recipe_id>', methods=['DELETE'])
+def delete_recipe(recipe_id):
+    recipe = recipe_model.get_recipe_by_id(recipe_id)
+
+    if not recipe:
+        return jsonify({'error': 'Recipe not found'}), 404
+
+    if recipe['image_filename']:
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], recipe['image_filename'])
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+    success = recipe_model.delete_recipe(recipe_id)
+    if success:
+        return jsonify({'message': 'Recipe deleted successfully'}), 200
+        
+    return jsonify({'error': 'Failed to delete from database'}), 500
