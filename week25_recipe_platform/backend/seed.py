@@ -134,6 +134,13 @@ def seed():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
 
+    # Idempotency guard: skip if already seeded
+    existing = conn.execute("SELECT COUNT(*) FROM recipes").fetchone()[0]
+    if existing > 0:
+        print(f"Database already has {existing} recipe(s). Skipping seed to avoid duplicates.")
+        conn.close()
+        return
+
     inserted = 0
     for recipe in SAMPLE_RECIPES:
         conn.execute(
