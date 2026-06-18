@@ -23,6 +23,46 @@
 
     </div>
 
+    <div id="recipe-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Recipe</h2>
+                <button id="close-modal-btn" class="icon-btn">&times;</button>
+            </div>
+            
+            <form id="add-recipe-form">
+                <div class="form-group">
+                    <label for="title">Recipe Title</label>
+                    <input type="text" id="title" name="title" required placeholder="e.g. Classic Carbonara">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Short Description</label>
+                    <input type="text" id="description" name="description" required placeholder="A brief summary...">
+                </div>
+
+                <div class="form-group">
+                    <label for="ingredients">Ingredients (one per line)</label>
+                    <textarea id="ingredients" name="ingredients" rows="4" required placeholder="400g spaghetti&#10;200g pancetta..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea id="instructions" name="instructions" rows="4" required placeholder="1. Boil water...&#10;2. Fry pancetta..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Recipe Photo</label>
+                    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/webp">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" id="submit-recipe-btn" class="btn-primary">Save Recipe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script type="module" src="../src/main.js"></script>
 </body>
 </html>
