@@ -49,6 +49,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize the grid on page load
     loadGrid();
+    const modal = document.getElementById('recipe-modal');
+    const addBtn = document.getElementById('add-recipe-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const form = document.getElementById('add-recipe-form');
+    const submitBtn = document.getElementById('submit-recipe-btn');
+
+    addBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        form.reset(); 
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        submitBtn.textContent = 'Uploading...';
+        submitBtn.disabled = true;
+
+        try {
+            const payload = new FormData(form);
+            await createRecipe(payload);
+            
+            modal.classList.add('hidden');
+            form.reset();
+            loadGrid();
+            
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert(`Error: ${error.message}`);
+        } finally {
+            submitBtn.textContent = 'Save Recipe';
+            submitBtn.disabled = false;
+        }
+    });
 });
