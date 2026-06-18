@@ -1,11 +1,13 @@
 :root {
   --bg-color: #0f172a;
   --surface-color: #1e293b;
+  --surface-hover: #263347;
   --border-color: #334155;
   --primary-color: #3b82f6;
   --primary-hover: #2563eb;
   --danger-color: #ef4444;
   --danger-hover: #dc2626;
+  --success-color: #16a34a;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-radius: 8px;
