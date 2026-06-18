@@ -2,6 +2,17 @@ import { fetchRecipes, createRecipe, updateRecipe, deleteRecipe } from './api/re
 import { API_BASE } from './config.js';
 
 // ============================================================
+// Lucide icon SVG strings (used inside dynamically built innerHTML)
+// Keeps dynamic card buttons icon-consistent with the rest of the UI.
+// ============================================================
+const ICON = {
+    pencil:  `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
+    trash:   `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
+    chevLeft:  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+    chevRight: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+};
+
+// ============================================================
 // State
 // ============================================================
 let currentPage = 1;
@@ -173,8 +184,8 @@ function buildCard(recipe) {
     // All recipe fields are escaped before inserting into innerHTML (XSS fix)
     card.innerHTML = `
         <div class="card-actions">
-            <button class="edit-btn"   data-id="${recipe.id}" aria-label="Edit ${escapeHtml(recipe.title)}">Edit</button>
-            <button class="delete-btn" data-id="${recipe.id}" aria-label="Delete ${escapeHtml(recipe.title)}">Delete</button>
+            <button class="edit-btn"   data-id="${recipe.id}" aria-label="Edit ${escapeHtml(recipe.title)}">${ICON.pencil} Edit</button>
+            <button class="delete-btn" data-id="${recipe.id}" aria-label="Delete ${escapeHtml(recipe.title)}">${ICON.trash} Delete</button>
         </div>
         <img
             src="${escapeHtml(imgSrc)}"
@@ -232,9 +243,9 @@ function buildPagination(page, pages) {
 
     pagination.classList.remove('hidden');
     pagination.innerHTML = `
-        <button class="pagination-btn" id="prev-btn" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+        <button class="pagination-btn" id="prev-btn" ${page <= 1 ? 'disabled' : ''}>${ICON.chevLeft} Prev</button>
         <span class="pagination-info">Page ${page} of ${pages}</span>
-        <button class="pagination-btn" id="next-btn" ${page >= pages ? 'disabled' : ''}>Next →</button>
+        <button class="pagination-btn" id="next-btn" ${page >= pages ? 'disabled' : ''}>Next ${ICON.chevRight}</button>
     `;
 
     pagination.querySelector('#prev-btn').addEventListener('click', () => {
@@ -268,6 +279,9 @@ async function loadGrid() {
         data.recipes.forEach(recipe => grid.appendChild(buildCard(recipe)));
         buildPagination(data.page, data.pages);
 
+        // Initialise Lucide icons injected into static HTML (header, view modal headings etc.)
+        if (window.lucide) window.lucide.createIcons();
+
     } catch (error) {
         console.error(error);
         grid.innerHTML = '<p class="text-danger">Failed to load server data. Is Flask running?</p>';
@@ -291,7 +305,7 @@ form.addEventListener('submit', async (e) => {
         closeModal(modal, form);
         currentPage = 1; // jump to first page to see new recipe
         loadGrid();
-        showToast('Recipe added successfully! 🎉', 'success');
+        showToast('Recipe added successfully!', 'success');
     } catch (error) {
         console.error('Upload failed:', error);
         showToast(`Error: ${error.message}`, 'error');
@@ -318,7 +332,7 @@ editForm.addEventListener('submit', async (e) => {
         await updateRecipe(id, new FormData(editForm));
         closeModal(editModal, editForm);
         loadGrid();
-        showToast('Recipe updated successfully! ✏️', 'success');
+        showToast('Recipe updated successfully!', 'success');
     } catch (error) {
         console.error('Update failed:', error);
         showToast(`Error: ${error.message}`, 'error');
@@ -332,4 +346,8 @@ editForm.addEventListener('submit', async (e) => {
 // Init
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', () => loadGrid());
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialise Lucide icons that are present in the static HTML on first load
+    if (window.lucide) window.lucide.createIcons();
+    loadGrid();
+});
