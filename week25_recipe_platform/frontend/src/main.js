@@ -1,4 +1,5 @@
 import { fetchRecipes, deleteRecipe } from './api/recipe_api.js';
+import { fetchRecipes, createRecipe, deleteRecipe } from './api/recipe_api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('recipe-grid');
