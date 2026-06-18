@@ -120,6 +120,37 @@
         </div>
     </div>
 
+    <!-- ===== View Recipe Modal ===== -->
+    <div id="view-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="view-modal-title">
+        <div class="modal-content view-modal-content">
+            <div class="modal-header">
+                <h2 id="view-modal-title" class="view-modal-title">Recipe</h2>
+                <button id="close-view-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+
+            <img id="view-modal-img" src="" alt="" class="view-modal-img">
+
+            <p id="view-modal-description" class="view-modal-description"></p>
+
+            <div class="view-modal-sections">
+                <section class="view-section">
+                    <h3 class="view-section-heading">🥕 Ingredients</h3>
+                    <pre id="view-modal-ingredients" class="view-section-body"></pre>
+                </section>
+
+                <section class="view-section">
+                    <h3 class="view-section-heading">📋 Instructions</h3>
+                    <pre id="view-modal-instructions" class="view-section-body"></pre>
+                </section>
+            </div>
+
+            <div class="view-modal-actions">
+                <button id="view-edit-btn"   class="btn-primary">✏️ Edit Recipe</button>
+                <button id="view-delete-btn" class="btn-danger">🗑️ Delete</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== Toast Notification ===== -->
     <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
 
