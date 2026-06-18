@@ -35,6 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${imgSrc}" alt="${recipe.title}" class="card-img">
                     <div class="card-title">${recipe.title}</div>
                     <p class="card-desc">${recipe.description}</p>
+                    
+                    <details class="recipe-details">
+                        <summary class="recipe-summary">View Recipe</summary>
+                        <div class="recipe-content">
+                            <strong>Ingredients:</strong>
+                            <p>${recipe.ingredients}</p>
+                            
+                            <strong>Instructions:</strong>
+                            <p>${recipe.instructions}</p>
+                        </div>
+                    </details>
                 `;
                 
                 grid.appendChild(card);

@@ -15,6 +15,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
     app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS 
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
