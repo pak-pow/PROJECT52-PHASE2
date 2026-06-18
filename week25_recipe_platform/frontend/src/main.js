@@ -1,9 +1,15 @@
-import { fetchRecipes, deleteRecipe } from './api/recipe_api.js';
 import { fetchRecipes, createRecipe, deleteRecipe } from './api/recipe_api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
     const grid = document.getElementById('recipe-grid');
+    const modal = document.getElementById('recipe-modal');
+    const addBtn = document.getElementById('add-recipe-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const form = document.getElementById('add-recipe-form');
+    const submitBtn = document.getElementById('submit-recipe-btn');
 
+    // --- Grid Loading Logic ---
     async function loadGrid() {
         grid.innerHTML = '<p class="text-muted">Loading recipes...</p>';
         try {
@@ -19,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 
+                // Determine image source or fallback
                 const imgSrc = recipe.image_filename 
                     ? `http://127.0.0.1:5000/uploads/${recipe.image_filename}` 
                     : 'https://placehold.co/600x400/1e293b/94a3b8?text=No+Image';
@@ -33,12 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 grid.appendChild(card);
             });
 
+            // Attach event listeners to dynamically created delete buttons
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.getAttribute('data-id');
                     if (confirm('Are you sure you want to delete this recipe?')) {
                         await deleteRecipe(id);
-                        loadGrid(); 
+                        loadGrid(); // Refresh grid after deletion
                     }
                 });
             });
@@ -49,20 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadGrid();
-    const modal = document.getElementById('recipe-modal');
-    const addBtn = document.getElementById('add-recipe-btn');
-    const closeBtn = document.getElementById('close-modal-btn');
-    const form = document.getElementById('add-recipe-form');
-    const submitBtn = document.getElementById('submit-recipe-btn');
-
     addBtn.addEventListener('click', () => {
         modal.classList.remove('hidden');
     });
 
     closeBtn.addEventListener('click', () => {
         modal.classList.add('hidden');
-        form.reset(); 
+        form.reset();
     });
 
     form.addEventListener('submit', async (e) => {
@@ -87,4 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
         }
     });
+
+    loadGrid();
 });
