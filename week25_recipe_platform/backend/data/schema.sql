@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS recipes;
+-- Removed: DROP TABLE IF EXISTS recipes;
 
-CREATE TABLE recipes (
+CREATE TABLE IF NOT EXISTS recipes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
