@@ -2,7 +2,7 @@
 button {
   border: none;
   border-radius: var(--border-radius);
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -15,19 +15,57 @@ button {
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--border-color);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-hover);
 }
 
 .delete-btn {
-  background-color: var(--danger-color);
-  color: white;
-  padding: 0.5rem 0.75rem;
-  align-self: flex-end; 
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
+  background-color: transparent;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
 }
 
 .delete-btn:hover {
-  background-color: var(--danger-hover);
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.edit-btn {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.edit-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* --- Card Action Row --- */
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
 }
 
 /* --- Cards --- */
@@ -38,7 +76,7 @@ button {
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .card:hover {
@@ -48,15 +86,15 @@ button {
 }
 
 .card-title {
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--primary-color);
+  color: var(--text-main);
 }
 
 .card-img {
   width: 100%;
-  aspect-ratio: 16 / 9; 
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: calc(var(--border-radius) / 2);
   margin-bottom: 1rem;
@@ -66,7 +104,8 @@ button {
 .card-desc {
   color: var(--text-muted);
   font-size: 0.875rem;
-  flex-grow: 1; /* Pushes content evenly */
+  flex-grow: 1;
+  margin-bottom: 0.5rem;
 }
 
 /* --- Modal & Overlays --- */
@@ -88,14 +127,31 @@ button {
   display: none;
 }
 
+/* Merged: was split across two blocks — now a single canonical rule */
 .modal-content {
   background-color: var(--surface-color);
   padding: 2rem;
   border-radius: var(--border-radius);
   width: 100%;
   max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
   border: 1px solid var(--border-color);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: var(--surface-color);
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
 }
 
 .modal-header {
@@ -103,6 +159,10 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
 }
 
 .modal-footer {
@@ -120,6 +180,7 @@ button {
   cursor: pointer;
   transition: var(--transition);
   padding: 0;
+  line-height: 1;
 }
 
 .icon-btn:hover {
@@ -134,7 +195,7 @@ button {
 }
 
 .form-group label {
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   color: var(--text-muted);
@@ -150,12 +211,15 @@ button {
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color var(--transition);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 input[type="file"]::file-selector-button {
@@ -176,27 +240,8 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .form-group textarea {
-  resize: vertical; 
+  resize: vertical;
   min-height: 80px;
-}
-
-.modal-content {
-  max-height: 90vh;
-  overflow-y: auto; 
-}
-
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-.modal-content::-webkit-scrollbar-track {
-  background: var(--surface-color);
-}
-.modal-content::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
 }
 
 /* --- Recipe Card Details (Accordion) --- */
@@ -208,11 +253,12 @@ input[type="file"]::file-selector-button:hover {
 
 .recipe-summary {
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   color: var(--primary-color);
   font-size: 0.875rem;
   transition: var(--transition);
   outline: none;
+  user-select: none;
 }
 
 .recipe-summary:hover {
@@ -223,7 +269,7 @@ input[type="file"]::file-selector-button:hover {
   margin-top: 0.75rem;
   color: var(--text-muted);
   font-size: 0.875rem;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
 }
 
 .recipe-content strong {
@@ -231,4 +277,94 @@ input[type="file"]::file-selector-button:hover {
   color: var(--text-main);
   margin-top: 0.75rem;
   margin-bottom: 0.25rem;
+}
+
+/* --- Pagination --- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.pagination.hidden {
+  display: none;
+}
+
+.pagination-btn {
+  padding: 0.5rem 1.25rem;
+  background-color: var(--surface-color);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* --- Toast Notifications --- */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  z-index: 9999;
+  max-width: 340px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(0);
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast.toast-success {
+  background-color: #16a34a;
+}
+
+.toast.toast-error {
+  background-color: var(--danger-color);
+}
+
+.toast.toast-fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* --- Header Brand --- */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.header-icon {
+  font-size: 1.75rem;
 }
