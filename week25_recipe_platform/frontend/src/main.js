@@ -10,7 +10,7 @@ const PER_PAGE   = 12;
 // ============================================================
 // DOM References
 // ============================================================
-const grid      = document.getElementById('recipe-grid');
+const grid       = document.getElementById('recipe-grid');
 const pagination = document.getElementById('pagination');
 
 // Add modal
@@ -25,6 +25,17 @@ const editModal     = document.getElementById('edit-modal');
 const closeEditBtn  = document.getElementById('close-edit-modal-btn');
 const editForm      = document.getElementById('edit-recipe-form');
 const submitEditBtn = document.getElementById('submit-edit-btn');
+
+// View modal
+const viewModal        = document.getElementById('view-modal');
+const closeViewBtn     = document.getElementById('close-view-modal-btn');
+const viewModalTitle   = document.getElementById('view-modal-title');
+const viewModalImg     = document.getElementById('view-modal-img');
+const viewModalDesc    = document.getElementById('view-modal-description');
+const viewModalIngred  = document.getElementById('view-modal-ingredients');
+const viewModalInstruct= document.getElementById('view-modal-instructions');
+const viewEditBtn      = document.getElementById('view-edit-btn');
+const viewDeleteBtn    = document.getElementById('view-delete-btn');
 
 // Toast
 const toast = document.getElementById('toast');
@@ -85,6 +96,65 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (!modal.classList.contains('hidden'))     closeModal(modal, form);
         if (!editModal.classList.contains('hidden')) closeModal(editModal, editForm);
+        if (!viewModal.classList.contains('hidden')) closeModal(viewModal, null);
+    }
+});
+
+// ============================================================
+// View Modal
+// ============================================================
+
+// Keeps a reference to the recipe currently shown in the view modal
+// so the Edit/Delete buttons inside it can act on the right recipe.
+let _viewRecipe = null;
+
+function openViewModal(recipe) {
+    _viewRecipe = recipe;
+
+    const imgSrc = recipe.image_filename
+        ? `${API_BASE}/uploads/${recipe.image_filename}`
+        : 'https://placehold.co/680x300/0f172a/334155?text=No+Image';
+
+    viewModalTitle.textContent    = recipe.title;
+    viewModalImg.src              = imgSrc;
+    viewModalImg.alt              = recipe.title;
+    viewModalDesc.textContent     = recipe.description;
+    viewModalIngred.textContent   = recipe.ingredients;
+    viewModalInstruct.textContent = recipe.instructions;
+
+    // onerror fallback
+    viewModalImg.onerror = () => {
+        viewModalImg.src = 'https://placehold.co/680x300/0f172a/334155?text=No+Image';
+    };
+
+    openModal(viewModal);
+}
+
+closeViewBtn.addEventListener('click', () => closeModal(viewModal, null));
+
+// Edit from view modal: close view, open edit pre-filled
+viewEditBtn.addEventListener('click', () => {
+    if (!_viewRecipe) return;
+    closeModal(viewModal, null);
+    document.getElementById('edit-recipe-id').value        = _viewRecipe.id;
+    document.getElementById('edit-title').value            = _viewRecipe.title;
+    document.getElementById('edit-description').value      = _viewRecipe.description;
+    document.getElementById('edit-ingredients').value      = _viewRecipe.ingredients;
+    document.getElementById('edit-instructions').value     = _viewRecipe.instructions;
+    openModal(editModal);
+});
+
+// Delete from view modal
+viewDeleteBtn.addEventListener('click', async () => {
+    if (!_viewRecipe) return;
+    if (!confirm(`Delete "${_viewRecipe.title}"?`)) return;
+    try {
+        await deleteRecipe(_viewRecipe.id);
+        closeModal(viewModal, null);
+        showToast('Recipe deleted successfully.', 'success');
+        loadGrid();
+    } catch (err) {
+        showToast(`Delete failed: ${err.message}`, 'error');
     }
 });
 
@@ -114,21 +184,17 @@ function buildCard(recipe) {
         >
         <div class="card-title">${escapeHtml(recipe.title)}</div>
         <p class="card-desc">${escapeHtml(recipe.description)}</p>
-
-        <details class="recipe-details">
-            <summary class="recipe-summary">View Recipe</summary>
-            <div class="recipe-content">
-                <strong>Ingredients:</strong>
-                <p>${escapeHtml(recipe.ingredients)}</p>
-
-                <strong>Instructions:</strong>
-                <p>${escapeHtml(recipe.instructions)}</p>
-            </div>
-        </details>
     `;
+
+    // Clicking the card body (not the action buttons) opens the view modal
+    card.addEventListener('click', (e) => {
+        if (e.target.closest('.card-actions')) return; // don't intercept Edit/Delete
+        openViewModal(recipe);
+    });
 
     // Delete handler
     card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+        e.stopPropagation(); // prevent card click
         const id = e.currentTarget.getAttribute('data-id');
         if (!confirm('Are you sure you want to delete this recipe?')) return;
         try {
@@ -141,7 +207,8 @@ function buildCard(recipe) {
     });
 
     // Edit handler — populate edit modal with current values
-    card.querySelector('.edit-btn').addEventListener('click', () => {
+    card.querySelector('.edit-btn').addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent card click
         document.getElementById('edit-recipe-id').value        = recipe.id;
         document.getElementById('edit-title').value            = recipe.title;
         document.getElementById('edit-description').value      = recipe.description;
