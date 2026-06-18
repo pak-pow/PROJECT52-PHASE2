@@ -421,6 +421,26 @@ input[type="file"]::file-selector-button:hover {
   gap: 0.625rem;
 }
 
-.header-icon {
-  font-size: 1.75rem;
+.header-icon-svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+/* --- Global Lucide icon alignment ---
+   Ensures every <i data-lucide> and inline SVG sits
+   vertically centred with surrounding text. */
+svg[data-lucide],
+.btn-primary svg,
+.btn-danger svg,
+.btn-secondary svg,
+.edit-btn svg,
+.delete-btn svg,
+.pagination-btn svg,
+.view-section-heading svg {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
