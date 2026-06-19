@@ -106,6 +106,23 @@ button {
   color: var(--text-main);
 }
 
+.card-meta {
+  margin-bottom: 0.5rem;
+}
+
+.card-category {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
 .card-img {
   width: 100%;
   aspect-ratio: 16 / 9;
