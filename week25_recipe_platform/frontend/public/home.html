@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Hub — Discover & Share Recipes</title>
+    <meta name="description" content="Recipe Hub — A magazine-style food blog. Browse, discover, and share beautiful recipes with photos, ingredients, and step-by-step instructions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/variables.css">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/layout.css">
+    <link rel="stylesheet" href="../src/assets/components.css">
+</head>
+<body>
+    <!-- Nav injected by nav.js -->
+
+    <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+
+        <!-- ===== Hero Section ===== -->
+        <section class="hero" id="hero" aria-label="Featured recipes">
+            <!-- Slides injected by home.js -->
+            <div class="hero-indicators" id="hero-indicators"></div>
+        </section>
+
+        <!-- ===== Recipe Grid ===== -->
+        <section aria-label="All recipes">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h2 class="section-title">All Recipes</h2>
+            </div>
+
+            <!-- Category pills -->
+            <div class="category-pills" id="category-pills" role="tablist" aria-label="Filter by category">
+                <button class="pill active" data-category="all" role="tab">All</button>
+                <!-- More pills injected by home.js -->
+            </div>
+
+            <!-- Recipe grid -->
+            <div class="grid" id="recipe-grid" aria-live="polite"></div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination hidden" role="navigation" aria-label="Page navigation"></div>
+        </section>
+
+    </main>
+
+    <!-- ===== View Recipe Modal ===== -->
+    <div id="view-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="view-modal-title">
+        <div class="modal-content view-modal-content">
+            <div class="modal-header">
+                <h2 id="view-modal-title" class="view-modal-title">Recipe</h2>
+                <button id="close-view-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+            <img id="view-modal-img" src="" alt="" class="view-modal-img">
+            <p id="view-modal-description" class="view-modal-description"></p>
+            <div class="view-modal-sections">
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="list"></i> Ingredients</h3>
+                    <pre id="view-modal-ingredients" class="view-section-body"></pre>
+                </section>
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="book-open"></i> Instructions</h3>
+                    <pre id="view-modal-instructions" class="view-section-body"></pre>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script type="module" src="../src/pages/home.js"></script>
+</body>
+</html>
