@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Recipes — Recipe Hub</title>
+    <meta name="description" content="Search and filter hundreds of recipes by category, keyword, or cook time on Recipe Hub.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/variables.css">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/layout.css">
+    <link rel="stylesheet" href="../src/assets/components.css">
+</head>
+<body>
+    <!-- Nav injected by browse.js -->
+
+    <main class="container" style="padding-bottom: 4rem;">
+
+        <!-- ===== Page Banner ===== -->
+        <div class="page-banner">
+            <h1 class="page-banner-title">Browse Recipes</h1>
+            <p class="page-banner-sub">Search, filter, and discover your next favourite meal.</p>
+        </div>
+
+        <!-- ===== Search + Sort controls ===== -->
+        <div class="browse-controls">
+            <form class="browse-search-wrap" id="browse-search-form">
+                <input
+                    type="search"
+                    id="browse-search-input"
+                    class="browse-search-input"
+                    placeholder="Search by name or description…"
+                    aria-label="Search recipes"
+                    autocomplete="off"
+                >
+                <button type="submit" class="browse-search-btn" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+            </form>
+
+            <select id="sort-select" class="sort-select" aria-label="Sort recipes">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="az">A → Z</option>
+            </select>
+        </div>
+
+        <!-- ===== Category Pills ===== -->
+        <div class="category-pills" id="category-pills" role="tablist" aria-label="Filter by category">
+            <button class="pill active" data-category="all" role="tab">All</button>
+            <!-- More pills injected by browse.js -->
+        </div>
+
+        <!-- ===== Results count ===== -->
+        <p id="results-count" class="text-muted" style="margin-bottom: 0.5rem; font-size: 0.875rem;"></p>
+
+        <!-- ===== Recipe Grid ===== -->
+        <div class="grid" id="recipe-grid" aria-live="polite"></div>
+
+        <!-- ===== Pagination ===== -->
+        <div id="pagination" class="pagination hidden" role="navigation" aria-label="Page navigation"></div>
+
+    </main>
+
+    <!-- ===== View Recipe Modal ===== -->
+    <div id="view-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="view-modal-title">
+        <div class="modal-content view-modal-content">
+            <div class="modal-header">
+                <h2 id="view-modal-title" class="view-modal-title">Recipe</h2>
+                <button id="close-view-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+            <img id="view-modal-img" src="" alt="" class="view-modal-img">
+            <p id="view-modal-description" class="view-modal-description"></p>
+            <div class="view-modal-sections">
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="list"></i> Ingredients</h3>
+                    <pre id="view-modal-ingredients" class="view-section-body"></pre>
+                </section>
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="book-open"></i> Instructions</h3>
+                    <pre id="view-modal-instructions" class="view-section-body"></pre>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script type="module" src="../src/pages/browse.js"></script>
+</body>
+</html>
