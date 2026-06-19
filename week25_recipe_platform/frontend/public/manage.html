@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Recipes — Recipe Hub</title>
+    <meta name="description" content="Add, edit, and delete recipes on Recipe Hub.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/variables.css">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/layout.css">
+    <link rel="stylesheet" href="../src/assets/components.css">
+</head>
+<body>
+    <!-- Nav injected by manage.js -->
+
+    <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+
+        <header class="app-header">
+            <div class="header-brand">
+                <i data-lucide="settings" class="header-icon-svg"></i>
+                <h1>Manage Recipes</h1>
+            </div>
+            <button id="add-recipe-btn" class="btn-primary">
+                <i data-lucide="plus"></i> New Recipe
+            </button>
+        </header>
+
+        <div class="grid" id="recipe-grid" aria-live="polite"></div>
+        <div id="pagination" class="pagination hidden" role="navigation" aria-label="Page navigation"></div>
+
+    </main>
+
+    <!-- ===== Add Recipe Modal ===== -->
+    <div id="recipe-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Recipe</h2>
+                <button id="close-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+            <form id="add-recipe-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Title <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" required placeholder="e.g. Classic Adobo">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" class="sort-select" style="width:100%">
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner" selected>Dinner</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Soup">Soup</option>
+                        <option value="Uncategorised">Uncategorised</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description <span class="required">*</span></label>
+                    <textarea id="description" name="description" required placeholder="A short summary of the dish…"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ingredients">Ingredients <span class="required">*</span></label>
+                    <textarea id="ingredients" name="ingredients" required placeholder="One per line…" style="min-height:120px"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions <span class="required">*</span></label>
+                    <textarea id="instructions" name="instructions" required placeholder="Step-by-step…" style="min-height:140px"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="image">Photo <span class="text-muted">(PNG, JPG, WEBP — max 5 MB)</span></label>
+                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.webp">
+                </div>
+                <button type="submit" id="submit-recipe-btn" class="btn-primary" style="width:100%">Save Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Edit Recipe Modal ===== -->
+    <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="edit-modal-title">Edit Recipe</h2>
+                <button id="close-edit-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+            <form id="edit-recipe-form" enctype="multipart/form-data">
+                <input type="hidden" id="edit-recipe-id" name="id">
+                <div class="form-group">
+                    <label for="edit-title">Title <span class="required">*</span></label>
+                    <input type="text" id="edit-title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-category">Category</label>
+                    <select id="edit-category" name="category" class="sort-select" style="width:100%">
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Soup">Soup</option>
+                        <option value="Uncategorised">Uncategorised</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">Description <span class="required">*</span></label>
+                    <textarea id="edit-description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-ingredients">Ingredients <span class="required">*</span></label>
+                    <textarea id="edit-ingredients" name="ingredients" required style="min-height:120px"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-instructions">Instructions <span class="required">*</span></label>
+                    <textarea id="edit-instructions" name="instructions" required style="min-height:140px"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-image">Replace Photo <span class="text-muted">(leave blank to keep current)</span></label>
+                    <input type="file" id="edit-image" name="image" accept=".png,.jpg,.jpeg,.webp">
+                </div>
+                <button type="submit" id="submit-edit-btn" class="btn-primary" style="width:100%">Update Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== View Recipe Modal ===== -->
+    <div id="view-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="view-modal-title">
+        <div class="modal-content view-modal-content">
+            <div class="modal-header">
+                <h2 id="view-modal-title" class="view-modal-title">Recipe</h2>
+                <button id="close-view-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+            <img id="view-modal-img" src="" alt="" class="view-modal-img">
+            <p id="view-modal-description" class="view-modal-description"></p>
+            <div class="view-modal-sections">
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="list"></i> Ingredients</h3>
+                    <pre id="view-modal-ingredients" class="view-section-body"></pre>
+                </section>
+                <section class="view-section">
+                    <h3 class="view-section-heading"><i data-lucide="book-open"></i> Instructions</h3>
+                    <pre id="view-modal-instructions" class="view-section-body"></pre>
+                </section>
+            </div>
+            <div class="view-modal-actions">
+                <button id="view-edit-btn" class="btn-primary"><i data-lucide="pencil"></i> Edit Recipe</button>
+                <button id="view-delete-btn" class="btn-danger"><i data-lucide="trash-2"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script type="module" src="../src/pages/manage.js"></script>
+</body>
+</html>
