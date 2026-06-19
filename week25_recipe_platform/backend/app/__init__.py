@@ -1,40 +1,40 @@
 import os
+import logging
 from flask import Flask  # type: ignore
 from flask_cors import CORS  # type: ignore
+from app.config.settings import (
+    ALLOWED_ORIGINS,
+    ALLOWED_EXTENSIONS,
+    MAX_CONTENT_LENGTH,
+    SEND_FILE_MAX_AGE,
+)
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR     = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "..", "uploads")
-MAX_CONTENT_LENGTH = 5 * 1024 * 1024
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
-
-# Origins allowed to call the API. Extend this list for staging/production.
-ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-    # file:// origin used when opening index.html directly in the browser
-    "null",
-]
 
 
 def create_app():
     app = Flask(__name__)
     CORS(app, origins=ALLOWED_ORIGINS)
 
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-    app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
+    # --- Flask config (sourced from settings.py) ---
+    app.config['UPLOAD_FOLDER']          = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH']     = MAX_CONTENT_LENGTH
+    app.config['ALLOWED_EXTENSIONS']     = ALLOWED_EXTENSIONS
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = SEND_FILE_MAX_AGE
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+    # --- Request logger middleware ---
+    logging.basicConfig(level=logging.INFO)
+    from app.middlewares.request_logger import register_logger
+    register_logger(app)
 
     with app.app_context():
         from app.utils.db import init_db, close_db
         init_db()
 
-        # Ensure DB connections are closed after every request
+        # Close DB connections after every request
         app.teardown_appcontext(close_db)
 
         from app.routes.recipe_routes import recipe_bp
