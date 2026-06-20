@@ -1,9 +1,20 @@
 from app.utils.db import get_db
 
+
 def get_columns_by_board(board_id):
     conn = get_db()
-    cursor = conn.execute("SELECT * FROM columns WHERE board_id = ? ORDER BY position ASC", (board_id,))
+    cursor = conn.execute(
+        "SELECT * FROM columns WHERE board_id = ? ORDER BY position ASC",
+        (board_id,)
+    )
     return [dict(row) for row in cursor.fetchall()]
+
+
+def get_column_by_id(column_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM columns WHERE id = ?", (column_id,)).fetchone()
+    return dict(row) if row else None
+
 
 def create_column(board_id, title):
     conn = get_db()
@@ -16,20 +27,27 @@ def create_column(board_id, title):
         (board_id, title, position)
     )
     conn.commit()
-    return cursor.lastrowid
+    return get_column_by_id(cursor.lastrowid)
+
 
 def update_column(column_id, title):
     conn = get_db()
     conn.execute("UPDATE columns SET title = ? WHERE id = ?", (title, column_id))
     conn.commit()
+    return get_column_by_id(column_id)
+
 
 def delete_column(column_id):
     conn = get_db()
     conn.execute("DELETE FROM columns WHERE id = ?", (column_id,))
     conn.commit()
 
+
 def update_column_positions(updates):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.executemany("UPDATE columns SET position = ? WHERE id = ?", [(pos, cid) for cid, pos in updates])
+    cursor.executemany(
+        "UPDATE columns SET position = ? WHERE id = ?",
+        [(pos, cid) for cid, pos in updates]
+    )
     conn.commit()
