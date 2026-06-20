@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+*.env.local
+
+# Database (runtime files)
+*.db
+*.sqlite3
+
+# Vite build output
+dist/
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Pytest cache
+.pytest_cache/
