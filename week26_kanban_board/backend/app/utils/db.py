@@ -16,9 +16,17 @@ def get_db():
         
     return g.db
 
-def close_db():
-    pass
+def close_db(e = None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 def init_db():
-    pass
-
+    db = get_db()
+    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    schema_path = os.path.join(base_dir, 'data', 'schema.sql')
+    
+    with open(schema_path, 'r') as f:
+        db.executescript(f.read())
+        
+    db.commit()
