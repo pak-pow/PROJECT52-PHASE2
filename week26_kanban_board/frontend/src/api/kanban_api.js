@@ -1,37 +1,154 @@
-const API_BASE = 'http://127.0.0.1:5000/api';
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 
-async function fetchAPI(endpoint, options = {}) {
-    const res = await fetch(`${API_BASE}${endpoint}`, {
+/**
+ * Helper to execute fetch requests and handle response errors cleanly.
+ */
+async function request(path, options = {}) {
+    const url = `${API_BASE_URL}${path}`;
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+    };
+
+    const config = {
         ...options,
         headers: {
-            'Content-Type': 'application/json',
-            ...(options.headers || {})
-        }
-    });
+            ...defaultHeaders,
+            ...options.headers,
+        },
+    };
 
-    if(!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `API Error: ${res.status}`)
+    if (config.body && typeof config.body === 'object') {
+        config.body = JSON.stringify(config.body);
     }
 
-    if (res.status == 200) return null
-    return res.json();
+    try {
+        const response = await fetch(url, config);
+        
+        if (response.status === 204) {
+            return null;
+        }
+
+        const data = await response.get_json ? await response.get_json() : await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || `HTTP error! Status: ${response.status}`);
+        }
+        
+        return data;
+    } catch (error) {
+        console.error(`API Request Failed on ${url}:`, error);
+        throw error;
+    }
 }
 
 export const api = {
-    getBoards: () => fetchAPI('/boards'),
-    getBoard: (id) => fetchAPI(`/boards/${id}`),
-    createBoard: (data) => fetchAPI('/boards', { method: 'POST', body: JSON.stringify(data) }),
-    deleteBoard: (id) => fetchAPI(`/boards/${id}`, { method: 'DELETE' }),
+    // ----------------------------------------------------
+    // Board Endpoints
+    // ----------------------------------------------------
+    async getBoards() {
+        return request('/boards');
+    },
 
-    createColumn: (boardId, title) => fetchAPI(`/boards/${boardId}/columns`, { method: 'POST', body: JSON.stringify({ title }) }),
-    updateColumn: (id, title) => fetchAPI(`/columns/${id}`, { method: 'PUT', body: JSON.stringify({ title }) }),
-    deleteColumn: (id) => fetchAPI(`/columns/${id}`, { method: 'DELETE' }),
-    reorderColumns: (boardId, updates) => fetchAPI(`/boards/${boardId}/columns/reorder`, { method: 'PATCH', body: JSON.stringify({ updates }) }),
+    async getBoard(id) {
+        return request(`/boards/${id}`);
+    },
 
-    createCard: (columnId, data) => fetchAPI(`/columns/${columnId}/cards`, { method: 'POST', body: JSON.stringify(data) }),
-    updateCard: (id, data) => fetchAPI(`/cards/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deleteCard: (id) => fetchAPI(`/cards/${id}`, { method: 'DELETE' }),
-    reorderCards: (columnId, updates) => fetchAPI(`/columns/${columnId}/cards/reorder`, { method: 'PATCH', body: JSON.stringify({ updates }) }),
-    moveCard: (id, columnId, position) => fetchAPI(`/cards/${id}/move`, { method: 'PATCH', body: JSON.stringify({ columnId, position }) })
+    async createBoard(boardData) {
+        return request('/boards', {
+            method: 'POST',
+            body: boardData,
+        });
+    },
+
+    async updateBoard(id, boardData) {
+        return request(`/boards/${id}`, {
+            method: 'PUT',
+            body: boardData,
+        });
+    },
+
+    async deleteBoard(id) {
+        return request(`/boards/${id}`, {
+            method: 'DELETE',
+        });
+    },
+
+    // ----------------------------------------------------
+    // Column Endpoints
+    // ----------------------------------------------------
+    async getColumns(boardId) {
+        return request(`/boards/${boardId}/columns`);
+    },
+
+    async createColumn(boardId, title) {
+        return request(`/boards/${boardId}/columns`, {
+            method: 'POST',
+            body: { title },
+        });
+    },
+
+    async updateColumn(columnId, title) {
+        return request(`/columns/${columnId}`, {
+            method: 'PUT',
+            body: { title },
+        });
+    },
+
+    async deleteColumn(columnId) {
+        return request(`/columns/${columnId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    async reorderColumns(boardId, updates) {
+        return request(`/boards/${boardId}/columns/reorder`, {
+            method: 'PATCH',
+            body: { updates },
+        });
+    },
+
+    // ----------------------------------------------------
+    // Card Endpoints
+    // ----------------------------------------------------
+    async getCards(columnId) {
+        return request(`/columns/${columnId}/cards`);
+    },
+
+    async getCard(cardId) {
+        return request(`/cards/${cardId}`);
+    },
+
+    async createCard(columnId, cardData) {
+        return request(`/columns/${columnId}/cards`, {
+            method: 'POST',
+            body: cardData,
+        });
+    },
+
+    async updateCard(cardId, cardData) {
+        return request(`/cards/${cardId}`, {
+            method: 'PUT',
+            body: cardData,
+        });
+    },
+
+    async deleteCard(cardId) {
+        return request(`/cards/${cardId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    async reorderCards(columnId, updates) {
+        return request(`/columns/${columnId}/cards/reorder`, {
+            method: 'PATCH',
+            body: { updates },
+        });
+    },
+
+    async moveCard(cardId, columnId, position) {
+        return request(`/cards/${cardId}/move`, {
+            method: 'PATCH',
+            body: { column_id: columnId, position },
+        });
+    },
 };
