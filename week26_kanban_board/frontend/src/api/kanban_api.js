@@ -8,4 +8,12 @@ async function fetchAPI(endpoint, options = {}) {
             ...(options.headers || {})
         }
     });
+
+    if(!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `API Error: ${res.status}`)
+    }
+
+    if (res.status == 200) return null
+    return res.json();
 }
