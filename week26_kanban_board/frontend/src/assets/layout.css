@@ -1,12 +1,84 @@
+/* Structural layout containers */
+.page-container {
+    padding: 2.5rem 2rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
 }
 
-.page-container {
+/* Kanban board canvas */
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.board-canvas-wrapper {
+    padding: 1.5rem 2rem;
+    overflow-x: auto;
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+}
+
+.board-canvas {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    height: 100%;
+    min-height: 500px;
+    padding-bottom: 2rem;
+}
+
+/* Modal layout */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(9, 9, 11, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-dialog {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 480px;
     padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px);
+    transition: transform var(--transition-normal);
+}
+
+.modal-overlay.active .modal-dialog {
+    transform: translateY(0);
 }
