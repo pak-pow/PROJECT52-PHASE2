@@ -17,3 +17,21 @@ async function fetchAPI(endpoint, options = {}) {
     if (res.status == 200) return null
     return res.json();
 }
+
+export const api = {
+    getBoards: () => fetchAPI('/boards'),
+    getBoard: (id) => fetchAPI(`/boards/${id}`),
+    createBoard: (data) => fetchAPI('/boards', { method: 'POST', body: JSON.stringify(data) }),
+    deleteBoard: (id) => fetchAPI(`/boards/${id}`, { method: 'DELETE' }),
+
+    createColumn: (boardId, title) => fetchAPI(`/boards/${boardId}/columns`, { method: 'POST', body: JSON.stringify({ title }) }),
+    updateColumn: (id, title) => fetchAPI(`/columns/${id}`, { method: 'PUT', body: JSON.stringify({ title }) }),
+    deleteColumn: (id) => fetchAPI(`/columns/${id}`, { method: 'DELETE' }),
+    reorderColumns: (boardId, updates) => fetchAPI(`/boards/${boardId}/columns/reorder`, { method: 'PATCH', body: JSON.stringify({ updates }) }),
+
+    createCard: (columnId, data) => fetchAPI(`/columns/${columnId}/cards`, { method: 'POST', body: JSON.stringify(data) }),
+    updateCard: (id, data) => fetchAPI(`/cards/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteCard: (id) => fetchAPI(`/cards/${id}`, { method: 'DELETE' }),
+    reorderCards: (columnId, updates) => fetchAPI(`/columns/${columnId}/cards/reorder`, { method: 'PATCH', body: JSON.stringify({ updates }) }),
+    moveCard: (id, columnId, position) => fetchAPI(`/cards/${id}/move`, { method: 'PATCH', body: JSON.stringify({ columnId, position }) })
+};
