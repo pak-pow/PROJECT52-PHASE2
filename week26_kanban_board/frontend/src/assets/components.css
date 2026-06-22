@@ -71,7 +71,7 @@
 .board-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
-    border-color: var(--accent);
+    border-color: var(--local-accent, var(--accent));
 }
 
 /* Kanban Column */
