@@ -92,11 +92,124 @@ function getDragAfterElement(container, y) {
     return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
-        
+
         if (offset < 0 && offset > closest.offset) {
             return { offset: offset, element: child };
         } else {
             return closest;
         }
     }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function getDragAfterColumn(container, x) {
+    const draggableElements = [...container.querySelectorAll('.kanban-column:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = x - box.left - box.width / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+export function initDragAndDrop(container, onCardMove, onColumnMove) {
+    let draggedElement = null;
+    let dragType = null;
+    let sourceContainer = null;
+    let originalNextSibling = null;
+
+    container.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('kanban-card')) {
+            dragType = 'card';
+
+            draggedElement = e.target;
+            sourceContainer = draggedElement.parentElement;
+            originalNextSibling = draggedElement.nextElementSibling;
+            setTimeout(() => draggedElement.classList.add('dragging'), 0);
+            
+        } else if (e.target.classList.contains('kanban-column')) {
+            if (e.target.dataset.dragEnabled !== 'true') {
+                e.preventDefault();
+                return;
+            }
+
+            dragType = 'column';
+            draggedElement = e.target;
+            sourceContainer = container; 
+            originalNextSibling = draggedElement.nextElementSibling;
+
+            setTimeout(() => draggedElement.classList.add('dragging'), 0);
+        }
+    });
+
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+        if (!draggedElement) return;
+
+        if (dragType === 'card') {
+            
+            const dropZone = e.target.closest('.column-cards');
+            if (!dropZone) return;
+            
+            const afterElement = getDragAfterElement(dropZone, e.clientY);
+            if (afterElement == null) {
+                dropZone.appendChild(draggedElement);
+            } else {
+                dropZone.insertBefore(draggedElement, afterElement);
+            }
+            
+        } else if (dragType === 'column') {
+            
+            const dropZone = container; 
+            const afterElement = getDragAfterColumn(dropZone, e.clientX);
+            if (afterElement == null) {
+                dropZone.appendChild(draggedElement);
+            } else {
+                dropZone.insertBefore(draggedElement, afterElement);
+            }
+        }
+    });
+
+    container.addEventListener('dragend', (e) => {
+        
+        if (!draggedElement) return;
+        
+        draggedElement.classList.remove('dragging');
+        if (dragType === 'column') {
+            draggedElement.dataset.dragEnabled = 'false'; // Reset lock
+        }
+        
+        const type = dragType;
+        const element = draggedElement;
+        const originalCol = sourceContainer;
+        const originalSib = originalNextSibling;
+
+        draggedElement = null;
+        dragType = null;
+        sourceContainer = null;
+        originalNextSibling = null;
+
+        if (type === 'card' && onCardMove) {
+            const newColumnId = element.closest('.kanban-column').dataset.id;
+            const newPosition = Array.from(element.parentElement.children).indexOf(element);
+            
+            onCardMove({
+                cardId: element.dataset.id,
+                newColumnId: newColumnId,
+                newPosition: newPosition,
+                revert: () => originalCol.insertBefore(element, originalSib)
+            });
+            
+        } else if (type === 'column' && onColumnMove) {
+            const newPosition = Array.from(container.querySelectorAll('.kanban-column')).indexOf(element);
+            
+            onColumnMove({
+                columnId: element.dataset.id,
+                newPosition: newPosition,
+                revert: () => container.insertBefore(element, originalSib)
+            });
+        }
+    });
 }
