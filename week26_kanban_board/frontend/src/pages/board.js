@@ -1,7 +1,7 @@
 import { api } from '../api/kanban_api.js';
 import { createColumnHTML } from '../components/column.js';
 import { createCardHTML } from '../components/card.js';
-import { escapeHtml, openModal, closeModal } from '../utils/dom.js';
+import { escapeHtml, openModal, closeModal, showToast } from '../utils/dom.js';
 import { initDragAndDrop } from '../utils/drag.js';
 
 export async function renderBoard(container, boardId) {
@@ -176,8 +176,9 @@ export async function renderBoard(container, boardId) {
                     try {
                         await api.updateColumn(id, newVal);
                         input.setAttribute('data-original-val', newVal);
+                        showToast(`Column renamed to "${newVal}"`, 'success');
                     } catch (error) {
-                        alert(`Failed to rename column: ${error.message}`);
+                        showToast(`Failed to rename column: ${error.message}`, 'error');
                         input.value = oldVal;
                     }
                 }
@@ -198,9 +199,10 @@ export async function renderBoard(container, boardId) {
                 if (confirm(`Delete the column "${title}"? All cards inside it will be permanently deleted.`)) {
                     try {
                         await api.deleteColumn(id);
+                        showToast(`Column "${title}" deleted`, 'success');
                         await loadBoard();
                     } catch (error) {
-                        alert(`Failed to delete column: ${error.message}`);
+                        showToast(`Failed to delete column: ${error.message}`, 'error');
                     }
                 }
             });
@@ -227,7 +229,7 @@ export async function renderBoard(container, boardId) {
                     document.getElementById('edit-card-desc').value = card.description || '';
                     openModal('edit-card-modal');
                 } catch (error) {
-                    alert(`Failed to fetch card details: ${error.message}`);
+                    showToast(`Failed to fetch card details: ${error.message}`, 'error');
                 }
             });
         });
@@ -241,9 +243,10 @@ export async function renderBoard(container, boardId) {
                 if (confirm(`Delete task "${title}"?`)) {
                     try {
                         await api.deleteCard(id);
+                        showToast(`Task "${title}" deleted`, 'success');
                         await loadBoard();
                     } catch (error) {
-                        alert(`Failed to delete card: ${error.message}`);
+                        showToast(`Failed to delete card: ${error.message}`, 'error');
                     }
                 }
             });
@@ -265,9 +268,10 @@ export async function renderBoard(container, boardId) {
         try {
             await api.createColumn(boardId, titleInput.value.trim());
             closeModal('create-column-modal');
+            showToast(`Column "${titleInput.value.trim()}" created`, 'success');
             await loadBoard();
         } catch (error) {
-            alert(`Error creating column: ${error.message}`);
+            showToast(`Error creating column: ${error.message}`, 'error');
         }
     });
 
@@ -285,9 +289,10 @@ export async function renderBoard(container, boardId) {
                 description: descInput.value.trim()
             });
             closeModal('create-card-modal');
+            showToast(`Task "${titleInput.value.trim()}" created`, 'success');
             await loadBoard();
         } catch (error) {
-            alert(`Error creating card: ${error.message}`);
+            showToast(`Error creating card: ${error.message}`, 'error');
         }
     });
 
@@ -305,28 +310,46 @@ export async function renderBoard(container, boardId) {
                 description: descInput.value.trim()
             });
             closeModal('edit-card-modal');
+            showToast(`Task updated successfully`, 'success');
             await loadBoard();
         } catch (error) {
-            alert(`Error updating card: ${error.message}`);
+            showToast(`Error updating card: ${error.message}`, 'error');
         }
     });
 
     // 5. Drag and Drop Hook integration
-    initDragAndDrop({
-        onCardMove: async (cardId, targetColumnId, targetPosition) => {
+    const canvasContainer = document.getElementById('board-columns-list');
+    initDragAndDrop(
+        canvasContainer,
+        async ({ cardId, newColumnId, newPosition, revert }) => {
             try {
                 // Persistent move endpoint trigger
-                await api.moveCard(cardId, targetColumnId, targetPosition);
-                // Refresh board content to guarantee positions/rendering alignment
-                await loadBoard();
+                await api.moveCard(cardId, newColumnId, newPosition);
+                showToast(`Task moved successfully`, 'success');
             } catch (error) {
                 console.error(`Move failed:`, error);
-                alert(`Could not save card placement: ${error.message}`);
-                // Hard reload to roll back local DOM changes to last synced DB state
-                await loadBoard();
+                showToast(`Could not save card placement: ${error.message}`, 'error');
+                revert(); // Perform optimistic visual rollback!
+            }
+        },
+        async ({ columnId, newPosition, revert }) => {
+            try {
+                // Collect columns in current DOM order
+                const columns = Array.from(canvasContainer.querySelectorAll('.kanban-column'));
+                const updates = columns.map((col, index) => {
+                    const colId = parseInt(col.dataset.columnId, 10);
+                    return [colId, index];
+                });
+                // Persist the reorder state
+                await api.reorderColumns(boardId, updates);
+                showToast(`Columns reordered`, 'success');
+            } catch (error) {
+                console.error(`Column reorder failed:`, error);
+                showToast(`Could not save column order: ${error.message}`, 'error');
+                revert(); // Perform optimistic visual rollback!
             }
         }
-    });
+    );
 
     // Initial Load
     await loadBoard();
