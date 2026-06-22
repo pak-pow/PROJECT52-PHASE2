@@ -4,88 +4,7 @@
  * @param {Function} callbacks.onCardMove - Called when a card is dropped: (cardId, targetColumnId, targetPosition)
  * @param {Function} callbacks.onColumnReorder - Called when a column is dragged (optional)
  */
-export function initDragAndDrop({ onCardMove }) {
-    let draggedCard = null;
 
-    // Attach to document to handle dynamically rendered cards/columns
-    document.addEventListener('dragstart', (e) => {
-        const card = e.target.closest('.kanban-card');
-        if (card) {
-            draggedCard = card;
-            card.classList.add('dragging');
-            
-            // Set drag data
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', card.getAttribute('data-card-id'));
-        }
-    });
-
-    document.addEventListener('dragend', (e) => {
-        const card = e.target.closest('.kanban-card');
-        if (card) {
-            card.classList.remove('dragging');
-        }
-        
-        // Remove drag highlights from all containers
-        document.querySelectorAll('.cards-container').forEach(container => {
-            container.classList.remove('drag-over');
-        });
-        
-        draggedCard = null;
-    });
-
-    document.addEventListener('dragover', (e) => {
-        const container = e.target.closest('.cards-container');
-        if (!container || !draggedCard) return;
-
-        e.preventDefault(); // Required to allow dropping
-        
-        container.classList.add('drag-over');
-
-        // Visual feedback: find closest card below cursor and append/insert before it
-        const afterElement = getDragAfterElement(container, e.clientY);
-        if (afterElement == null) {
-            container.appendChild(draggedCard);
-        } else {
-            container.insertBefore(draggedCard, afterElement);
-        }
-    });
-
-    document.addEventListener('dragleave', (e) => {
-        const container = e.target.closest('.cards-container');
-        if (container) {
-            // Check if cursor actually left the container, not just moved over a card
-            const rect = container.getBoundingClientRect();
-            if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
-                container.classList.remove('drag-over');
-            }
-        }
-    });
-
-    document.addEventListener('drop', async (e) => {
-        const container = e.target.closest('.cards-container');
-        if (!container || !draggedCard) return;
-
-        e.preventDefault();
-        container.classList.remove('drag-over');
-
-        const cardId = parseInt(draggedCard.getAttribute('data-card-id'), 10);
-        const targetColumnId = parseInt(container.getAttribute('data-column-id'), 10);
-
-        // Find position index of draggedCard inside this container
-        const cardsInContainer = Array.from(container.querySelectorAll('.kanban-card'));
-        const newPosition = cardsInContainer.indexOf(draggedCard);
-
-        if (cardId && targetColumnId !== undefined && newPosition !== -1) {
-            onCardMove(cardId, targetColumnId, newPosition);
-        }
-    });
-}
-
-/**
- * Calculates which card element the cursor is dragging over.
- * Returns the card element immediately below the cursor.
- */
 function getDragAfterElement(container, y) {
     const draggableElements = [...container.querySelectorAll('.kanban-card:not(.dragging)')];
 
@@ -103,9 +22,11 @@ function getDragAfterElement(container, y) {
 
 function getDragAfterColumn(container, x) {
     const draggableElements = [...container.querySelectorAll('.kanban-column:not(.dragging)')];
+    
     return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         const offset = x - box.left - box.width / 2;
+        
         if (offset < 0 && offset > closest.offset) {
             return { offset: offset, element: child };
         } else {
@@ -123,18 +44,19 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
     container.addEventListener('dragstart', (e) => {
         if (e.target.classList.contains('kanban-card')) {
             dragType = 'card';
-
             draggedElement = e.target;
             sourceContainer = draggedElement.parentElement;
             originalNextSibling = draggedElement.nextElementSibling;
+            
+            // Timeout ensures the ghost looks normal, but the original turns translucent
             setTimeout(() => draggedElement.classList.add('dragging'), 0);
             
         } else if (e.target.classList.contains('kanban-column')) {
+            // SECURITY: Only allow column dragging if the user grabbed the header!
             if (e.target.dataset.dragEnabled !== 'true') {
                 e.preventDefault();
                 return;
             }
-
             dragType = 'column';
             draggedElement = e.target;
             sourceContainer = container; 
@@ -145,12 +67,12 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
     });
 
     container.addEventListener('dragover', (e) => {
-        e.preventDefault(); 
+        e.preventDefault(); // Required to allow dropping
         if (!draggedElement) return;
 
         if (dragType === 'card') {
-            
-            const dropZone = e.target.closest('.column-cards');
+            // MATCHES YOUR CUSTOM HTML: .cards-container
+            const dropZone = e.target.closest('.cards-container');
             if (!dropZone) return;
             
             const afterElement = getDragAfterElement(dropZone, e.clientY);
@@ -161,7 +83,6 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
             }
             
         } else if (dragType === 'column') {
-            
             const dropZone = container; 
             const afterElement = getDragAfterColumn(dropZone, e.clientX);
             if (afterElement == null) {
@@ -173,7 +94,6 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
     });
 
     container.addEventListener('dragend', (e) => {
-        
         if (!draggedElement) return;
         
         draggedElement.classList.remove('dragging');
@@ -181,22 +101,26 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
             draggedElement.dataset.dragEnabled = 'false'; // Reset lock
         }
         
+        // Cache variables for the rollback function
         const type = dragType;
         const element = draggedElement;
         const originalCol = sourceContainer;
         const originalSib = originalNextSibling;
 
+        // Reset memory
         draggedElement = null;
         dragType = null;
         sourceContainer = null;
         originalNextSibling = null;
 
         if (type === 'card' && onCardMove) {
-            const newColumnId = element.closest('.kanban-column').dataset.id;
+            // MATCHES YOUR CUSTOM HTML: dataset.columnId and dataset.cardId
+            const newColumnId = element.closest('.kanban-column').dataset.columnId;
             const newPosition = Array.from(element.parentElement.children).indexOf(element);
+            const cardId = element.dataset.cardId || element.dataset.id; // Fallback support
             
             onCardMove({
-                cardId: element.dataset.id,
+                cardId: cardId,
                 newColumnId: newColumnId,
                 newPosition: newPosition,
                 revert: () => originalCol.insertBefore(element, originalSib)
@@ -204,9 +128,10 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
             
         } else if (type === 'column' && onColumnMove) {
             const newPosition = Array.from(container.querySelectorAll('.kanban-column')).indexOf(element);
+            const columnId = element.dataset.columnId || element.dataset.id; // Fallback support
             
             onColumnMove({
-                columnId: element.dataset.id,
+                columnId: columnId,
                 newPosition: newPosition,
                 revert: () => container.insertBefore(element, originalSib)
             });

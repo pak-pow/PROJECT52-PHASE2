@@ -2,8 +2,13 @@ import { escapeHtml } from '../utils/dom.js';
 
 export function createColumnHTML(column, cardsHTML = '') {
     return `
-        <div class="kanban-column" data-column-id="${column.id}" data-position="${column.position}">
-            <div class="column-header">
+        <div class="kanban-column" data-column-id="${column.id}" data-position="${column.position}" draggable="true" data-drag-enabled="false">
+            
+            <div class="column-header"
+                 onmousedown="this.parentElement.dataset.dragEnabled='true'"
+                 onmouseup="this.parentElement.dataset.dragEnabled='false'"
+                 onmouseleave="this.parentElement.dataset.dragEnabled='false'">
+                 
                 <input type="text" 
                        class="column-title-input" 
                        value="${escapeHtml(column.title)}" 
