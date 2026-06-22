@@ -4,7 +4,7 @@ export function createBoardCard(board) {
     const date = new Date(board.created_at).toLocaleDateString();
     
     return `
-        <a href="#board/${board.id}" class="board-card" style="border-top: 4px solid ${escapeHtml(board.accent_color)}; position: relative;">
+        <a href="#board/${board.id}" class="board-card" style="border-top: 4px solid ${escapeHtml(board.accent_color)}; --local-accent: ${escapeHtml(board.accent_color)}; position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 1rem;">
                 <h3 style="margin: 0; font-size: 1.1rem; line-height: 1.3;">
                     ${escapeHtml(board.title)}
