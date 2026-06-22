@@ -3,6 +3,9 @@ import { createBoardCard } from '../components/boardCard.js';
 import { escapeHtml, openModal, closeModal } from '../utils/dom.js';
 
 export async function renderDashboard(container) {
+    let activeEditBoardId = null;
+    let selectedEditColor = '#6366f1';
+
     // 1. Initial Scaffold Layout with Modal markup
     container.innerHTML = `
         <div class="page-container">
@@ -29,7 +32,7 @@ export async function renderDashboard(container) {
                 <form id="create-board-form">
                     <div class="form-group">
                         <label class="form-label" for="board-title">Board Title *</label>
-                        <input type="text" id="board-title" class="form-input" placeholder="e.g. Work Projects" required max-length="100">
+                        <input type="text" id="board-title" class="form-input" placeholder="e.g. Work Projects" required maxlength="100">
                     </div>
                     
                     <div class="form-group">
@@ -52,6 +55,47 @@ export async function renderDashboard(container) {
                     <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
                         <button type="button" class="btn" id="cancel-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Create Board</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Board Modal -->
+        <div class="modal-overlay" id="edit-board-modal">
+            <div class="modal-dialog">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.25rem;">Edit Board</h2>
+                    <button class="btn btn-icon" id="close-edit-modal-btn" style="border: none; background: transparent;">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                
+                <form id="edit-board-form">
+                    <div class="form-group">
+                        <label class="form-label" for="edit-board-title">Board Title *</label>
+                        <input type="text" id="edit-board-title" class="form-input" required maxlength="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="edit-board-desc">Description</label>
+                        <textarea id="edit-board-desc" class="form-input form-textarea"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Accent Color</label>
+                        <div class="color-picker-grid" id="edit-color-picker">
+                            <div class="color-swatch" data-color="#6366f1" style="background-color: #6366f1;"></div>
+                            <div class="color-swatch" data-color="#10b981" style="background-color: #10b981;"></div>
+                            <div class="color-swatch" data-color="#3b82f6" style="background-color: #3b82f6;"></div>
+                            <div class="color-swatch" data-color="#f59e0b" style="background-color: #f59e0b;"></div>
+                            <div class="color-swatch" data-color="#ec4899" style="background-color: #ec4899;"></div>
+                            <div class="color-swatch" data-color="#8b5cf6" style="background-color: #8b5cf6;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                        <button type="button" class="btn" id="cancel-edit-modal-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -92,8 +136,39 @@ export async function renderDashboard(container) {
         }
     }
 
-    // 3. Attach actions inside cards (like delete)
+    // 3. Attach actions inside cards (like edit and delete)
     function attachBoardCardListeners() {
+        // --- Edit Boards ---
+        const editButtons = container.querySelectorAll('.edit-board-btn');
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                activeEditBoardId = id;
+                try {
+                    const board = await api.getBoard(id);
+                    document.getElementById('edit-board-title').value = board.title;
+                    document.getElementById('edit-board-desc').value = board.description || '';
+                    selectedEditColor = board.accent_color;
+                    
+                    const editColorPicker = document.getElementById('edit-color-picker');
+                    editColorPicker.querySelectorAll('.color-swatch').forEach(swatch => {
+                        if (swatch.getAttribute('data-color') === board.accent_color) {
+                            swatch.classList.add('selected');
+                        } else {
+                            swatch.classList.remove('selected');
+                        }
+                    });
+                    
+                    openModal('edit-board-modal');
+                } catch (error) {
+                    alert(`Failed to load board details: ${error.message}`);
+                }
+            });
+        });
+
+        // --- Delete Boards ---
         const deleteButtons = container.querySelectorAll('.delete-board-btn');
         deleteButtons.forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -114,6 +189,7 @@ export async function renderDashboard(container) {
     }
 
     // 4. Modal Event Listeners
+    // --- Create Board Modal ---
     const openBtn = document.getElementById('new-board-btn');
     const closeBtn = document.getElementById('close-modal-btn');
     const cancelBtn = document.getElementById('cancel-modal-btn');
@@ -139,7 +215,6 @@ export async function renderDashboard(container) {
         btn.addEventListener('click', () => closeModal('create-board-modal'));
     });
 
-    // Color Swatch Picker listener
     colorPicker.addEventListener('click', (e) => {
         const swatch = e.target.closest('.color-swatch');
         if (swatch) {
@@ -149,7 +224,6 @@ export async function renderDashboard(container) {
         }
     });
 
-    // Form submit action
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const titleInput = document.getElementById('board-title');
@@ -165,6 +239,44 @@ export async function renderDashboard(container) {
             await loadBoards();
         } catch (error) {
             alert(`Error creating board: ${error.message}`);
+        }
+    });
+
+    // --- Edit Board Modal ---
+    const closeEditBtn = document.getElementById('close-edit-modal-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-modal-btn');
+    const editForm = document.getElementById('edit-board-form');
+    const editColorPicker = document.getElementById('edit-color-picker');
+
+    const closeEditActions = [closeEditBtn, cancelEditBtn];
+    closeEditActions.forEach(btn => {
+        btn.addEventListener('click', () => closeModal('edit-board-modal'));
+    });
+
+    editColorPicker.addEventListener('click', (e) => {
+        const swatch = e.target.closest('.color-swatch');
+        if (swatch) {
+            editColorPicker.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            swatch.classList.add('selected');
+            selectedEditColor = swatch.getAttribute('data-color');
+        }
+    });
+
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const titleInput = document.getElementById('edit-board-title');
+        const descInput = document.getElementById('edit-board-desc');
+        
+        try {
+            await api.updateBoard(activeEditBoardId, {
+                title: titleInput.value.trim(),
+                description: descInput.value.trim(),
+                accent_color: selectedEditColor
+            });
+            closeModal('edit-board-modal');
+            await loadBoards();
+        } catch (error) {
+            alert(`Error updating board: ${error.message}`);
         }
     });
 
