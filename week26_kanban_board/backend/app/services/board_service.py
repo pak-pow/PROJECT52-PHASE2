@@ -54,3 +54,11 @@ def delete_board(board_id):
     if not existing:
         raise ValueError("Board not found")
     board_model.delete_board(board_id)
+
+def reorder_boards(updates):
+    if not isinstance(updates, list):
+        raise ValueError("Updates must be a list")
+    for item in updates:
+        if not isinstance(item, list) or len(item) != 2:
+            raise ValueError("Each update must be a [board_id, position] list")
+    board_model.reorder_boards(updates)
