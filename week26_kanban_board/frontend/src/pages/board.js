@@ -20,7 +20,11 @@ export async function renderBoard(container, boardId) {
                 <h1 id="board-title-display" style="font-size: 1.5rem; margin: 0;">Loading Board...</h1>
                 <p id="board-desc-display" style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;"></p>
             </div>
-            <div style="display: flex; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <div style="position: relative; width: 220px;">
+                    <i data-lucide="search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted);"></i>
+                    <input type="text" id="board-search-input" class="form-input" placeholder="Filter tasks..." style="padding-left: 2rem; margin: 0; width: 100%; font-size: 0.875rem;">
+                </div>
                 <button class="btn btn-primary" id="add-column-btn"><i data-lucide="plus"></i> Add Column</button>
             </div>
         </div>
@@ -109,6 +113,24 @@ export async function renderBoard(container, boardId) {
 
     if (window.lucide) window.lucide.createIcons();
 
+    // Helper to filter cards
+    function filterCards(query) {
+        const q = query.toLowerCase().trim();
+        const cards = container.querySelectorAll('.kanban-card');
+        cards.forEach(card => {
+            const titleEl = card.querySelector('.card-title');
+            const descEl = card.querySelector('.card-desc');
+            const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+            const desc = descEl ? descEl.textContent.toLowerCase() : '';
+            
+            if (title.includes(q) || desc.includes(q)) {
+                card.classList.remove('filtered-out');
+            } else {
+                card.classList.add('filtered-out');
+            }
+        });
+    }
+
     // 2. Fetch Board Details and Hydrate Columns & Cards
     async function loadBoard() {
         const columnsList = document.getElementById('board-columns-list');
@@ -146,6 +168,12 @@ export async function renderBoard(container, boardId) {
             
             if (window.lucide) window.lucide.createIcons();
             attachCanvasListeners();
+
+            // Re-apply search filter if active
+            const searchInput = document.getElementById('board-search-input');
+            if (searchInput && searchInput.value.trim() !== '') {
+                filterCards(searchInput.value);
+            }
 
         } catch (error) {
             columnsList.innerHTML = `
@@ -322,6 +350,12 @@ export async function renderBoard(container, boardId) {
     initDragAndDrop(
         canvasContainer,
         async ({ cardId, newColumnId, newPosition, revert }) => {
+            const searchInput = document.getElementById('board-search-input');
+            if (searchInput && searchInput.value.trim() !== '') {
+                showToast('Reordering tasks is disabled while search filter is active.', 'error');
+                revert();
+                return;
+            }
             try {
                 // Persistent move endpoint trigger
                 await api.moveCard(cardId, newColumnId, newPosition);
@@ -333,6 +367,12 @@ export async function renderBoard(container, boardId) {
             }
         },
         async ({ columnId, newPosition, revert }) => {
+            const searchInput = document.getElementById('board-search-input');
+            if (searchInput && searchInput.value.trim() !== '') {
+                showToast('Reordering columns is disabled while search filter is active.', 'error');
+                revert();
+                return;
+            }
             try {
                 // Collect columns in current DOM order
                 const columns = Array.from(canvasContainer.querySelectorAll('.kanban-column'));
@@ -350,6 +390,14 @@ export async function renderBoard(container, boardId) {
             }
         }
     );
+
+    // Attach search input listener
+    const searchInput = document.getElementById('board-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterCards(e.target.value);
+        });
+    }
 
     // Initial Load
     await loadBoard();
