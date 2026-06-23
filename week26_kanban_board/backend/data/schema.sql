@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS boards (
     title           TEXT NOT NULL,
     description     TEXT,
     accent_color    TEXT DEFAULT '#3b82f6',
+    position        INTEGER DEFAULT 0,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
