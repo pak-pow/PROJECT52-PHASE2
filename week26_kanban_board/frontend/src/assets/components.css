@@ -299,3 +299,22 @@
 .column-header:active {
     cursor: grabbing;
 }
+
+/* Card Filtering Pro animations */
+.kanban-card {
+    transition: opacity var(--transition-normal) ease, transform var(--transition-normal) ease, height var(--transition-normal) ease, padding var(--transition-normal) ease, margin var(--transition-normal) ease, border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+}
+
+.kanban-card.filtered-out {
+    opacity: 0 !important;
+    transform: scale(0.9) translateY(-10px) !important;
+    pointer-events: none;
+    height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-width: 0 !important;
+    overflow: hidden;
+    box-shadow: none !important;
+}
