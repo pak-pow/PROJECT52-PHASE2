@@ -4,12 +4,21 @@ export function createBoardCard(board) {
     const date = new Date(board.created_at).toLocaleDateString();
     
     return `
-        <a href="#board/${board.id}" class="board-card" style="border-top: 4px solid ${escapeHtml(board.accent_color)}; --local-accent: ${escapeHtml(board.accent_color)}; position: relative;">
+        <a href="#board/${board.id}" class="board-card" data-board-id="${board.id}" data-position="${board.position}" draggable="true" data-drag-enabled="false" style="border-top: 4px solid ${escapeHtml(board.accent_color)}; --local-accent: ${escapeHtml(board.accent_color)}; position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 1rem;">
                 <h3 style="margin: 0; font-size: 1.1rem; line-height: 1.3;">
                     ${escapeHtml(board.title)}
                 </h3>
                 <div style="display: flex; gap: 4px; align-items: center;">
+                    <div class="board-drag-handle" 
+                         title="Drag to reorder"
+                         onmousedown="this.closest('.board-card').dataset.dragEnabled='true'"
+                         onmouseup="this.closest('.board-card').dataset.dragEnabled='false'"
+                         onmouseleave="this.closest('.board-card').dataset.dragEnabled='false'"
+                         onclick="event.preventDefault(); event.stopPropagation();"
+                         style="color: var(--text-muted); cursor: grab; padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; transition: color var(--transition-fast);">
+                        <i data-lucide="grip-vertical" style="width: 16px; height: 16px;"></i>
+                    </div>
                     <button class="edit-board-btn" 
                             data-id="${board.id}" 
                             title="Edit Board"
