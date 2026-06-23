@@ -1,6 +1,7 @@
 import { api } from '../api/kanban_api.js';
 import { createBoardCard } from '../components/boardCard.js';
-import { escapeHtml, openModal, closeModal } from '../utils/dom.js';
+import { escapeHtml, openModal, closeModal, showToast } from '../utils/dom.js';
+import { initDragAndDrop } from '../utils/drag.js';
 
 export async function renderDashboard(container) {
     let activeEditBoardId = null;
@@ -9,9 +10,15 @@ export async function renderDashboard(container) {
     // 1. Initial Scaffold Layout with Modal markup
     container.innerHTML = `
         <div class="page-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h1><i data-lucide="layout-dashboard" style="color: var(--accent);"></i> Your Workspaces</h1>
-                <button class="btn btn-primary" id="new-board-btn"><i data-lucide="plus"></i> New Board</button>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem;">
+                <h1 style="margin: 0;"><i data-lucide="layout-dashboard" style="color: var(--accent);"></i> Your Workspaces</h1>
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; width: 100%; max-width: 500px; justify-content: flex-end;">
+                    <div style="position: relative; flex-grow: 1; max-width: 300px;">
+                        <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+                        <input type="text" id="dashboard-search-input" class="form-input" placeholder="Search boards..." style="padding-left: 2.25rem; margin: 0; width: 100%;">
+                    </div>
+                    <button class="btn btn-primary" id="new-board-btn"><i data-lucide="plus"></i> New Board</button>
+                </div>
             </div>
             
             <div id="boards-list-container">
@@ -104,6 +111,21 @@ export async function renderDashboard(container) {
 
     if (window.lucide) window.lucide.createIcons();
 
+    // Helper to filter boards
+    function filterBoards(query) {
+        const q = query.toLowerCase().trim();
+        const cards = container.querySelectorAll('.board-card');
+        cards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const desc = card.querySelector('p').textContent.toLowerCase();
+            if (title.includes(q) || desc.includes(q)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
     // 2. Fetch and render boards list
     async function loadBoards() {
         const listContainer = document.getElementById('boards-list-container');
@@ -123,9 +145,46 @@ export async function renderDashboard(container) {
                 });
                 html += '</div>';
                 listContainer.innerHTML = html;
+
+                const dashboardGrid = listContainer.querySelector('.dashboard-grid');
+                if (dashboardGrid) {
+                    initDragAndDrop(
+                        listContainer,
+                        null,
+                        null,
+                        async ({ boardId, newPosition, revert }) => {
+                            const searchInput = document.getElementById('dashboard-search-input');
+                            if (searchInput && searchInput.value.trim() !== '') {
+                                showToast('Reordering is disabled while search filter is active.', 'error');
+                                revert();
+                                return;
+                            }
+
+                            const cards = Array.from(dashboardGrid.children);
+                            const updates = cards.map((card, idx) => {
+                                card.dataset.position = idx;
+                                return [parseInt(card.dataset.boardId), idx];
+                            });
+
+                            try {
+                                await api.reorderBoards(updates);
+                                showToast('Board order updated successfully', 'success');
+                            } catch (err) {
+                                showToast(`Failed to update board order: ${err.message}`, 'error');
+                                revert();
+                            }
+                        }
+                    );
+                }
             }
             if (window.lucide) window.lucide.createIcons();
             attachBoardCardListeners();
+
+            // Re-apply search filter if active
+            const searchInput = document.getElementById('dashboard-search-input');
+            if (searchInput && searchInput.value.trim() !== '') {
+                filterBoards(searchInput.value);
+            }
         } catch (error) {
             listContainer.innerHTML = `
                 <div style="padding: 2rem; border: 1px solid var(--danger); border-radius: var(--radius-md); background: rgba(239,68,68,0.05);">
@@ -163,7 +222,7 @@ export async function renderDashboard(container) {
                     
                     openModal('edit-board-modal');
                 } catch (error) {
-                    alert(`Failed to load board details: ${error.message}`);
+                    showToast(`Failed to load board details: ${error.message}`, 'error');
                 }
             });
         });
@@ -181,7 +240,7 @@ export async function renderDashboard(container) {
                         await api.deleteBoard(id);
                         await loadBoards();
                     } catch (error) {
-                        alert(`Failed to delete board: ${error.message}`);
+                        showToast(`Failed to delete board: ${error.message}`, 'error');
                     }
                 }
             });
@@ -238,7 +297,7 @@ export async function renderDashboard(container) {
             closeModal('create-board-modal');
             await loadBoards();
         } catch (error) {
-            alert(`Error creating board: ${error.message}`);
+            showToast(`Error creating board: ${error.message}`, 'error');
         }
     });
 
@@ -276,9 +335,17 @@ export async function renderDashboard(container) {
             closeModal('edit-board-modal');
             await loadBoards();
         } catch (error) {
-            alert(`Error updating board: ${error.message}`);
+            showToast(`Error updating board: ${error.message}`, 'error');
         }
     });
+
+    // Attach search input listener
+    const searchInput = document.getElementById('dashboard-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterBoards(e.target.value);
+        });
+    }
 
     // Initial load
     await loadBoards();
