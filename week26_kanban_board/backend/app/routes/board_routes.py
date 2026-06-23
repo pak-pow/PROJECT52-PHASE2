@@ -44,3 +44,14 @@ def delete_board(board_id):
     
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
+
+@board_bp.route('/reorder', methods=['PATCH'])
+def reorder_boards():
+    try:
+        data = request.get_json() or {}
+        updates = data.get('updates')
+        board_service.reorder_boards(updates)
+        return jsonify({'message': 'Boards reordered successfully'}), 200
+    
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
