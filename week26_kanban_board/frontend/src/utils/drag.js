@@ -35,7 +35,37 @@ function getDragAfterColumn(container, x) {
     }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-export function initDragAndDrop(container, onCardMove, onColumnMove) {
+function getDragAfterGridElement(container, x, y) {
+    const draggableElements = [...container.querySelectorAll('.board-card:not(.dragging)')];
+    
+    const closest = draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const centerX = box.left + box.width / 2;
+        const centerY = box.top + box.height / 2;
+        
+        const distance = Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2);
+        
+        if (distance < closest.distance) {
+            return { distance: distance, element: child, box: box };
+        } else {
+            return closest;
+        }
+    }, { distance: Number.POSITIVE_INFINITY, element: null });
+
+    if (!closest.element) return null;
+    
+    const box = closest.box;
+    const centerX = box.left + box.width / 2;
+    const centerY = box.top + box.height / 2;
+    
+    const isPast = (x > centerX && y >= box.top && y <= box.bottom) || (y > centerY);
+    if (isPast) {
+        return closest.element.nextElementSibling;
+    }
+    return closest.element;
+}
+
+export function initDragAndDrop(container, onCardMove, onColumnMove, onBoardMove) {
     let draggedElement = null;
     let dragType = null;
     let sourceContainer = null;
@@ -60,6 +90,18 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
             dragType = 'column';
             draggedElement = e.target;
             sourceContainer = container; 
+            originalNextSibling = draggedElement.nextElementSibling;
+
+            setTimeout(() => draggedElement.classList.add('dragging'), 0);
+        } else if (e.target.classList.contains('board-card')) {
+            // Only allow board dragging if user grabbed the drag handle!
+            if (e.target.dataset.dragEnabled !== 'true') {
+                e.preventDefault();
+                return;
+            }
+            dragType = 'board';
+            draggedElement = e.target;
+            sourceContainer = draggedElement.parentElement;
             originalNextSibling = draggedElement.nextElementSibling;
 
             setTimeout(() => draggedElement.classList.add('dragging'), 0);
@@ -90,6 +132,14 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
             } else {
                 dropZone.insertBefore(draggedElement, afterElement);
             }
+        } else if (dragType === 'board') {
+            const dropZone = container.querySelector('.dashboard-grid') || container;
+            const afterElement = getDragAfterGridElement(dropZone, e.clientX, e.clientY);
+            if (afterElement == null) {
+                dropZone.appendChild(draggedElement);
+            } else {
+                dropZone.insertBefore(draggedElement, afterElement);
+            }
         }
     });
 
@@ -97,7 +147,7 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
         if (!draggedElement) return;
         
         draggedElement.classList.remove('dragging');
-        if (dragType === 'column') {
+        if (dragType === 'column' || dragType === 'board') {
             draggedElement.dataset.dragEnabled = 'false'; // Reset lock
         }
         
@@ -134,6 +184,16 @@ export function initDragAndDrop(container, onCardMove, onColumnMove) {
                 columnId: columnId,
                 newPosition: newPosition,
                 revert: () => container.insertBefore(element, originalSib)
+            });
+        } else if (type === 'board' && onBoardMove) {
+            const parent = element.parentElement;
+            const newPosition = Array.from(parent.children).indexOf(element);
+            const boardId = element.dataset.boardId || element.dataset.id;
+            
+            onBoardMove({
+                boardId: boardId,
+                newPosition: newPosition,
+                revert: () => originalCol.insertBefore(element, originalSib)
             });
         }
     });
