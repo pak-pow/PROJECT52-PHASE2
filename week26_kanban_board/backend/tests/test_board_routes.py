@@ -24,14 +24,12 @@ class TestListBoards:
         assert res.status_code == 200
         assert len(data) == 2
 
-    def test_boards_ordered_newest_first(self, client):
-        import time
+    def test_boards_ordered_by_position(self, client):
         client.post('/api/boards', json={'title': 'First',  'accent_color': '#111111'})
-        time.sleep(1) # Ensure timestamps differ
         client.post('/api/boards', json={'title': 'Second', 'accent_color': '#222222'})
         data = client.get('/api/boards').get_json()
-        assert data[0]['title'] == 'Second'
-        assert data[1]['title'] == 'First'
+        assert data[0]['title'] == 'First'
+        assert data[1]['title'] == 'Second'
 
 
 # ---------------------------------------------------------------------------
@@ -162,3 +160,23 @@ class TestDeleteBoard:
         assert res.status_code in (200, 404)
         if res.status_code == 200:
             assert res.get_json() == []
+
+
+# ---------------------------------------------------------------------------
+# PATCH /api/boards/reorder
+# ---------------------------------------------------------------------------
+
+class TestReorderBoards:
+
+    def test_reorder_boards_returns_200(self, client):
+        b1 = client.post('/api/boards', json={'title': 'A'}).get_json()
+        b2 = client.post('/api/boards', json={'title': 'B'}).get_json()
+        
+        res = client.patch('/api/boards/reorder', json={
+            'updates': [[b1['id'], 1], [b2['id'], 0]]
+        })
+        assert res.status_code == 200
+        
+        data = client.get('/api/boards').get_json()
+        assert data[0]['title'] == 'B'
+        assert data[1]['title'] == 'A'
