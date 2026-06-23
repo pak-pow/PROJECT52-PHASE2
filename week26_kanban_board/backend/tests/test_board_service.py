@@ -4,7 +4,7 @@ Unit tests for board_service validation logic.
 These tests exercise only the validation layer — no DB or Flask app context required.
 """
 import pytest
-from app.services.board_service import create_board, update_board
+from app.services.board_service import create_board, update_board, reorder_boards
 
 
 # ---------------------------------------------------------------------------
@@ -89,3 +89,22 @@ class TestUpdateBoardValidation:
         mock_get.return_value = {"id": 1, "title": "Old", "description": "", "accent_color": "#ffffff"}
         with pytest.raises(ValueError, match="Invalid accent color"):
             update_board(1, {"title": "New Title", "accent_color": "not-a-color"})
+
+
+# ---------------------------------------------------------------------------
+# reorder_boards — validation
+# ---------------------------------------------------------------------------
+
+class TestReorderBoardsValidation:
+
+    def test_reorder_boards_invalid_type_raises(self):
+        with pytest.raises(ValueError, match="Updates must be a list"):
+            reorder_boards("not-a-list")
+
+    def test_reorder_boards_invalid_items_raises(self):
+        with pytest.raises(ValueError, match="Each update must be a \\[board_id, position\\] list"):
+            reorder_boards(["not-a-list-item"])
+
+    def test_reorder_boards_invalid_item_length_raises(self):
+        with pytest.raises(ValueError, match="Each update must be a \\[board_id, position\\] list"):
+            reorder_boards([[1]])
