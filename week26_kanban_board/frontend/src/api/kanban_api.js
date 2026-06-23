@@ -73,6 +73,13 @@ export const api = {
         });
     },
 
+    async reorderBoards(updates) {
+        return request('/boards/reorder', {
+            method: 'PATCH',
+            body: { updates },
+        });
+    },
+
     // ----------------------------------------------------
     // Column Endpoints
     // ----------------------------------------------------
