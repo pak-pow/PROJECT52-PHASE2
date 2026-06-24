@@ -1,8 +1,8 @@
 from app.utils.db import get_db
 
-def get_all_boards():
+def get_all_boards(user_id):
     conn = get_db()
-    cursor = conn.execute("SELECT * FROM boards ORDER BY position ASC, created_at DESC")
+    cursor = conn.execute("SELECT * FROM boards WHERE user_id = ? ORDER BY position ASC, created_at DESC", (user_id,))
     return [dict(row) for row in cursor.fetchall()]
 
 def get_board_by_id(board_id):
@@ -11,17 +11,17 @@ def get_board_by_id(board_id):
     row = cursor.fetchone()
     return dict(row) if row else None
 
-def create_board(title, description, accent_color):
+def create_board(user_id, title, description, accent_color):
     conn = get_db()
     
     # Calculate next position index
-    cursor = conn.execute("SELECT COALESCE(MAX(position), -1) FROM boards")
+    cursor = conn.execute("SELECT COALESCE(MAX(position), -1) FROM boards WHERE user_id = ?", (user_id,))
     max_pos = cursor.fetchone()[0]
     next_pos = max_pos + 1
     
     cursor = conn.execute(
-        "INSERT INTO boards (title, description, accent_color, position) VALUES (?, ?, ?, ?)",
-        (title, description, accent_color, next_pos)
+        "INSERT INTO boards (user_id, title, description, accent_color, position) VALUES (?, ?, ?, ?, ?)",
+        (user_id, title, description, accent_color, next_pos)
     )
     conn.commit()
     return cursor.lastrowid
