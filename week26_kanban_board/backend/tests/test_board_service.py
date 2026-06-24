@@ -15,15 +15,15 @@ class TestCreateBoardTitle:
 
     def test_missing_title_raises(self):
         with pytest.raises(ValueError, match="Board title is required"):
-            create_board({"description": "No title here", "accent_color": "#ffffff"})
+            create_board(1, {"description": "No title here", "accent_color": "#ffffff"})
 
     def test_empty_string_title_raises(self):
         with pytest.raises(ValueError, match="Board title is required"):
-            create_board({"title": "", "accent_color": "#ffffff"})
+            create_board(1, {"title": "", "accent_color": "#ffffff"})
 
     def test_whitespace_only_title_raises(self):
         with pytest.raises(ValueError, match="Board title is required"):
-            create_board({"title": "   ", "accent_color": "#ffffff"})
+            create_board(1, {"title": "   ", "accent_color": "#ffffff"})
 
 
 # ---------------------------------------------------------------------------
@@ -34,38 +34,38 @@ class TestCreateBoardAccentColor:
 
     def test_invalid_color_word_raises(self):
         with pytest.raises(ValueError, match="Invalid accent color"):
-            create_board({"title": "Valid Title", "accent_color": "blue"})
+            create_board(1, {"title": "Valid Title", "accent_color": "blue"})
 
     def test_invalid_color_no_hash_raises(self):
         with pytest.raises(ValueError, match="Invalid accent color"):
-            create_board({"title": "Valid Title", "accent_color": "3b82f6"})
+            create_board(1, {"title": "Valid Title", "accent_color": "3b82f6"})
 
     def test_invalid_color_too_long_raises(self):
         with pytest.raises(ValueError, match="Invalid accent color"):
-            create_board({"title": "Valid Title", "accent_color": "#1234567"})
+            create_board(1, {"title": "Valid Title", "accent_color": "#1234567"})
 
     def test_invalid_color_too_short_raises(self):
         with pytest.raises(ValueError, match="Invalid accent color"):
-            create_board({"title": "Valid Title", "accent_color": "#12"})
+            create_board(1, {"title": "Valid Title", "accent_color": "#12"})
 
     def test_valid_6char_hex_passes(self):
         """A valid 6-char hex should not raise at the validation step."""
         # We expect this to fail at the DB step (no app context), not the validation step
         with pytest.raises(Exception) as exc_info:
-            create_board({"title": "Valid Board", "accent_color": "#3b82f6"})
+            create_board(1, {"title": "Valid Board", "accent_color": "#3b82f6"})
         # The exception must NOT be about the color
         assert "Invalid accent color" not in str(exc_info.value)
 
     def test_valid_3char_hex_passes(self):
         """A valid 3-char hex shorthand should not raise at the validation step."""
         with pytest.raises(Exception) as exc_info:
-            create_board({"title": "Valid Board", "accent_color": "#fff"})
+            create_board(1, {"title": "Valid Board", "accent_color": "#fff"})
         assert "Invalid accent color" not in str(exc_info.value)
 
     def test_uppercase_hex_passes(self):
         """Hex colors are case-insensitive."""
         with pytest.raises(Exception) as exc_info:
-            create_board({"title": "Valid Board", "accent_color": "#3B82F6"})
+            create_board(1, {"title": "Valid Board", "accent_color": "#3B82F6"})
         assert "Invalid accent color" not in str(exc_info.value)
 
 
@@ -80,15 +80,15 @@ class TestUpdateBoardValidation:
     @patch('app.services.board_service.board_model.get_board_by_id')
     def test_empty_title_raises(self, mock_get):
         """update_board raises if the new title is an empty string."""
-        mock_get.return_value = {"id": 1, "title": "Old", "description": "", "accent_color": "#ffffff"}
+        mock_get.return_value = {"id": 1, "title": "Old", "description": "", "accent_color": "#ffffff", "user_id": 1}
         with pytest.raises(ValueError, match="Board title cannot be empty"):
-            update_board(1, {"title": "   ", "accent_color": "#ffffff"})
+            update_board(1, 1, {"title": "   ", "accent_color": "#ffffff"})
 
     @patch('app.services.board_service.board_model.get_board_by_id')
     def test_invalid_color_raises_on_update(self, mock_get):
-        mock_get.return_value = {"id": 1, "title": "Old", "description": "", "accent_color": "#ffffff"}
+        mock_get.return_value = {"id": 1, "title": "Old", "description": "", "accent_color": "#ffffff", "user_id": 1}
         with pytest.raises(ValueError, match="Invalid accent color"):
-            update_board(1, {"title": "New Title", "accent_color": "not-a-color"})
+            update_board(1, 1, {"title": "New Title", "accent_color": "not-a-color"})
 
 
 # ---------------------------------------------------------------------------
@@ -99,12 +99,12 @@ class TestReorderBoardsValidation:
 
     def test_reorder_boards_invalid_type_raises(self):
         with pytest.raises(ValueError, match="Updates must be a list"):
-            reorder_boards("not-a-list")
+            reorder_boards(1, "not-a-list")
 
     def test_reorder_boards_invalid_items_raises(self):
         with pytest.raises(ValueError, match="Each update must be a \\[board_id, position\\] list"):
-            reorder_boards(["not-a-list-item"])
+            reorder_boards(1, ["not-a-list-item"])
 
     def test_reorder_boards_invalid_item_length_raises(self):
         with pytest.raises(ValueError, match="Each update must be a \\[board_id, position\\] list"):
-            reorder_boards([[1]])
+            reorder_boards(1, [[1]])
