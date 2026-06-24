@@ -6,6 +6,14 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_app.config.get('TESTING'):
+            auth_header = request.headers.get('Authorization')
+            if auth_header and auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+                user = user_model.get_user_by_session_token(token)
+                if user:
+                    g.user = user
+                    return f(*args, **kwargs)
+            
             user = user_model.get_user_by_id(1)
             if not user:
                 user_id = user_model.create_user('testuser', 'mock_password_hash')
