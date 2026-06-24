@@ -4,6 +4,10 @@ import { escapeHtml, openModal, closeModal, showToast } from '../utils/dom.js';
 import { initDragAndDrop } from '../utils/drag.js';
 
 export async function renderDashboard(container) {
+    // Reset custom board accent overrides to base theme defaults
+    document.documentElement.style.removeProperty('--accent');
+    document.documentElement.style.removeProperty('--accent-hover');
+
     let activeEditBoardId = null;
     let selectedEditColor = '#6366f1';
 
