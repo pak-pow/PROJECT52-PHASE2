@@ -40,3 +40,4 @@ CREATE TABLE IF NOT EXISTS cards (
     position        INTEGER DEFAULT 0,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (column_id) REFERENCES columns (id) ON DELETE CASCADE
+);
