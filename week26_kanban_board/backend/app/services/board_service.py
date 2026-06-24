@@ -1,12 +1,12 @@
 import re
 from app.models import board_model, column_model, card_model
 
-def get_all_boards():
-    return board_model.get_all_boards()
+def get_all_boards(user_id):
+    return board_model.get_all_boards(user_id)
 
-def get_board_with_details(board_id):
+def get_board_with_details(user_id, board_id):
     board = board_model.get_board_by_id(board_id)
-    if not board:
+    if not board or board['user_id'] != user_id:
         raise ValueError("Board not found")
     
     columns = column_model.get_columns_by_board(board_id)
@@ -17,7 +17,7 @@ def get_board_with_details(board_id):
     board['columns'] = columns
     return board
 
-def create_board(data):
+def create_board(user_id, data):
     title = data.get('title', '').strip()
     if not title:
         raise ValueError("Board title is required")
@@ -28,12 +28,12 @@ def create_board(data):
         
     description = data.get('description', '').strip()
     
-    board_id = board_model.create_board(title, description, accent_color)
+    board_id = board_model.create_board(user_id, title, description, accent_color)
     return board_model.get_board_by_id(board_id)
 
-def update_board(board_id, data):
+def update_board(user_id, board_id, data):
     existing = board_model.get_board_by_id(board_id)
-    if not existing:
+    if not existing or existing['user_id'] != user_id:
         raise ValueError("Board not found")
         
     title = data.get('title', existing['title']).strip()
@@ -49,16 +49,20 @@ def update_board(board_id, data):
     board_model.update_board(board_id, title, description, accent_color)
     return board_model.get_board_by_id(board_id)
 
-def delete_board(board_id):
+def delete_board(user_id, board_id):
     existing = board_model.get_board_by_id(board_id)
-    if not existing:
+    if not existing or existing['user_id'] != user_id:
         raise ValueError("Board not found")
     board_model.delete_board(board_id)
 
-def reorder_boards(updates):
+def reorder_boards(user_id, updates):
     if not isinstance(updates, list):
         raise ValueError("Updates must be a list")
     for item in updates:
         if not isinstance(item, list) or len(item) != 2:
             raise ValueError("Each update must be a [board_id, position] list")
+        board_id = item[0]
+        board = board_model.get_board_by_id(board_id)
+        if not board or board['user_id'] != user_id:
+            raise ValueError("Unauthorized board reordering")
     board_model.reorder_boards(updates)
