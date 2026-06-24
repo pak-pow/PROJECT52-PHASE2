@@ -40,7 +40,6 @@ export function createBoardCard(board) {
                 <span class="board-card-date">
                     <i data-lucide="calendar" style="width: 14px; height: 14px;"></i> ${date}
                 </span>
-                <span style="opacity: 0.8;">Board ID: ${board.id}</span>
             </div>
         </a>
     `;
