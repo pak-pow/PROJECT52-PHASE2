@@ -2,6 +2,10 @@ import { api } from '../api/kanban_api.js';
 import { showToast } from '../utils/dom.js';
 
 export function renderAuth(container) {
+    // Reset custom board accent overrides to base theme defaults
+    document.documentElement.style.removeProperty('--accent');
+    document.documentElement.style.removeProperty('--accent-hover');
+
     let isLogin = true;
 
     // Helper to update the view state without recreating DOM nodes (to preserve focus)
