@@ -148,3 +148,8 @@
     align-items: center;
     flex-wrap: wrap;
 }
+
+.board-header-right .search-input,
+.board-header-right .btn {
+    height: 38px;
+}
