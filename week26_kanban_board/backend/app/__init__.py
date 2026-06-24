@@ -7,6 +7,7 @@ from app.middlewares.request_logger import register_logger
 from app.routes.board_routes import board_bp
 from app.routes.column_routes import column_bp
 from app.routes.card_routes import card_bp
+from app.routes.auth_routes import auth_bp
 
 
 def create_app():
@@ -19,6 +20,7 @@ def create_app():
 
     with app.app_context():
         init_db()
+        app.register_blueprint(auth_bp)
         app.register_blueprint(board_bp)
         app.register_blueprint(column_bp)
         app.register_blueprint(card_bp)
