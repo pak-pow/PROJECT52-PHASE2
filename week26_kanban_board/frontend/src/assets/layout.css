@@ -82,3 +82,23 @@
 .modal-overlay.active .modal-dialog {
     transform: translateY(0);
 }
+
+/* Layout Headers and Controls */
+.dashboard-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.dashboard-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 500px;
+    justify-content: flex-end;
+}
