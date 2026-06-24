@@ -5,9 +5,15 @@ const API_BASE_URL = 'http://127.0.0.1:5000/api';
  */
 async function request(path, options = {}) {
     const url = `${API_BASE_URL}${path}`;
+    const token = localStorage.getItem('kanban_token');
+    
     const defaultHeaders = {
         'Content-Type': 'application/json',
     };
+
+    if (token) {
+        defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
 
     const config = {
         ...options,
@@ -31,6 +37,13 @@ async function request(path, options = {}) {
         const data = await response.get_json ? await response.get_json() : await response.json();
         
         if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('kanban_token');
+                localStorage.removeItem('kanban_user');
+                if (window.location.hash !== '#login') {
+                    window.location.hash = '#login';
+                }
+            }
             throw new Error(data.error || `HTTP error! Status: ${response.status}`);
         }
         
@@ -42,6 +55,59 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+    // ----------------------------------------------------
+    // Auth Endpoints
+    // ----------------------------------------------------
+    async login(username, password) {
+        const data = await request('/auth/login', {
+            method: 'POST',
+            body: { username, password },
+        });
+        if (data && data.token) {
+            localStorage.setItem('kanban_token', data.token);
+            localStorage.setItem('kanban_user', JSON.stringify(data.user));
+        }
+        return data;
+    },
+
+    async register(username, password) {
+        const data = await request('/auth/register', {
+            method: 'POST',
+            body: { username, password },
+        });
+        if (data && data.token) {
+            localStorage.setItem('kanban_token', data.token);
+            localStorage.setItem('kanban_user', JSON.stringify(data.user));
+        }
+        return data;
+    },
+
+    async logout() {
+        try {
+            await request('/auth/logout', {
+                method: 'POST',
+            });
+        } catch (e) {
+            console.error('Logout request failed:', e);
+        } finally {
+            localStorage.removeItem('kanban_token');
+            localStorage.removeItem('kanban_user');
+            window.location.hash = '#login';
+        }
+    },
+
+    async getMe() {
+        return request('/auth/me');
+    },
+
+    isAuthenticated() {
+        return !!localStorage.getItem('kanban_token');
+    },
+
+    getCurrentUser() {
+        const user = localStorage.getItem('kanban_user');
+        return user ? JSON.parse(user) : null;
+    },
     // ----------------------------------------------------
     // Board Endpoints
     // ----------------------------------------------------
