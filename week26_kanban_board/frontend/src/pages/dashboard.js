@@ -10,28 +10,28 @@ export async function renderDashboard(container) {
     // 1. Initial Scaffold Layout with Modal markup
     container.innerHTML = `
         <div class="page-container">
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem;">
-                <h1 style="margin: 0;"><i data-lucide="layout-dashboard" style="color: var(--accent);"></i> Your Workspaces</h1>
-                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; width: 100%; max-width: 500px; justify-content: flex-end;">
-                    <div style="position: relative; flex-grow: 1; max-width: 300px;">
-                        <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
-                        <input type="text" id="dashboard-search-input" class="form-input" placeholder="Search boards..." style="padding-left: 2.25rem; margin: 0; width: 100%;">
+            <div class="dashboard-header">
+                <h1><i data-lucide="layout-dashboard" style="color: var(--accent);"></i> Your Workspaces</h1>
+                <div class="dashboard-controls">
+                    <div class="search-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="dashboard-search-input" class="form-input search-input" placeholder="Search boards...">
                     </div>
                     <button class="btn btn-primary" id="new-board-btn"><i data-lucide="plus"></i> New Board</button>
                 </div>
             </div>
             
             <div id="boards-list-container">
-                <p style="color: var(--text-muted);">Loading workspace boards...</p>
+                <p class="text-muted">Loading workspace boards...</p>
             </div>
         </div>
 
         <!-- Create Board Modal -->
         <div class="modal-overlay" id="create-board-modal">
             <div class="modal-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.25rem;">Create New Board</h2>
-                    <button class="btn btn-icon" id="close-modal-btn" style="border: none; background: transparent;">
+                <div class="modal-header">
+                    <h2>Create New Board</h2>
+                    <button class="btn btn-icon" id="close-modal-btn">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
@@ -59,7 +59,7 @@ export async function renderDashboard(container) {
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <div class="modal-actions">
                         <button type="button" class="btn" id="cancel-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Create Board</button>
                     </div>
@@ -70,9 +70,9 @@ export async function renderDashboard(container) {
         <!-- Edit Board Modal -->
         <div class="modal-overlay" id="edit-board-modal">
             <div class="modal-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.25rem;">Edit Board</h2>
-                    <button class="btn btn-icon" id="close-edit-modal-btn" style="border: none; background: transparent;">
+                <div class="modal-header">
+                    <h2>Edit Board</h2>
+                    <button class="btn btn-icon" id="close-edit-modal-btn">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
@@ -100,7 +100,7 @@ export async function renderDashboard(container) {
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <div class="modal-actions">
                         <button type="button" class="btn" id="cancel-edit-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
@@ -133,9 +133,9 @@ export async function renderDashboard(container) {
             const boards = await api.getBoards();
             if (boards.length === 0) {
                 listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 4rem 2rem; border: 1px dashed var(--border-color); border-radius: var(--radius-md);">
-                        <i data-lucide="kanban" style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 1rem;"></i>
-                        <p style="color: var(--text-muted); font-size: 1rem;">No boards found. Create a board to get started!</p>
+                    <div class="empty-state">
+                        <i data-lucide="kanban"></i>
+                        <p>No boards found. Create a board to get started!</p>
                     </div>
                 `;
             } else {
@@ -187,9 +187,9 @@ export async function renderDashboard(container) {
             }
         } catch (error) {
             listContainer.innerHTML = `
-                <div style="padding: 2rem; border: 1px solid var(--danger); border-radius: var(--radius-md); background: rgba(239,68,68,0.05);">
-                    <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Connection Error</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Could not connect to the server. Please verify your Python Flask app is running.</p>
+                <div class="error-state">
+                    <h3>Connection Error</h3>
+                    <p>Could not connect to the server. Please verify your Python Flask app is running.</p>
                 </div>
             `;
         }
