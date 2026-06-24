@@ -29,7 +29,7 @@
 .board-canvas-wrapper {
     padding: 1.5rem 2rem;
     overflow-x: auto;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
 }
