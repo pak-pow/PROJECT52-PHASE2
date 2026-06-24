@@ -102,3 +102,42 @@
     max-width: 500px;
     justify-content: flex-end;
 }
+
+/* Global Navigation Bar */
+.global-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 0 2rem;
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.global-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.global-nav-brand i {
+    color: var(--accent);
+}
+
+.global-nav-user-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.global-nav-username {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
