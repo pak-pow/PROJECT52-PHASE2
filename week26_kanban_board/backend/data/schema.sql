@@ -14,11 +14,13 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE TABLE IF NOT EXISTS boards (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id         INTEGER,
     title           TEXT NOT NULL,
     description     TEXT,
     accent_color    TEXT DEFAULT '#3b82f6',
     position        INTEGER DEFAULT 0,
-    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS columns (
@@ -38,4 +40,3 @@ CREATE TABLE IF NOT EXISTS cards (
     position        INTEGER DEFAULT 0,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (column_id) REFERENCES columns (id) ON DELETE CASCADE
-);
