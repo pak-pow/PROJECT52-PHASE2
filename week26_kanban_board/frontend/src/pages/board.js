@@ -13,17 +13,17 @@ export async function renderBoard(container, boardId) {
     container.innerHTML = `
         <!-- Board Header Sticky Nav -->
         <div class="board-header" id="board-header-section">
-            <div>
-                <a href="#" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.25rem; margin-bottom: 0.25rem;">
+            <div class="board-header-left">
+                <a href="#" class="back-link">
                     <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i> Back to Dashboard
                 </a>
-                <h1 id="board-title-display" style="font-size: 1.5rem; margin: 0;">Loading Board...</h1>
-                <p id="board-desc-display" style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;"></p>
+                <h1 id="board-title-display" class="board-title">Loading Board...</h1>
+                <p id="board-desc-display" class="board-desc"></p>
             </div>
-            <div style="display: flex; gap: 0.75rem; align-items: center;">
-                <div style="position: relative; width: 220px;">
-                    <i data-lucide="search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted);"></i>
-                    <input type="text" id="board-search-input" class="form-input" placeholder="Filter tasks..." style="padding-left: 2rem; margin: 0; width: 100%; font-size: 0.875rem;">
+            <div class="board-header-right">
+                <div class="board-search-container">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="board-search-input" class="form-input search-input" placeholder="Filter tasks...">
                 </div>
                 <button class="btn btn-primary" id="add-column-btn"><i data-lucide="plus"></i> Add Column</button>
             </div>
@@ -32,16 +32,16 @@ export async function renderBoard(container, boardId) {
         <!-- Board Canvas horizontal scrolling layout -->
         <div class="board-canvas-wrapper">
             <div class="board-canvas" id="board-columns-list">
-                <p style="color: var(--text-muted);">Loading columns and cards...</p>
+                <p class="text-muted">Loading columns and cards...</p>
             </div>
         </div>
 
         <!-- Add Column Modal -->
         <div class="modal-overlay" id="create-column-modal">
             <div class="modal-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.25rem;">Create New Column</h2>
-                    <button class="btn btn-icon" id="close-column-modal-btn" style="border: none; background: transparent;">
+                <div class="modal-header">
+                    <h2>Create New Column</h2>
+                    <button class="btn btn-icon" id="close-column-modal-btn">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
@@ -50,7 +50,7 @@ export async function renderBoard(container, boardId) {
                         <label class="form-label" for="column-title">Column Title *</label>
                         <input type="text" id="column-title" class="form-input" placeholder="e.g. In Progress" required maxlength="100">
                     </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <div class="modal-actions">
                         <button type="button" class="btn" id="cancel-column-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Create Column</button>
                     </div>
@@ -61,9 +61,9 @@ export async function renderBoard(container, boardId) {
         <!-- Add Card Modal -->
         <div class="modal-overlay" id="create-card-modal">
             <div class="modal-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.25rem;">Create New Task</h2>
-                    <button class="btn btn-icon" id="close-card-modal-btn" style="border: none; background: transparent;">
+                <div class="modal-header">
+                    <h2>Create New Task</h2>
+                    <button class="btn btn-icon" id="close-card-modal-btn">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
@@ -76,7 +76,7 @@ export async function renderBoard(container, boardId) {
                         <label class="form-label" for="card-desc">Description</label>
                         <textarea id="card-desc" class="form-input form-textarea" placeholder="Describe the task..."></textarea>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <div class="modal-actions">
                         <button type="button" class="btn" id="cancel-card-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Create Task</button>
                     </div>
@@ -87,9 +87,9 @@ export async function renderBoard(container, boardId) {
         <!-- Edit Card Modal -->
         <div class="modal-overlay" id="edit-card-modal">
             <div class="modal-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.25rem;">Edit Task</h2>
-                    <button class="btn btn-icon" id="close-edit-modal-btn" style="border: none; background: transparent;">
+                <div class="modal-header">
+                    <h2>Edit Task</h2>
+                    <button class="btn btn-icon" id="close-edit-modal-btn">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
@@ -102,7 +102,7 @@ export async function renderBoard(container, boardId) {
                         <label class="form-label" for="edit-card-desc">Description</label>
                         <textarea id="edit-card-desc" class="form-input form-textarea"></textarea>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <div class="modal-actions">
                         <button type="button" class="btn" id="cancel-edit-modal-btn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
@@ -150,9 +150,9 @@ export async function renderBoard(container, boardId) {
 
             if (boardData.columns.length === 0) {
                 columnsList.innerHTML = `
-                    <div style="text-align: center; margin: auto; padding: 4rem 2rem;">
-                        <i data-lucide="columns" style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 1rem;"></i>
-                        <p style="color: var(--text-muted); font-size: 1rem;">No columns found. Create one to start organizing cards!</p>
+                    <div class="empty-state">
+                        <i data-lucide="columns"></i>
+                        <p>No columns found. Create one to start organizing cards!</p>
                     </div>
                 `;
             } else {
@@ -177,9 +177,9 @@ export async function renderBoard(container, boardId) {
 
         } catch (error) {
             columnsList.innerHTML = `
-                <div style="margin: auto; padding: 2rem; border: 1px solid var(--danger); border-radius: var(--radius-md); background: rgba(239,68,68,0.05); max-width: 500px;">
-                    <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Failed to load Board</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">The board does not exist or the server could not be reached.</p>
+                <div class="error-state">
+                    <h3>Failed to load Board</h3>
+                    <p>The board does not exist or the server could not be reached.</p>
                 </div>
             `;
         }
