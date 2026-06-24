@@ -134,9 +134,9 @@ class TestUpdateCard:
         res = client.put(f'/api/cards/{card["id"]}', json={'title': 'Changed Title'})
         assert res.get_json()['description'] == original_desc
 
-    def test_update_nonexistent_card_returns_400(self, client):
+    def test_update_nonexistent_card_returns_404(self, client):
         res = client.put('/api/cards/99999', json={'title': 'Ghost'})
-        assert res.status_code == 400
+        assert res.status_code == 404
 
     def test_update_none_description_does_not_crash(self, client, card):
         """Regression: passing description=null must not cause an AttributeError."""
