@@ -42,7 +42,7 @@ Phase 2 represents the convergence of foundational skills into cohesive systems.
 | 23 | Expense Tracker with Charts | Full Stack | Chart.js, Data Aggregation | 6h | Not Started |
 | 24 | URL Shortener Service | Backend | Hash Functions, Database Design | 5h | Not Started |
 | 25 | Recipe Sharing Platform | Full Stack | Image Upload, User Content | 8h | Not Started |
-| 26 | Kanban Board (Trello Clone) | Full Stack | Drag & Drop, State Management | 9h | Not Started |
+| 26 | Kanban Board (Trello Clone) | Full Stack | Drag & Drop, State Management | 9h | Done |
 | 27 | Portfolio v2 with Backend | Full Stack | Contact Forms, Admin Dashboard | 7h | Not Started |
 | 28 | Quiz Platform with Scores | Full Stack | Leaderboards, Timed Tests | 7h | Not Started |
 | 29 | File Upload & Storage System | Backend | File Handling, Cloud Storage | 6h | Not Started |
