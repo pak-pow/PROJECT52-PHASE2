@@ -32,16 +32,16 @@ Phase 2 represents the convergence of foundational skills into cohesive systems.
 | 13 | REST API for Todo App | Backend | Flask/FastAPI, RESTful Design | 5h | Done |
 | 14 | Todo Frontend with Fetch API | Frontend + Backend | AJAX, API Integration, JSON | 4h | Done |
 | 15 | User Authentication System | Backend | JWT, Password Hashing, Sessions | 6h | Done |
-| 16 | Blog Platform (Static) | Frontend | Multi-page Layout, SEO Basics | 4h | Not Started |
-| 17 | SQLite Database Manager | Backend + Database | SQL Queries, CRUD Operations | 5h | Not Started |
-| 18 | Weather Dashboard with API | Full Stack | External APIs, Async JS, UI Updates | 5h | Not Started |
-| 19 | Markdown Note-Taking App | Full Stack | File System, Markdown Parser | 6h | Not Started |
-| 20 | E-commerce Product Catalog | Frontend + Backend | Product Models, Filtering, Search | 7h | Not Started |
-| 21 | Real-time Chat Application | Full Stack | WebSockets, Event-Driven Design | 8h | Not Started |
-| 22 | Blog with CMS Backend | Full Stack | Admin Panel, Rich Text Editor | 7h | Not Started |
-| 23 | Expense Tracker with Charts | Full Stack | Chart.js, Data Aggregation | 6h | Not Started |
-| 24 | URL Shortener Service | Backend | Hash Functions, Database Design | 5h | Not Started |
-| 25 | Recipe Sharing Platform | Full Stack | Image Upload, User Content | 8h | Not Started |
+| 16 | Blog Platform (Static) | Frontend | Multi-page Layout, SEO Basics | 4h | Done |
+| 17 | SQLite Database Manager | Backend + Database | SQL Queries, CRUD Operations | 5h | Done |
+| 18 | Weather Dashboard with API | Full Stack | External APIs, Async JS, UI Updates | 5h | Done |
+| 19 | Markdown Note-Taking App | Full Stack | File System, Markdown Parser | 6h | Done |
+| 20 | E-commerce Product Catalog | Frontend + Backend | Product Models, Filtering, Search | 7h | Done |
+| 21 | Real-time Chat Application | Full Stack | WebSockets, Event-Driven Design | 8h | Done |
+| 22 | Blog with CMS Backend | Full Stack | Admin Panel, Rich Text Editor | 7h | Done |
+| 23 | Expense Tracker with Charts | Full Stack | Chart.js, Data Aggregation | 6h | Done |
+| 24 | URL Shortener Service | Backend | Hash Functions, Database Design | 5h | Done |
+| 25 | Recipe Sharing Platform | Full Stack | Image Upload, User Content | 8h | Done |
 | 26 | Kanban Board (Trello Clone) | Full Stack | Drag & Drop, State Management | 9h | Done |
 | 27 | Portfolio v2 with Backend | Full Stack | Contact Forms, Admin Dashboard | 7h | Not Started |
 | 28 | Quiz Platform with Scores | Full Stack | Leaderboards, Timed Tests | 7h | Not Started |
