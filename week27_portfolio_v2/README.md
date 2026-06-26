@@ -30,7 +30,7 @@ An upgraded version of the static Week 1 portfolio, now powered by a Flask backe
 ```bash
 cd backend
 pip install -r requirements.txt
-python app.py
+python run.py
 ```
 
 The server runs on **http://localhost:5000**. The database is auto-created on first run.

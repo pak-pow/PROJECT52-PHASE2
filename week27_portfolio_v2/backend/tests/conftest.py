@@ -1,19 +1,13 @@
-import pytest #type:ignore
+import pytest
 import sys
 import os
-import importlib.util
 import tempfile
 
-# Add backend root to path
+# Add backend root to path so 'app', 'config', 'run' are all importable
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, backend_dir)
 
-# Load app.py directly (avoids name collision with the app/ package)
-_spec = importlib.util.spec_from_file_location("app_module", os.path.join(backend_dir, "app.py"))
-_mod  = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_mod)
-create_app = _mod.create_app
-
+from run import create_app       # run.py — no collision with app/ package
 from app.db import init_db
 from config import Config
 
