@@ -519,6 +519,13 @@ footer {
 .footer-admin-link:hover { opacity: 1 !important; color: var(--accent) !important; }
 
 /* ── About Page ─────────────────────────────────────────────*/
+/* The about section is always full-page — animate it in directly
+   so it never stays invisible even if JS is slow */
+#about-page {
+    animation: slideUp 0.7s var(--ease) both;
+    opacity: 1 !important;   /* override section-reveal's opacity:0 */
+    transform: none !important;
+}
 .about-wrapper { max-width: 860px; }
 .about-header  { margin-bottom: 3rem; }
 .about-title   { font-size: 1.1rem; color: var(--accent); margin-top: 0.5rem; }
