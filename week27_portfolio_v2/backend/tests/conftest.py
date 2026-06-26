@@ -1,32 +1,51 @@
 import pytest #type:ignore
 import sys
 import os
+import importlib.util
+import tempfile
 
-# Ensure backend root is on the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+# Add backend root to path
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, backend_dir)
 
-from app import create_app #type:ignore
-from app.db import get_db, init_db
+# Load app.py directly (avoids name collision with the app/ package)
+_spec = importlib.util.spec_from_file_location("app_module", os.path.join(backend_dir, "app.py"))
+_mod  = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_mod)
+create_app = _mod.create_app
+
+from app.db import init_db
 from config import Config
 
 
 class TestConfig(Config):
-    """Override config for tests — use in-memory SQLite."""
+    """Override config for tests — use a temp file DB (not :memory:)
+    so all SQLite connections within a test share the same data."""
     TESTING = True
-    DATABASE = ":memory:"
     ADMIN_USERNAME = "admin"
     ADMIN_PASSWORD = "admin123"
 
 
 @pytest.fixture
 def app():
-    """Create application with in-memory DB for each test."""
-    application = create_app(TestConfig)
+    """Create application with a fresh temp-file DB for each test."""
+    db_fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(db_fd)
 
-    with application.app_context():
-        init_db()
+    class _TestConfig(TestConfig):
+        DATABASE = db_path
+
+    application = create_app(_TestConfig)
+
+    # Push a permanent app context so init_db and all test requests share it
+    ctx = application.app_context()
+    ctx.push()
+    init_db()
 
     yield application
+
+    ctx.pop()
+    os.unlink(db_path)
 
 
 @pytest.fixture

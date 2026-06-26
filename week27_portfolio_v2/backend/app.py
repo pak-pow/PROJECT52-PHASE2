@@ -12,6 +12,7 @@ from app.routes.projects_routes import projects_bp
 from app.routes.admin_routes import admin_bp
 
 
+
 def create_app(config_class=Config):
     """Create and configure the Flask application."""
     app = Flask(__name__)
@@ -28,9 +29,11 @@ def create_app(config_class=Config):
     app.register_blueprint(projects_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/api")
 
-    # Initialise DB on first run
-    with app.app_context():
-        init_db()
+    # Auto-init DB only when not in test mode
+    # (Tests call init_db() themselves inside their fixture)
+    if not app.config.get("TESTING"):
+        with app.app_context():
+            init_db()
 
     @app.route("/api/health")
     def health():
