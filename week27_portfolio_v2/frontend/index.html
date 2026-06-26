@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vincent Aguirre | Full Stack Developer</title>
+    <meta name="description" content="Full Stack Developer building 52 projects in 2026. Specialising in Python, Flask, and modern web technologies.">
+    <meta property="og:title" content="Vincent Aguirre | Full Stack Developer">
+    <meta property="og:description" content="Full Stack Developer — Project 52. One project every week for a year.">
+    <meta property="og:url" content="https://pak-pow.github.io/PROJECT52-PHASE2/week27_portfolio_v2/">
+    <meta name="theme-color" content="#4196f3">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+
+    <header id="site-header">
+        <nav>
+            <div class="logo">ENGINEER.DEV</div>
+            <ul>
+                <li><a href="index.html" class="nav-active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- ── Hero ──────────────────────────────────────────────── -->
+        <section id="hero">
+            <div class="hero-content">
+                <p class="hero-label">// Full Stack Developer</p>
+                <h1>Hello, I'm<br><span class="accent">Vincent Aguirre</span></h1>
+                <p class="hero-sub">
+                    Building <strong>52 projects in 2026</strong> — one every week.<br>
+                    Python · Flask · SQLite · JavaScript · WebSockets
+                </p>
+                <div class="hero-actions">
+                    <a href="#projects" class="btn btn-primary">View Projects</a>
+                    <a href="#contact" class="btn btn-outline">Contact Me</a>
+                </div>
+            </div>
+            <div class="hero-badge">
+                <span class="badge-text">Week 27</span>
+                <span class="badge-label">Portfolio v2</span>
+            </div>
+        </section>
+
+        <!-- ── About Preview ─────────────────────────────────────── -->
+        <section id="home-about" class="section-reveal">
+            <div class="content-wrapper">
+                <h2 class="section-title">About Me</h2>
+                <p>
+                    I'm a Computer Science student at <strong>MSEUF, Lucena City, Philippines</strong>, obsessed with
+                    <strong>system architecture</strong> and <strong>game engines</strong>.
+                    I don't just write code — I build systems.
+                </p>
+                <p>
+                    Currently halfway through <strong>Project 52</strong>: shipping one engineering project
+                    every single week for a year. Phase 1 complete. Phase 2 in progress.
+                </p>
+                <a href="about.html" class="text-link">Read Full Profile →</a>
+            </div>
+        </section>
+
+        <!-- ── Projects ──────────────────────────────────────────── -->
+        <section id="projects" class="section-reveal">
+            <div class="content-wrapper">
+                <h2 class="section-title">Projects</h2>
+                <p class="section-sub">A live feed from the database — managed via the admin panel.</p>
+                <div id="projects-grid" class="project-grid">
+                    <!-- Populated by api.js -->
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Contact ───────────────────────────────────────────── -->
+        <section id="contact" class="section-reveal">
+            <div class="content-wrapper contact-wrapper">
+                <h2 class="section-title">Open Frequency</h2>
+                <p class="section-sub">Ready to deploy? Send a message — I'll get back to you.</p>
+
+                <form id="contact-form" class="contact-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name">Name</label>
+                            <input type="text" id="contact-name" name="name" placeholder="Your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email</label>
+                            <input type="email" id="contact-email" name="email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <input type="text" id="contact-subject" name="subject" placeholder="What's this about?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" name="message" rows="5" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" id="contact-submit" class="btn btn-primary btn-full">
+                        <span id="submit-text">Send Message</span>
+                        <span id="submit-spinner" class="spinner hidden"></span>
+                    </button>
+                </form>
+
+                <div id="contact-toast" class="toast hidden"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <p class="footer-copy">© 2026 Vincent Aguirre. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/pak-pow" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/vincent-aguirre-367173367" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="admin.html" class="footer-admin-link">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="./src/api.js"></script>
+    <script type="module" src="./src/contact.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Portfolio v2</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#4196f3">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body class="admin-page">
+
+    <!-- ── Login Screen ─────────────────────────────────────────── -->
+    <div id="admin-login" class="admin-login-wrapper">
+        <div class="login-card glass-card">
+            <div class="logo">ENGINEER.DEV</div>
+            <h1>Admin Access</h1>
+            <p class="login-sub">Restricted area. Authorised personnel only.</p>
+            <form id="login-form" novalidate>
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" placeholder="admin" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <div id="login-error" class="form-error hidden"></div>
+                <button type="submit" id="login-btn" class="btn btn-primary btn-full">
+                    <span id="login-text">Login</span>
+                    <span id="login-spinner" class="spinner hidden"></span>
+                </button>
+            </form>
+            <a href="index.html" class="text-link back-link">← Back to Portfolio</a>
+        </div>
+    </div>
+
+    <!-- ── Dashboard ────────────────────────────────────────────── -->
+    <div id="admin-dashboard" class="hidden">
+
+        <header id="site-header">
+            <nav>
+                <div class="logo">ENGINEER.DEV <span class="admin-badge">ADMIN</span></div>
+                <div class="admin-nav-right">
+                    <a href="index.html" class="text-link">← Portfolio</a>
+                    <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+
+            <!-- Tab Nav -->
+            <div class="admin-tabs">
+                <button class="tab-btn tab-active" data-tab="messages">
+                    📬 Messages <span id="unread-badge" class="badge-count hidden">0</span>
+                </button>
+                <button class="tab-btn" data-tab="projects">
+                    🗂 Projects
+                </button>
+            </div>
+
+            <!-- ── Messages Tab ──────────────────────────────────── -->
+            <div id="tab-messages" class="tab-content">
+                <div class="tab-header">
+                    <h2>Contact Inbox</h2>
+                    <button id="refresh-messages-btn" class="btn btn-outline btn-sm">↺ Refresh</button>
+                </div>
+                <div id="messages-loading" class="loading-state">Loading messages...</div>
+                <div id="messages-empty" class="empty-state hidden">
+                    <p>📭 No messages yet.</p>
+                </div>
+                <div id="messages-list" class="messages-list hidden"></div>
+            </div>
+
+            <!-- ── Projects Tab ──────────────────────────────────── -->
+            <div id="tab-projects" class="tab-content hidden">
+                <div class="tab-header">
+                    <h2>Manage Projects</h2>
+                    <button id="add-project-btn" class="btn btn-primary btn-sm">+ Add Project</button>
+                </div>
+
+                <!-- Add / Edit Form -->
+                <div id="project-form-wrapper" class="glass-card project-form-card hidden">
+                    <h3 id="project-form-title">New Project</h3>
+                    <form id="project-form" novalidate>
+                        <input type="hidden" id="project-id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="proj-title">Title *</label>
+                                <input type="text" id="proj-title" required placeholder="Project name">
+                            </div>
+                            <div class="form-group">
+                                <label for="proj-status">Status</label>
+                                <select id="proj-status">
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Planned">Planned</option>
+                                    <option value="Live">Live</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="proj-description">Description *</label>
+                            <textarea id="proj-description" rows="3" required placeholder="What does this project do?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="proj-tech">Tech Stack *</label>
+                            <input type="text" id="proj-tech" required placeholder="Python, Flask, SQLite">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="proj-github">GitHub URL</label>
+                                <input type="url" id="proj-github" placeholder="https://github.com/...">
+                            </div>
+                            <div class="form-group">
+                                <label for="proj-live">Live URL</label>
+                                <input type="url" id="proj-live" placeholder="https://...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="proj-order">Sort Order</label>
+                            <input type="number" id="proj-order" value="0" min="0">
+                        </div>
+                        <div id="project-form-error" class="form-error hidden"></div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Project</button>
+                            <button type="button" id="cancel-project-btn" class="btn btn-outline">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="projects-loading" class="loading-state">Loading projects...</div>
+                <div id="projects-empty" class="empty-state hidden">
+                    <p>📂 No projects yet. Add one above!</p>
+                </div>
+                <div id="projects-list" class="projects-admin-list hidden"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="admin-toast" class="toast hidden"></div>
+
+    <script type="module" src="./src/api.js"></script>
+    <script type="module" src="./src/admin.js"></script>
+
+</body>
+</html>
