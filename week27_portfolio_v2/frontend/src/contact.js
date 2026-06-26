@@ -1,15 +1,18 @@
 /**
- * contact.js — Contact form AJAX handler
- * Intercepts the contact form submit, calls the API, shows toast feedback.
+ * contact.js — Contact form AJAX handler + Projects renderer
+ * Handles the public-facing index.html page.
  */
 
-import { submitContact } from "./api.js";
+// ── All imports MUST be at the top of an ES module ────────────────────────
+import { submitContact, getProjects } from "./api.js";
 
-const form    = document.getElementById("contact-form");
-const submitBtn   = document.getElementById("contact-submit");
-const submitText  = document.getElementById("submit-text");
-const spinner     = document.getElementById("submit-spinner");
-const toast       = document.getElementById("contact-toast");
+// ── Contact Form ───────────────────────────────────────────────────────────
+
+const form       = document.getElementById("contact-form");
+const submitBtn  = document.getElementById("contact-submit");
+const submitText = document.getElementById("submit-text");
+const spinner    = document.getElementById("submit-spinner");
+const toast      = document.getElementById("contact-toast");
 
 if (form) {
     form.addEventListener("submit", async (e) => {
@@ -22,7 +25,6 @@ if (form) {
             message: form.message.value.trim(),
         };
 
-        // Show loading state
         submitBtn.disabled = true;
         submitText.textContent = "Sending...";
         spinner.classList.remove("hidden");
@@ -55,8 +57,7 @@ function showToast(message, type = "success") {
     }, 4000);
 }
 
-// ── Projects grid on index.html ────────────────────────────────────────────
-import { getProjects } from "./api.js";
+// ── Projects Grid ──────────────────────────────────────────────────────────
 
 const grid = document.getElementById("projects-grid");
 
@@ -69,18 +70,22 @@ async function loadProjects() {
         const projects = await getProjects();
         renderProjects(projects);
     } catch {
-        grid.innerHTML = `<p class="error-state">Could not load projects. Is the backend running?</p>`;
+        grid.innerHTML = `
+            <div class="backend-offline-msg">
+                <p>⚠️ Could not connect to backend.</p>
+                <p class="backend-hint">Run <code>python run.py</code> in <code>backend/</code> then refresh.</p>
+            </div>`;
     }
 }
 
 function renderProjects(projects) {
     if (!projects.length) {
-        grid.innerHTML = `<p class="empty-state">No projects yet.</p>`;
+        grid.innerHTML = `<p class="empty-state">No projects yet — add some from the admin panel.</p>`;
         return;
     }
 
     grid.innerHTML = projects.map((p) => `
-        <div class="project-card glass-card section-reveal">
+        <div class="project-card glass-card">
             <div class="project-card-header">
                 <h3>${escHtml(p.title)}</h3>
                 <span class="status-badge status-${slugify(p.status)}">${escHtml(p.status)}</span>
@@ -100,7 +105,7 @@ function renderProjects(projects) {
 }
 
 function escHtml(str) {
-    return String(str)
+    return String(str ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -112,14 +117,29 @@ function slugify(str) {
 }
 
 // ── Scroll-reveal via IntersectionObserver ─────────────────────────────────
+// Immediately reveal elements already visible on page load,
+// observe the rest as the user scrolls.
+
 const revealEls = document.querySelectorAll(".section-reveal");
-const observer  = new IntersectionObserver(
-    (entries) => entries.forEach((e) => {
-        if (e.isIntersecting) {
-            e.target.classList.add("revealed");
-            observer.unobserve(e.target);
-        }
-    }),
-    { threshold: 0.1 }
+
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((e) => {
+            if (e.isIntersecting) {
+                e.target.classList.add("revealed");
+                observer.unobserve(e.target);
+            }
+        });
+    },
+    { threshold: 0.08 }
 );
-revealEls.forEach((el) => observer.observe(el));
+
+revealEls.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    const alreadyVisible = rect.top < window.innerHeight && rect.bottom > 0;
+    if (alreadyVisible) {
+        el.classList.add("revealed");
+    } else {
+        observer.observe(el);
+    }
+});

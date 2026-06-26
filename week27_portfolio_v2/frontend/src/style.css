@@ -196,7 +196,7 @@ nav a.nav-active { color: var(--accent); }
 
 /* ── Hero ───────────────────────────────────────────────────*/
 #hero {
-    min-height: 90vh;
+    min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -286,6 +286,11 @@ nav a.nav-active { color: var(--accent); }
     margin-bottom: 2.5rem;
 }
 
+/* Paragraph spacing inside content sections */
+.content-wrapper p + p {
+    margin-top: 1rem;
+}
+
 /* Alternating section bg */
 #home-about  { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 #contact     { background: var(--bg-surface); border-top: 1px solid var(--border); }
@@ -362,6 +367,26 @@ nav a.nav-active { color: var(--accent); }
 .status-in-progress{ background: var(--accent-dim);         color: var(--accent);  }
 .status-planned    { background: rgba(136,136,136,0.15);    color: var(--text-muted); }
 .status-live       { background: rgba(82, 224, 124, 0.25); color: var(--success); }
+
+/* Backend offline message */
+.backend-offline-msg {
+    grid-column: 1 / -1;
+    padding: 2rem;
+    text-align: center;
+    border: 1px dashed var(--border-accent);
+    border-radius: 12px;
+    color: var(--text-muted);
+}
+.backend-offline-msg p { margin: 0; }
+.backend-offline-msg p + p { margin-top: 0.5rem; }
+.backend-hint { font-size: 0.85rem; }
+.backend-hint code {
+    font-family: var(--font-mono);
+    background: rgba(65,150,243,0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: var(--accent);
+}
 
 /* Skeleton loading cards */
 .skeleton-card {
