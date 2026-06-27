@@ -73,6 +73,30 @@
             <div class="content-wrapper">
                 <h2 class="section-title">Projects</h2>
                 <p class="section-sub">A live feed from the database — managed via the admin panel.</p>
+                
+                <!-- NEW: Spotlight container for the featured project -->
+                <div id="featured-project-container" class="featured-project-container"></div>
+
+                <!-- NEW: Dynamic filter controls -->
+                <div id="projects-filter-bar" class="filter-bar">
+                    <div class="filter-group">
+                        <span class="filter-label">Stack:</span>
+                        <div id="tech-filters" class="filter-pills">
+                            <button class="filter-btn active" data-tech="all">All</button>
+                            <!-- Dynamic tech badges will be added here -->
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Status:</span>
+                        <select id="status-filter" class="filter-select">
+                            <option value="all">All Statuses</option>
+                            <option value="Completed">Completed</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Planned">Planned</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div id="projects-grid" class="project-grid">
                     <!-- Populated by api.js -->
                     <div class="skeleton-card"></div>
