@@ -24,14 +24,17 @@ def close_db(e=None):
 def init_db():
     """Read schema.sql and apply it to the database."""
     db = get_db()
+    
+    # NEW: Try migrating the existing table before running schema.sql
+    # so that the INSERT statements in schema.sql don't fail due to a missing column.
+    try:
+        db.execute("ALTER TABLE projects ADD COLUMN featured INTEGER DEFAULT 0;")
+        db.commit()
+    except sqlite3.OperationalError:
+        pass  # Table does not exist yet (new DB) or column already exists
+
     with current_app.open_resource("data/schema.sql") as f:
         db.executescript(f.read().decode("utf-8"))
-    
-    try: 
-        db.execute("ALTER TABLE projects ADD COLUMN featured INTEGER DEFAULT 0;")
-    except sqlite3.OperationalError:
-        pass
-
     db.commit()
 
 
