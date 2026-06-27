@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify #type: ignore
 from app.db import get_db
 from app.middlewares.admin_middleware import admin_required
 
@@ -16,6 +16,7 @@ def _project_to_dict(row):
         "live_url":    row["live_url"],
         "status":      row["status"],
         "sort_order":  row["sort_order"],
+        "featured":    row["featured"],
         "created_at":  row["created_at"],
     }
 
@@ -49,8 +50,8 @@ def create_project():
 
     db = get_db()
     cursor = db.execute(
-        """INSERT INTO projects (title, description, tech_stack, github_url, live_url, status, sort_order)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO projects (title, description, tech_stack, github_url, live_url, status, sort_order, featured)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             data["title"].strip(),
             data["description"].strip(),
@@ -59,6 +60,7 @@ def create_project():
             data.get("live_url", "").strip() or None,
             data.get("status", "In Progress").strip(),
             int(data.get("sort_order", 0)),
+            1 if data.get("featured") else 0,
         ),
     )
     db.commit()
@@ -89,7 +91,7 @@ def update_project(project_id):
     db.execute(
         """UPDATE projects
            SET title = ?, description = ?, tech_stack = ?,
-               github_url = ?, live_url = ?, status = ?, sort_order = ?
+               github_url = ?, live_url = ?, status = ?, sort_order = ?, featured = ?
            WHERE id = ?""",
         (
             data.get("title", existing["title"]).strip(),
@@ -99,6 +101,7 @@ def update_project(project_id):
             data.get("live_url", existing["live_url"]),
             data.get("status", existing["status"]).strip(),
             int(data.get("sort_order", existing["sort_order"])),
+            1 if data.get("featured", existing["featured"]) else 0,
             project_id,
         ),
     )
