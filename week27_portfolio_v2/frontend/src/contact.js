@@ -1,5 +1,5 @@
 /**
- * contact.js — Contact form AJAX handler + Projects renderer
+ * contact.js — Contact form AJAX handler + Projects renderer with filtering & spotlight
  * Handles the public-facing index.html page.
  */
 
@@ -57,9 +57,16 @@ function showToast(message, type = "success") {
     }, 4000);
 }
 
-// ── Projects Grid ──────────────────────────────────────────────────────────
+// ── Projects Rendering & Filtering ──────────────────────────────────────────
 
 const grid = document.getElementById("projects-grid");
+const featuredContainer = document.getElementById("featured-project-container");
+const techFilters = document.getElementById("tech-filters");
+const statusFilter = document.getElementById("status-filter");
+
+let allProjects = [];
+let currentTech = "all";
+let currentStatus = "all";
 
 if (grid) {
     loadProjects();
@@ -67,9 +74,18 @@ if (grid) {
 
 async function loadProjects() {
     try {
-        const projects = await getProjects();
-        renderProjects(projects);
-    } catch {
+        allProjects = await getProjects();
+        
+        // Build tech filters dynamically
+        buildTechFilters();
+        
+        // Setup filter listeners
+        setupFilterListeners();
+        
+        // Initial render
+        renderFilteredProjects();
+    } catch (err) {
+        console.error(err);
         grid.innerHTML = `
             <div class="backend-offline-msg">
                 <p>⚠️ Could not connect to backend.</p>
@@ -78,16 +94,128 @@ async function loadProjects() {
     }
 }
 
-function renderProjects(projects) {
-    if (!projects.length) {
-        grid.innerHTML = `<p class="empty-state">No projects yet — add some from the admin panel.</p>`;
+/** Dynamic extraction of top tech tags */
+function buildTechFilters() {
+    if (!techFilters) return;
+    
+    // Count tech frequency
+    const techCounts = {};
+    allProjects.forEach((p) => {
+        if (!p.tech_stack) return;
+        p.tech_stack.split(",").forEach((t) => {
+            const tech = t.trim();
+            if (tech) {
+                techCounts[tech] = (techCounts[tech] || 0) + 1;
+            }
+        });
+    });
+
+    // Sort by count descending
+    const sortedTechs = Object.keys(techCounts).sort((a, b) => techCounts[b] - techCounts[a]);
+    
+    // Take top 6 technologies
+    const topTechs = sortedTechs.slice(0, 6);
+
+    // Render pills
+    let html = `<button class="filter-btn active" data-tech="all">All</button>`;
+    topTechs.forEach((tech) => {
+        html += `<button class="filter-btn" data-tech="${escHtml(tech)}">${escHtml(tech)}</button>`;
+    });
+    techFilters.innerHTML = html;
+}
+
+function setupFilterListeners() {
+    if (techFilters) {
+        techFilters.addEventListener("click", (e) => {
+            const btn = e.target.closest(".filter-btn");
+            if (!btn) return;
+            
+            // Toggle active class
+            techFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            
+            currentTech = btn.dataset.tech;
+            renderFilteredProjects();
+        });
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener("change", (e) => {
+            currentStatus = e.target.value;
+            renderFilteredProjects();
+        });
+    }
+}
+
+function renderFilteredProjects() {
+    // 1. Filter the list
+    const filtered = allProjects.filter((p) => {
+        const matchesStatus = (currentStatus === "all") || (p.status === currentStatus);
+        
+        let matchesTech = false;
+        if (currentTech === "all") {
+            matchesTech = true;
+        } else if (p.tech_stack) {
+            matchesTech = p.tech_stack.split(",").map(t => t.trim()).includes(currentTech);
+        }
+        
+        return matchesStatus && matchesTech;
+    });
+
+    // 2. Render Featured Spotlight (only shown when no filter is active, and if a project is featured)
+    const featuredProj = allProjects.find((p) => p.featured === 1);
+    
+    if (featuredProj && currentTech === "all" && currentStatus === "all") {
+        featuredContainer.innerHTML = `
+            <div class="featured-card card-entrance">
+                <span class="featured-badge"><span class="featured-star">★</span> Spotlight</span>
+                <div class="featured-left">
+                    <p class="hero-label">// Featured Project</p>
+                    <h3>${escHtml(featuredProj.title)}</h3>
+                    <p>${escHtml(featuredProj.description)}</p>
+                </div>
+                <div class="featured-right">
+                    <div class="featured-status-row">
+                        <span class="filter-label">Status:</span>
+                        <span class="status-badge status-${slugify(featuredProj.status)}">${escHtml(featuredProj.status)}</span>
+                    </div>
+                    <div>
+                        <span class="filter-label" style="display:block; margin-bottom:0.5rem;">Tech Stack:</span>
+                        <div class="featured-tech-list">
+                            ${featuredProj.tech_stack.split(",").map(t =>
+                                `<span class="tech-tag">${escHtml(t.trim())}</span>`
+                            ).join("")}
+                        </div>
+                    </div>
+                    <div class="featured-links">
+                        ${featuredProj.github_url ? `<a href="${escHtml(featuredProj.github_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">GitHub ↗</a>` : ""}
+                        ${featuredProj.live_url   ? `<a href="${escHtml(featuredProj.live_url)}"   target="_blank" rel="noopener" class="btn btn-primary btn-sm">Live ↗</a>` : ""}
+                    </div>
+                </div>
+            </div>`;
+    } else {
+        featuredContainer.innerHTML = "";
+    }
+
+    // 3. Render General Grid (if not filtering, exclude the spotlight project so it doesn't duplicate)
+    let gridProjects = filtered;
+    if (featuredProj && currentTech === "all" && currentStatus === "all") {
+        gridProjects = filtered.filter((p) => p.id !== featuredProj.id);
+    }
+
+    if (!gridProjects.length) {
+        grid.innerHTML = `<p class="empty-state">No matching projects found.</p>`;
         return;
     }
 
-    grid.innerHTML = projects.map((p) => `
-        <div class="project-card glass-card">
+    // Render grid with staggered delay styling
+    grid.innerHTML = gridProjects.map((p, index) => `
+        <div class="project-card glass-card card-entrance" style="animation-delay: ${index * 75}ms">
             <div class="project-card-header">
-                <h3>${escHtml(p.title)}</h3>
+                <h3>
+                    ${p.featured === 1 ? `<span class="admin-featured-star" title="Featured project">★</span>` : ""}
+                    ${escHtml(p.title)}
+                </h3>
                 <span class="status-badge status-${slugify(p.status)}">${escHtml(p.status)}</span>
             </div>
             <p class="project-desc">${escHtml(p.description)}</p>

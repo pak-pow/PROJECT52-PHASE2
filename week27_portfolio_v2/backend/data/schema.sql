@@ -47,14 +47,14 @@ VALUES
         '12-week sprint building foundational projects: portfolio, CLI tools, data visualisation, web scraper, quiz app, and more.',
         'Python, HTML, CSS, JavaScript',
         'https://github.com/pak-pow/PROJECT52-PHASE1',
-        'Completed', 2),
+        'Completed', 2, 0),
     (3, 'PROJECT52: Phase 2',
         '24-week full-stack integration phase: REST APIs, authentication, real-time chat, Kanban board, and this portfolio.',
         'Python, Flask, SQLite, JavaScript',
         'https://github.com/pak-pow/PROJECT52-PHASE2',
-        'In Progress', 3),
+        'In Progress', 3, 0),
     (4, 'PROJECT52: Phase 3',
         'Production-ready applications: deployment, DevOps, testing, scalability, and cloud infrastructure.',
         'Docker, CI/CD, PostgreSQL, Cloud',
         'https://github.com/pak-pow/PROJECT52-PHASE3',
-        'Planned', 4);
+        'Planned', 4, 0);

@@ -206,6 +206,7 @@ function renderAdminProjects(projects) {
     projectsList.innerHTML = projects.map((p) => `
         <div class="project-admin-row glass-card" data-id="${p.id}">
             <div class="proj-info">
+                ${p.featured === 1 ? '<span class="admin-featured-star" title="Featured project">★</span>' : ""}
                 <span class="proj-title">${escHtml(p.title)}</span>
                 <span class="status-badge status-${slugify(p.status)}">${escHtml(p.status)}</span>
                 <span class="proj-tech">${escHtml(p.tech_stack)}</span>
@@ -246,6 +247,7 @@ addProjectBtn.addEventListener("click", () => openProjectForm());
 cancelProjectBtn.addEventListener("click", () => {
     projectFormWrap.classList.add("hidden");
     projectForm.reset();
+    document.getElementById("proj-featured").checked = false;
 });
 
 function openProjectForm(project = null) {
@@ -258,6 +260,7 @@ function openProjectForm(project = null) {
     document.getElementById("proj-live").value        = project?.live_url    || "";
     document.getElementById("proj-status").value      = project?.status      || "In Progress";
     document.getElementById("proj-order").value       = project?.sort_order  ?? 0;
+    document.getElementById("proj-featured").checked  = project?.featured === 1;
     projectFormError.classList.add("hidden");
     projectFormWrap.classList.remove("hidden");
     projectFormWrap.scrollIntoView({ behavior: "smooth" });
@@ -276,6 +279,7 @@ projectForm.addEventListener("submit", async (e) => {
         live_url:    document.getElementById("proj-live").value.trim()   || null,
         status:      document.getElementById("proj-status").value,
         sort_order:  parseInt(document.getElementById("proj-order").value) || 0,
+        featured:    document.getElementById("proj-featured").checked ? 1 : 0,
     };
 
     try {
