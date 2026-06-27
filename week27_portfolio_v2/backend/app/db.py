@@ -1,6 +1,6 @@
 import sqlite3
-import click
-from flask import current_app, g
+import click #type: ignore
+from flask import current_app, g #type: ignore
 
 
 def get_db():
@@ -26,6 +26,12 @@ def init_db():
     db = get_db()
     with current_app.open_resource("data/schema.sql") as f:
         db.executescript(f.read().decode("utf-8"))
+    
+    try: 
+        db.execute("ALTER TABLE projects ADD COLUMN featured INTEGER DEFAULT 0;")
+    except sqlite3.OperationalError:
+        pass
+
     db.commit()
 
 
