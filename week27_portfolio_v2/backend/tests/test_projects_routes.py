@@ -20,7 +20,7 @@ class TestListProjects:
     def test_projects_have_required_fields(self, client):
         res = client.get("/api/projects")
         project = res.get_json()[0]
-        for field in ["id", "title", "description", "tech_stack", "status"]:
+        for field in ["id", "title", "description", "tech_stack", "status", "featured"]:
             assert field in project
 
 
@@ -53,7 +53,19 @@ class TestCreateProject:
             "title": "Test", "tech_stack": "Python"
         }, headers=auth_headers)
         assert res.status_code == 400
-
+        
+    def test_create_featured_project_returns_201(self, client, auth_headers):
+        res = client.post("/api/projects", json={
+            "title":       "Featured Project",
+            "description": "A very special test project",
+            "tech_stack":  "OpenGL, C++",
+            "status":      "Completed",
+            "featured":    True
+        }, headers=auth_headers)
+        assert res.status_code == 201
+        data = res.get_json()
+        assert data["title"] == "Featured Project"
+        assert data["featured"] == 1
 
 class TestUpdateProject:
 
@@ -73,6 +85,19 @@ class TestUpdateProject:
             "title": "Ghost"
         }, headers=auth_headers)
         assert res.status_code == 404
+        
+    def test_update_featured_status_returns_200(self, client, auth_headers):
+        res = client.put("/api/projects/2", json={
+            "featured": True
+        }, headers=auth_headers)
+        assert res.status_code == 200
+        assert res.get_json()["featured"] == 1
+
+        res2 = client.put("/api/projects/2", json={
+            "featured": False
+        }, headers=auth_headers)
+        assert res2.status_code == 200
+        assert res2.get_json()["featured"] == 0
 
 
 class TestDeleteProject:
