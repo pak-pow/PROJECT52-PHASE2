@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
     live_url    TEXT,
     status      TEXT DEFAULT 'In Progress',
     sort_order  INTEGER DEFAULT 0,
+    featured    INTEGER DEFAULT 0,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -35,13 +36,13 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
 -- ============================================================
 --  Seed Data: Pre-populate projects from v1
 -- ============================================================
-INSERT OR IGNORE INTO projects (id, title, description, tech_stack, github_url, status, sort_order)
+INSERT OR IGNORE INTO projects (id, title, description, tech_stack, github_url, status, sort_order, featured)
 VALUES
     (1, 'PROJECT_PYGAME',
         'A 3D Engine built from scratch in Python using Pygame and OpenGL. Custom renderer, matrix transforms, and camera system.',
         'Python, Pygame, OpenGL',
         'https://github.com/pak-pow/PROJECT_PYGAME',
-        'Completed', 1),
+        'Completed', 1, 1),
     (2, 'PROJECT52: Phase 1',
         '12-week sprint building foundational projects: portfolio, CLI tools, data visualisation, web scraper, quiz app, and more.',
         'Python, HTML, CSS, JavaScript',
