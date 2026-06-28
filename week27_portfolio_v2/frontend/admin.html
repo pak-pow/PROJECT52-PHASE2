@@ -64,6 +64,32 @@
                 </button>
             </div>
 
+            <div class="stats-grid">
+                <div class="stats-card glass-card" id="stats-unread">
+                    <span class="stats-icon">📬</span>
+                    <div class="stats-info">
+                        <span class="stats-label">Unread Messages</span>
+                        <h3 class="stats-val" id="stats-unread-count">0</h3>
+                    </div>
+                </div>
+
+                <div class="stats-card glass-card" id="stats-projects">
+                    <span class="stats-icon">🗂</span>
+                    <div class="stats-info">
+                        <span class="stats-label">Total Projects</span>
+                        <h3 class="stats-val" id="stat-projects-count">0</h3>
+                    </div>
+                </div>
+
+                <div class="stats-card glass-card" id="stats-velocity">
+                    <span class="stats-icon">⚡</span>
+                    <div class="stats-info">
+                        <span class="stats-label">Completed / Live</span>
+                        <h3 class="stats-val" id="stat-completed-count">0</h3>
+                    </div>
+                </div>
+            </div>
+
             <!-- ── Messages Tab ──────────────────────────────────── -->
             <div id="tab-messages" class="tab-content">
                 <div class="tab-header">
@@ -152,6 +178,17 @@
     </div>
 
     <div id="admin-toast" class="toast hidden"></div>
+
+    <div id="confirm-modal" class="confirm-modal-overlay hidden">
+        <div class="confirm-modal-card glass-card">
+            <h3 id="confirm-title">Confirm Action</h3>
+            <p id="confirm-message">Are you sure you want to proceed?</p>
+            <div class="confirm-modal-actions">
+                <button id="confirm-btn-cancel" class="btn btn-outline">Cancel</button>
+                <button id="confirm-btn-ok" class="btn btn-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="./src/admin.js"></script>
 
