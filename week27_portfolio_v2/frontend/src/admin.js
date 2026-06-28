@@ -40,6 +40,19 @@ const cancelProjectBtn= document.getElementById("cancel-project-btn");
 const projectFormError= document.getElementById("project-form-error");
 const adminToast      = document.getElementById("admin-toast");
 
+const statUnreadCount   = document.getElementById("stat-unread-count");
+const statProjectsCount = document.getElementById("stat-projects-count");
+const statCompletedCount = document.getElementById("stat-completed-count");
+
+const confirmModal      = document.getElementById("confirm-modal");
+const confirmTitle      = document.getElementById("confirm-title");
+const confirmMessage    = document.getElementById("confirm-message");
+const confirmBtnCancel  = document.getElementById("confirm-btn-cancel");
+const confirmBtnOk      = document.getElementById("confirm-btn-ok");
+
+let loadedMessages = [];
+let loadedProjects = [];
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function init() {
@@ -116,7 +129,9 @@ async function loadMessages() {
     setLoading("messages", true);
     try {
         const messages = await getMessages();
+        loadedMessages = messages;
         renderMessages(messages);
+        updateStats();
     } catch {
         messagesLoading.textContent = "Failed to load messages. Try refreshing.";
     }
@@ -167,11 +182,14 @@ function renderMessages(messages) {
 
     messagesList.querySelectorAll(".delete-msg-btn").forEach((btn) => {
         btn.addEventListener("click", async () => {
-            if (!confirm("Delete this message?")) return;
+            const confirmed = await showConfirm("Delete Message", "Are you sure you want to permanently delete this message?");
+            if (!confirmed) return;
             try {
                 await deleteMessage(btn.dataset.id);
                 btn.closest(".message-card").remove();
                 showToast("Message deleted");
+                loadedMessages = loadedMessages.filter(m => m.id !== parseInt(btn.dataset.id));
+                updateStats();
                 loadMessages();
             } catch { showToast("Failed to delete", "error"); }
         });
@@ -186,7 +204,9 @@ async function loadAdminProjects() {
     setLoading("projects", true);
     try {
         const projects = await getProjects();
+        loadedProjects = projects;
         renderAdminProjects(projects);
+        updateStats();
     } catch {
         projectsLoading.textContent = "Failed to load projects.";
     }
@@ -230,10 +250,13 @@ function renderAdminProjects(projects) {
     // Attach delete buttons
     projectsList.querySelectorAll(".delete-project-btn").forEach((btn) => {
         btn.addEventListener("click", async () => {
-            if (!confirm("Delete this project?")) return;
+            const confirmed = await showConfirm("Delete Project", "Are you sure you want to permanently delete this project?");
+            if (!confirmed) return;
             try {
                 await deleteProject(btn.dataset.id);
                 showToast("Project deleted");
+                loadedProjects = loadedProjects.filter(p => p.id !== parseInt(btn.dataset.id));
+                updateStats();
                 loadAdminProjects();
             } catch { showToast("Failed to delete project", "error"); }
         });
@@ -327,6 +350,68 @@ function slugify(str) {
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString("en-PH", {
         year: "numeric", month: "short", day: "numeric",
+    });
+}
+
+function updateStats() {
+    if (statUnreadCount) {
+        const unread = loadedMessages.filter((m) => !m.is_read).length;
+        animateNumberValue(statUnreadCount, unread);
+    }
+    if (statProjectsCount) {
+        animateNumberValue(statProjectsCount, loadedProjects.length);
+    }
+    if (statCompletedCount) {
+        const completed = loadedProjects.filter((p) => p.status === "Completed" || p.status === "Live").length;
+        animateNumberValue(statCompletedCount, completed);
+    }
+}
+
+function animateNumberValue(el, target) {
+    const start = parseInt(el.textContent) || 0;
+    if (start === target) return;
+    const duration = 400; // ms duration
+    const startTime = performance.now();
+    
+    function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = progress * (2 - progress); // Ease out quadratic
+        const current = Math.floor(start + (target - start) * ease);
+        el.textContent = current;
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            el.textContent = target;
+        }
+    }
+    requestAnimationFrame(update);
+}
+
+function showConfirm(title, message) {
+    return new Promise((resolve) => {
+        confirmTitle.textContent = title;
+        confirmMessage.textContent = message;
+        confirmModal.classList.remove("hidden");
+        
+        function handleCancel() {
+            cleanup();
+            resolve(false);
+        }
+        
+        function handleConfirm() {
+            cleanup();
+            resolve(true);
+        }
+        
+        function cleanup() {
+            confirmBtnCancel.removeEventListener("click", handleCancel);
+            confirmBtnOk.removeEventListener("click", handleConfirm);
+            confirmModal.classList.add("hidden");
+        }
+        
+        confirmBtnCancel.addEventListener("click", handleCancel);
+        confirmBtnOk.addEventListener("click", handleConfirm);
     });
 }
 
