@@ -96,6 +96,15 @@
                     <h2>Contact Inbox</h2>
                     <button id="refresh-messages-btn" class="btn btn-outline btn-sm">↺ Refresh</button>
                 </div>
+                <!-- NEW: Inbox search and filter controls -->
+                <div class="inbox-controls">
+                    <input type="text" id="msg-search-input" placeholder="Search by name, email, subject..." class="search-input">
+                    <div id="msg-filter-pills" class="filter-pills">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="unread">Unread</button>
+                        <button class="filter-btn" data-filter="read">Read</button>
+                    </div>
+                </div>
                 <div id="messages-loading" class="loading-state">Loading messages...</div>
                 <div id="messages-empty" class="empty-state hidden">
                     <p>📭 No messages yet.</p>
