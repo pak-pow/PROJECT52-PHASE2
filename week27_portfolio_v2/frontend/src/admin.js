@@ -53,6 +53,12 @@ const confirmBtnOk      = document.getElementById("confirm-btn-ok");
 let loadedMessages = [];
 let loadedProjects = [];
 
+// NEW: Message filtering state and DOM references
+const msgSearchInput   = document.getElementById("msg-search-input");
+const msgFilterPills   = document.getElementById("msg-filter-pills");
+let currentMsgSearch   = "";
+let currentMsgFilter   = "all";
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function init() {
@@ -140,19 +146,42 @@ async function loadMessages() {
 function renderMessages(messages) {
     setLoading("messages", false);
 
+    // NEW: Apply local search and read/unread filters
+    let filtered = messages;
+
+    if (currentMsgFilter === "unread") {
+        filtered = filtered.filter((m) => !m.is_read);
+    } else if (currentMsgFilter === "read") {
+        filtered = filtered.filter((m) => m.is_read);
+    }
+
+    if (currentMsgSearch) {
+        filtered = filtered.filter((m) => 
+            (m.name || "").toLowerCase().includes(currentMsgSearch) ||
+            (m.email || "").toLowerCase().includes(currentMsgSearch) ||
+            (m.subject || "").toLowerCase().includes(currentMsgSearch) ||
+            (m.message || "").toLowerCase().includes(currentMsgSearch)
+        );
+    }
+
     const unread = messages.filter((m) => !m.is_read).length;
     unreadBadge.textContent = unread;
     unreadBadge.classList.toggle("hidden", unread === 0);
 
-    if (!messages.length) {
+    if (!filtered.length) {
         messagesEmpty.classList.remove("hidden");
+        if (currentMsgSearch || currentMsgFilter !== "all") {
+            messagesEmpty.querySelector("p").textContent = "🔍 No matching messages found.";
+        } else {
+            messagesEmpty.querySelector("p").textContent = "📭 No messages yet.";
+        }
         messagesList.classList.add("hidden");
         return;
     }
 
     messagesEmpty.classList.add("hidden");
     messagesList.classList.remove("hidden");
-    messagesList.innerHTML = messages.map((m) => `
+    messagesList.innerHTML = filtered.map((m) => `
         <div class="message-card glass-card ${m.is_read ? "msg-read" : "msg-unread"}" data-id="${m.id}">
             <div class="msg-meta">
                 <span class="msg-name">${escHtml(m.name)}</span>
@@ -197,6 +226,27 @@ function renderMessages(messages) {
 }
 
 refreshBtn.addEventListener("click", loadMessages);
+
+// NEW: Search & filtering listeners for inbox
+if (msgSearchInput) {
+    msgSearchInput.addEventListener("input", (e) => {
+        currentMsgSearch = e.target.value.toLowerCase().trim();
+        renderMessages(loadedMessages);
+    });
+}
+
+if (msgFilterPills) {
+    msgFilterPills.addEventListener("click", (e) => {
+        const btn = e.target.closest(".filter-btn");
+        if (!btn) return;
+
+        msgFilterPills.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        currentMsgFilter = btn.dataset.filter;
+        renderMessages(loadedMessages);
+    });
+}
 
 // ── Admin Projects ─────────────────────────────────────────────────────────
 
