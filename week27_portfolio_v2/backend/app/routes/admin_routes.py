@@ -1,5 +1,7 @@
 import secrets
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, current_app #type: ignore
+from werkzeug.security import check_password_hash
 from app.db import get_db
 from app.middlewares.admin_middleware import admin_required
 
@@ -27,14 +29,18 @@ def admin_login():
     password = data.get("password", "").strip()
 
     expected_user = current_app.config["ADMIN_USERNAME"]
-    expected_pass = current_app.config["ADMIN_PASSWORD"]
+    expected_hash = current_app.config["ADMIN_PASSWORD_HASH"]
 
-    if username != expected_user or password != expected_pass:
+    if username != expected_user or not check_password_hash(expected_hash, password):
         return jsonify({"error": "Invalid credentials"}), 401
 
     token = secrets.token_hex(32)
+    expires_at = datetime.utcnow() + timedelta(hours=2)
     db = get_db()
-    db.execute("INSERT INTO admin_sessions (token) VALUES (?)", (token,))
+    db.execute(
+        "INSERT INTO admin_sessions (token, expires_at) VALUES (?, ?)",
+        (token, expires_at.strftime("%Y-%m-%d %H:%M:%S.%f")),
+    )
     db.commit()
 
     return jsonify({"token": token}), 200

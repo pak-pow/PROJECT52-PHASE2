@@ -12,12 +12,16 @@ from app.db import init_db
 from config import Config
 
 
+from werkzeug.security import generate_password_hash
+
+
 class TestConfig(Config):
     """Override config for tests — use a temp file DB (not :memory:)
     so all SQLite connections within a test share the same data."""
     TESTING = True
     ADMIN_USERNAME = "admin"
     ADMIN_PASSWORD = "admin123"
+    ADMIN_PASSWORD_HASH = generate_password_hash("admin123")
 
 
 @pytest.fixture

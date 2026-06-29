@@ -33,6 +33,12 @@ def init_db():
     except sqlite3.OperationalError:
         pass  # Table does not exist yet (new DB) or column already exists
 
+    try:
+        db.execute("ALTER TABLE admin_sessions ADD COLUMN expires_at TIMESTAMP;")
+        db.commit()
+    except sqlite3.OperationalError:
+        pass
+
     with current_app.open_resource("data/schema.sql") as f:
         db.executescript(f.read().decode("utf-8"))
     db.commit()

@@ -117,3 +117,15 @@ class TestAdminMessages:
     def test_delete_without_auth_returns_401(self, client):
         res = client.delete("/api/admin/messages/1")
         assert res.status_code == 401
+
+    def test_expired_token_returns_401(self, client, auth_headers):
+        from app.db import get_db
+        db = get_db()
+        db.execute(
+            "UPDATE admin_sessions SET expires_at = '2000-01-01 00:00:00'"
+        )
+        db.commit()
+
+        # Try to make an authenticated request
+        res = client.get("/api/admin/messages", headers=auth_headers)
+        assert res.status_code == 401

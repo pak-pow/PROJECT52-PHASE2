@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS projects (
 -- Admin sessions (simple token-based auth, no JWT library)
 CREATE TABLE IF NOT EXISTS admin_sessions (
     token       TEXT PRIMARY KEY,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at  TIMESTAMP NOT NULL
 );
 
 -- ============================================================
