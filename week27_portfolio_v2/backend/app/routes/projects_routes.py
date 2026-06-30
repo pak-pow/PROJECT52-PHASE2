@@ -131,3 +131,61 @@ def delete_project(project_id):
     db.execute("DELETE FROM projects WHERE id = ?", (project_id,))
     db.commit()
     return "", 204
+
+
+@projects_bp.route("/projects/<int:project_id>/reorder", methods=["POST"])
+@admin_required
+def reorder_project(project_id):
+    """
+    POST /api/projects/<id>/reorder  [Admin only]
+    Change sorting order relative to other projects.
+    Body (JSON):
+        direction (str): "up" or "down"
+    """
+    data = request.get_json(silent=True) or {}
+    direction = data.get("direction")
+    if direction not in ["up", "down"]:
+        return jsonify({"error": "Invalid direction. Use 'up' or 'down'"}), 400
+
+    db = get_db()
+    current_proj = db.execute(
+        "SELECT id, sort_order FROM projects WHERE id = ?", (project_id,)
+    ).fetchone()
+    if not current_proj:
+        return jsonify({"error": "Project not found"}), 404
+
+    current_order = current_proj["sort_order"]
+
+    all_projs = db.execute(
+        "SELECT id, sort_order FROM projects ORDER BY sort_order ASC, id ASC"
+    ).fetchall()
+
+    proj_ids = [p["id"] for p in all_projs]
+    try:
+        idx = proj_ids.index(project_id)
+    except ValueError:
+        return jsonify({"error": "Project not found in listing"}), 404
+
+    if direction == "up":
+        if idx == 0:
+            return jsonify({"message": "Already at the top"}), 200
+        target_idx = idx - 1
+    else:
+        if idx == len(proj_ids) - 1:
+            return jsonify({"message": "Already at the bottom"}), 200
+        target_idx = idx + 1
+
+    target_proj = all_projs[target_idx]
+
+    # Swap the sort_orders
+    db.execute(
+        "UPDATE projects SET sort_order = ? WHERE id = ?",
+        (target_proj["sort_order"], current_proj["id"]),
+    )
+    db.execute(
+        "UPDATE projects SET sort_order = ? WHERE id = ?",
+        (current_order, target_proj["id"]),
+    )
+    db.commit()
+
+    return jsonify({"message": "Reordered successfully"}), 200
