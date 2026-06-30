@@ -62,6 +62,9 @@ let currentMsgFilter   = "all";
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function init() {
+    setupFormValidation(projectForm);
+    setupFormValidation(loginForm);
+
     const token = localStorage.getItem("admin_token");
     if (token) {
         showDashboard();
@@ -87,6 +90,22 @@ function showDashboard() {
 loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     loginError.classList.add("hidden");
+
+    // NEW: Check login form validity
+    let isFormValid = true;
+    const inputs = loginForm.querySelectorAll("input");
+    inputs.forEach((input) => {
+        if (!validateField(input)) {
+            isFormValid = false;
+        }
+    });
+
+    if (!isFormValid) {
+        loginError.textContent = "Please fill in all required fields.";
+        loginError.classList.remove("hidden");
+        return;
+    }
+
     loginBtn.disabled = true;
     loginText.textContent = "Verifying...";
     loginSpinner.classList.remove("hidden");
@@ -281,12 +300,30 @@ function renderAdminProjects(projects) {
                 <span class="status-badge status-${slugify(p.status)}">${escHtml(p.status)}</span>
                 <span class="proj-tech">${escHtml(p.tech_stack)}</span>
             </div>
+            <!-- NEW: Up/Down arrow button reordering controls -->
+            <div class="proj-reorder">
+                <button class="btn-reorder reorder-up-btn" data-id="${p.id}" title="Move Up">▲</button>
+                <button class="btn-reorder reorder-down-btn" data-id="${p.id}" title="Move Down">▼</button>
+            </div>
             <div class="proj-actions">
                 <button class="btn btn-outline btn-sm edit-project-btn" data-id="${p.id}">Edit</button>
                 <button class="btn btn-danger btn-sm delete-project-btn" data-id="${p.id}">Delete</button>
             </div>
         </div>
     `).join("");
+
+    // NEW: Attach reorder buttons
+    projectsList.querySelectorAll(".reorder-up-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            await handleReorder(btn.dataset.id, "up");
+        });
+    });
+
+    projectsList.querySelectorAll(".reorder-down-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            await handleReorder(btn.dataset.id, "down");
+        });
+    });
 
     // Attach edit buttons
     projectsList.querySelectorAll(".edit-project-btn").forEach((btn) => {
@@ -320,6 +357,7 @@ addProjectBtn.addEventListener("click", () => openProjectForm());
 cancelProjectBtn.addEventListener("click", () => {
     projectFormWrap.classList.add("hidden");
     projectForm.reset();
+    resetFormValidation(projectForm);
     document.getElementById("proj-featured").checked = false;
 });
 
@@ -335,6 +373,7 @@ function openProjectForm(project = null) {
     document.getElementById("proj-order").value       = project?.sort_order  ?? 0;
     document.getElementById("proj-featured").checked  = project?.featured === 1;
     projectFormError.classList.add("hidden");
+    resetFormValidation(projectForm);
     projectFormWrap.classList.remove("hidden");
     projectFormWrap.scrollIntoView({ behavior: "smooth" });
 }
@@ -342,6 +381,21 @@ function openProjectForm(project = null) {
 projectForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     projectFormError.classList.add("hidden");
+
+    // NEW: Check form validity before submission
+    let isFormValid = true;
+    const inputs = projectForm.querySelectorAll("input, textarea, select");
+    inputs.forEach((input) => {
+        if (!validateField(input)) {
+            isFormValid = false;
+        }
+    });
+
+    if (!isFormValid) {
+        projectFormError.textContent = "Please resolve invalid fields before submitting.";
+        projectFormError.classList.remove("hidden");
+        return;
+    }
 
     const id   = document.getElementById("project-id").value;
     const data = {
@@ -462,6 +516,78 @@ function showConfirm(title, message) {
         
         confirmBtnCancel.addEventListener("click", handleCancel);
         confirmBtnOk.addEventListener("click", handleConfirm);
+    });
+}
+
+// NEW: Reordering API and handler
+async function reorderProject(id, direction) {
+    const token = localStorage.getItem("admin_token");
+    const res = await fetch(`${API_BASE}/projects/${id}/reorder`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ direction })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to reorder project");
+    }
+    return res.json();
+}
+
+async function handleReorder(id, direction) {
+    try {
+        await reorderProject(id, direction);
+        await loadAdminProjects();
+        showToast("Order updated");
+    } catch (e) {
+        showToast(e.message, "error");
+    }
+}
+
+// NEW: Form Validation helpers
+function setupFormValidation(formEl) {
+    if (!formEl) return;
+    const inputs = formEl.querySelectorAll("input, textarea, select");
+    inputs.forEach((input) => {
+        input.addEventListener("blur", () => validateField(input));
+        input.addEventListener("input", () => {
+            if (input.classList.contains("is-invalid") || input.classList.contains("is-valid")) {
+                validateField(input);
+            }
+        });
+    });
+}
+
+function validateField(input) {
+    let isValid = input.checkValidity();
+    
+    // Custom check for URL type input fields when not empty
+    if (input.type === "url" && input.value.trim() !== "") {
+        try {
+            new URL(input.value.trim());
+        } catch {
+            isValid = false;
+        }
+    }
+    
+    if (isValid) {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+    } else {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+    }
+    return isValid;
+}
+
+function resetFormValidation(formEl) {
+    if (!formEl) return;
+    const inputs = formEl.querySelectorAll("input, textarea, select");
+    inputs.forEach((input) => {
+        input.classList.remove("is-valid", "is-invalid");
     });
 }
 
