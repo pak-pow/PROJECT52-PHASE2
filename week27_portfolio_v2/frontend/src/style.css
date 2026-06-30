@@ -1072,8 +1072,42 @@ footer {
     outline: none;
 }
 
+/* Reorder controls inside project list */
+.proj-reorder {
+    display: flex;
+    gap: 0.5rem;
+    margin-right: 1.5rem;
+}
+.btn-reorder {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--dur-fast);
+}
+.btn-reorder:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Input field validation indicators */
+.is-valid {
+    border-color: #2ec4b6 !important;
+    box-shadow: 0 0 8px rgba(46, 196, 182, 0.15) !important;
+}
+.is-invalid {
+    border-color: #e71d36 !important;
+    box-shadow: 0 0 8px rgba(231, 29, 54, 0.15) !important;
+}
+
 /* ── Responsive ─────────────────────────────────────────────*/
 @media (max-width: 768px) {
+    .project-admin-row { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .proj-reorder { margin-right: 0; margin-bottom: 0.5rem; justify-content: flex-start; }
     .inbox-controls { flex-direction: column; align-items: stretch; gap: 1rem; }
     .inbox-controls .search-input { width: 100%; }
     .stats-grid { grid-template-columns: 1fr; gap: 1rem; }
