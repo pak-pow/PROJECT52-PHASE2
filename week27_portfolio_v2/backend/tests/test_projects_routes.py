@@ -113,3 +113,69 @@ class TestDeleteProject:
     def test_delete_nonexistent_returns_404(self, client, auth_headers):
         res = client.delete("/api/projects/99999", headers=auth_headers)
         assert res.status_code == 404
+
+
+class TestReorderProject:
+
+    def test_reorder_without_auth_returns_401(self, client):
+        res = client.post("/api/projects/1/reorder", json={"direction": "up"})
+        assert res.status_code == 401
+
+    def test_reorder_invalid_direction_returns_400(self, client, auth_headers):
+        res = client.post(
+            "/api/projects/1/reorder",
+            headers=auth_headers,
+            json={"direction": "invalid"},
+        )
+        assert res.status_code == 400
+
+    def test_reorder_nonexistent_returns_404(self, client, auth_headers):
+        res = client.post(
+            "/api/projects/99999/reorder",
+            headers=auth_headers,
+            json={"direction": "up"},
+        )
+        assert res.status_code == 404
+
+    def test_reorder_swaps_sort_orders_returns_200(self, client, auth_headers):
+        res1 = client.post(
+            "/api/projects",
+            headers=auth_headers,
+            json={
+                "title": "First",
+                "description": "Desc",
+                "tech_stack": "Tech",
+                "sort_order": 10,
+            },
+        )
+        p1 = res1.get_json()
+
+        res2 = client.post(
+            "/api/projects",
+            headers=auth_headers,
+            json={
+                "title": "Second",
+                "description": "Desc",
+                "tech_stack": "Tech",
+                "sort_order": 20,
+            },
+        )
+        p2 = res2.get_json()
+
+        # Swap Second "up"
+        res_swap = client.post(
+            f"/api/projects/{p2['id']}/reorder",
+            headers=auth_headers,
+            json={"direction": "up"},
+        )
+        assert res_swap.status_code == 200
+
+        # Fetch projects to verify order swapped
+        res_list = client.get("/api/projects")
+        projects = res_list.get_json()
+        
+        p1_new = next(p for p in projects if p["id"] == p1["id"])
+        p2_new = next(p for p in projects if p["id"] == p2["id"])
+
+        assert p1_new["sort_order"] == 20
+        assert p2_new["sort_order"] == 10
