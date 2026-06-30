@@ -15,8 +15,24 @@ const spinner    = document.getElementById("submit-spinner");
 const toast      = document.getElementById("contact-toast");
 
 if (form) {
+    setupFormValidation(form);
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // NEW: Check form validity before submission
+        let isFormValid = true;
+        const inputs = form.querySelectorAll("input, textarea");
+        inputs.forEach((input) => {
+            if (!validateField(input)) {
+                isFormValid = false;
+            }
+        });
+
+        if (!isFormValid) {
+            showToast("Please fill in all fields correctly.", "error");
+            return;
+        }
 
         const data = {
             name:    form.name.value.trim(),
@@ -33,6 +49,7 @@ if (form) {
             const result = await submitContact(data);
             showToast(result.message, "success");
             form.reset();
+            resetFormValidation(form);
         } catch (err) {
             showToast(err.message || "Something went wrong. Please try again.", "error");
         } finally {
@@ -40,6 +57,46 @@ if (form) {
             submitText.textContent = "Send Message";
             spinner.classList.add("hidden");
         }
+    });
+}
+
+// NEW: Live input validation logic
+function setupFormValidation(formEl) {
+    if (!formEl) return;
+    const inputs = formEl.querySelectorAll("input, textarea");
+    inputs.forEach((input) => {
+        input.addEventListener("blur", () => validateField(input));
+        input.addEventListener("input", () => {
+            if (input.classList.contains("is-invalid") || input.classList.contains("is-valid")) {
+                validateField(input);
+            }
+        });
+    });
+}
+
+function validateField(input) {
+    let isValid = input.checkValidity();
+    if (input.type === "email" && input.value.trim() !== "") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(input.value.trim())) {
+            isValid = false;
+        }
+    }
+    if (isValid) {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+    } else {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+    }
+    return isValid;
+}
+
+function resetFormValidation(formEl) {
+    if (!formEl) return;
+    const inputs = formEl.querySelectorAll("input, textarea");
+    inputs.forEach((input) => {
+        input.classList.remove("is-valid", "is-invalid");
     });
 }
 
