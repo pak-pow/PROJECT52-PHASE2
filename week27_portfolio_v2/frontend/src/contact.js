@@ -8,11 +8,11 @@ import { submitContact, getProjects } from "./api.js";
 
 // ── Contact Form ───────────────────────────────────────────────────────────
 
-const form       = document.getElementById("contact-form");
-const submitBtn  = document.getElementById("contact-submit");
-const submitText = document.getElementById("submit-text");
-const spinner    = document.getElementById("submit-spinner");
-const toast      = document.getElementById("contact-toast");
+const form           = document.getElementById("contact-form");
+const submitBtn      = document.getElementById("contact-submit");
+const submitText     = document.getElementById("submit-text");
+const spinner        = document.getElementById("submit-spinner");
+const toastContainer = document.getElementById("toast-container");
 
 if (form) {
     setupFormValidation(form);
@@ -101,17 +101,38 @@ function resetFormValidation(formEl) {
 }
 
 function showToast(message, type = "success") {
-    toast.textContent = message;
-    toast.className = `toast toast-${type}`;
-    toast.classList.remove("hidden");
+    if (!toastContainer) return;
 
+    const toastCard = document.createElement("div");
+    toastCard.className = `toast-card toast-${type}`;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "toast-text";
+    textSpan.textContent = message;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "toast-close";
+    closeBtn.innerHTML = "&times;";
+    closeBtn.addEventListener("click", () => dismissToast(toastCard));
+
+    toastCard.appendChild(textSpan);
+    toastCard.appendChild(closeBtn);
+    toastContainer.appendChild(toastCard);
+
+    // Auto-dismiss after 3.5s
     setTimeout(() => {
-        toast.classList.add("toast-fade");
-        setTimeout(() => {
-            toast.classList.add("hidden");
-            toast.classList.remove("toast-fade");
-        }, 500);
-    }, 4000);
+        dismissToast(toastCard);
+    }, 3500);
+}
+
+function dismissToast(toastCard) {
+    if (!toastCard || !toastCard.parentNode) return;
+    toastCard.classList.add("toast-fadeout");
+    setTimeout(() => {
+        if (toastCard.parentNode) {
+            toastCard.parentNode.removeChild(toastCard);
+        }
+    }, 300);
 }
 
 // ── Projects Rendering & Filtering ──────────────────────────────────────────
