@@ -118,6 +118,19 @@
                     <h2>Manage Projects</h2>
                     <button id="add-project-btn" class="btn btn-primary btn-sm">+ Add Project</button>
                 </div>
+                <!-- NEW: Projects tab search and status filter controls -->
+                <div class="inbox-controls">
+                    <input type="text" id="proj-search-input" placeholder="Search projects by title, tech stack..." class="search-input">
+                    <div class="status-filter-wrapper">
+                        <select id="proj-filter-status" class="filter-select">
+                            <option value="all">All Statuses</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Planned">Planned</option>
+                            <option value="Live">Live</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Add / Edit Form -->
                 <div id="project-form-wrapper" class="glass-card project-form-card hidden">
@@ -186,7 +199,8 @@
         </main>
     </div>
 
-    <div id="admin-toast" class="toast hidden"></div>
+    <!-- NEW: Stacking Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <div id="confirm-modal" class="confirm-modal-overlay hidden">
         <div class="confirm-modal-card glass-card">
