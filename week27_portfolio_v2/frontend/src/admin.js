@@ -38,7 +38,7 @@ const projectForm     = document.getElementById("project-form");
 const projectFormTitle= document.getElementById("project-form-title");
 const cancelProjectBtn= document.getElementById("cancel-project-btn");
 const projectFormError= document.getElementById("project-form-error");
-const adminToast      = document.getElementById("admin-toast");
+const toastContainer  = document.getElementById("toast-container");
 
 const statUnreadCount   = document.getElementById("stat-unread-count");
 const statProjectsCount = document.getElementById("stat-projects-count");
@@ -58,6 +58,12 @@ const msgSearchInput   = document.getElementById("msg-search-input");
 const msgFilterPills   = document.getElementById("msg-filter-pills");
 let currentMsgSearch   = "";
 let currentMsgFilter   = "all";
+
+// NEW: Project filtering state and DOM references
+const projSearchInput  = document.getElementById("proj-search-input");
+const projFilterStatus = document.getElementById("proj-filter-status");
+let currentProjSearch  = "";
+let currentProjStatus  = "all";
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
@@ -267,6 +273,21 @@ if (msgFilterPills) {
     });
 }
 
+// NEW: Search & filtering listeners for admin projects list
+if (projSearchInput) {
+    projSearchInput.addEventListener("input", (e) => {
+        currentProjSearch = e.target.value.toLowerCase().trim();
+        renderAdminProjects(loadedProjects);
+    });
+}
+
+if (projFilterStatus) {
+    projFilterStatus.addEventListener("change", (e) => {
+        currentProjStatus = e.target.value;
+        renderAdminProjects(loadedProjects);
+    });
+}
+
 // ── Admin Projects ─────────────────────────────────────────────────────────
 
 async function loadAdminProjects() {
@@ -284,15 +305,35 @@ async function loadAdminProjects() {
 function renderAdminProjects(projects) {
     setLoading("projects", false);
 
-    if (!projects.length) {
+    // NEW: Apply local search and status filters
+    let filtered = projects;
+
+    if (currentProjStatus !== "all") {
+        filtered = filtered.filter((p) => p.status === currentProjStatus);
+    }
+
+    if (currentProjSearch) {
+        filtered = filtered.filter((p) => 
+            (p.title || "").toLowerCase().includes(currentProjSearch) ||
+            (p.tech_stack || "").toLowerCase().includes(currentProjSearch) ||
+            (p.description || "").toLowerCase().includes(currentProjSearch)
+        );
+    }
+
+    if (!filtered.length) {
         projectsEmpty.classList.remove("hidden");
+        if (currentProjSearch || currentProjStatus !== "all") {
+            projectsEmpty.querySelector("p").textContent = "🔍 No matching projects found.";
+        } else {
+            projectsEmpty.querySelector("p").textContent = "📂 No projects yet. Add one above!";
+        }
         projectsList.classList.add("hidden");
         return;
     }
 
     projectsEmpty.classList.add("hidden");
     projectsList.classList.remove("hidden");
-    projectsList.innerHTML = projects.map((p) => `
+    projectsList.innerHTML = filtered.map((p) => `
         <div class="project-admin-row glass-card" data-id="${p.id}">
             <div class="proj-info">
                 ${p.featured === 1 ? '<span class="admin-featured-star" title="Featured project">★</span>' : ""}
@@ -433,10 +474,38 @@ function setLoading(section, loading) {
 }
 
 function showToast(message, type = "success") {
-    adminToast.textContent = message;
-    adminToast.className = `toast toast-${type}`;
-    adminToast.classList.remove("hidden");
-    setTimeout(() => adminToast.classList.add("hidden"), 3500);
+    if (!toastContainer) return;
+
+    const toastCard = document.createElement("div");
+    toastCard.className = `toast-card toast-${type}`;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "toast-text";
+    textSpan.textContent = message;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "toast-close";
+    closeBtn.innerHTML = "&times;";
+    closeBtn.addEventListener("click", () => dismissToast(toastCard));
+
+    toastCard.appendChild(textSpan);
+    toastCard.appendChild(closeBtn);
+    toastContainer.appendChild(toastCard);
+
+    // Auto-dismiss after 3.5s
+    setTimeout(() => {
+        dismissToast(toastCard);
+    }, 3500);
+}
+
+function dismissToast(toastCard) {
+    if (!toastCard || !toastCard.parentNode) return;
+    toastCard.classList.add("toast-fadeout");
+    setTimeout(() => {
+        if (toastCard.parentNode) {
+            toastCard.parentNode.removeChild(toastCard);
+        }
+    }, 300);
 }
 
 function escHtml(str) {
