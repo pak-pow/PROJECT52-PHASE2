@@ -2,9 +2,9 @@
 
 **Project 52 — Phase 2 | Week 27**  
 **Category:** Full Stack  
-**Skills:** Flask, SQLite, Vanilla JS, AJAX, Admin Dashboard  
+**Skills:** Flask, SQLite, Vanilla JS, AJAX, Admin Dashboard, Hashed Passwords, Session Expiration, Stacking Toasts, Project Reordering  
 **Estimated Time:** 7 hours  
-**Status:** In Progress
+**Status:** Complete
 
 ---
 
@@ -52,7 +52,7 @@ Navigate to `frontend/admin.html` (linked in the footer as "Admin").
 | Username | `admin` |
 | Password | `admin123` |
 
-> Change credentials by setting environment variables `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+> **Security Note**: All passwords are stored and verified securely using `werkzeug.security` cryptographic hashes. Active admin sessions expire after **2 hours** of inactivity. Override credentials by setting environment variables `ADMIN_USERNAME`, `ADMIN_PASSWORD`, or `ADMIN_PASSWORD_HASH`.
 
 ---
 
@@ -70,6 +70,7 @@ Navigate to `frontend/admin.html` (linked in the footer as "Admin").
 | DELETE | `/api/admin/messages/<id>` | ✓ Bearer | Delete message |
 | POST | `/api/projects` | ✓ Bearer | Create project |
 | PUT | `/api/projects/<id>` | ✓ Bearer | Update project |
+| POST | `/api/projects/<id>/reorder` | ✓ Bearer | Swap sort order index |
 | DELETE | `/api/projects/<id>` | ✓ Bearer | Delete project |
 
 ---
@@ -110,9 +111,22 @@ week27_portfolio_v2/
     ├── index.html          # Home page
     ├── about.html          # About page
     ├── admin.html          # Admin dashboard
+    ├── assets/             # Static documents
+    │   └── vincent_aguirre_cv.pdf
     └── src/
         ├── style.css       # Design system
         ├── api.js          # API client
         ├── contact.js      # Form + projects renderer
         └── admin.js        # Admin panel controller
 ```
+
+---
+
+## Weekly Sprint Enhancements
+
+During this sprint, we implemented a series of progressive polishes:
+- **Day 2 (Spotlight & Filtering)**: Dynamic top 6 tech tags extractor, featured project showcase, live filters, staggered entrance card transitions, and a local CV downloader.
+- **Day 3 (Analytics & Custom Modals)**: Dashboard stats counters with sequential loading animations, and promise-based custom glassmorphic modals replacing standard browser `confirm()` alerts.
+- **Day 4 (Security & Search)**: Safe password verification using Werkzeug hashes, 2-hour login session expiration checks in middleware, and a live search and read/unread filtering panel in the admin inbox.
+- **Day 5 (Reordering & Validation)**: Live reorder swap (`/reorder`) buttons (▲ / ▼) in the admin dashboard, and glowing live form validity feedback (green for valid, red for invalid).
+- **Day 6 (Toast Queueing & Project Search)**: Fixed stacking notification toast queue (bottom-right) with click-dismiss controls, and added real-time project title and status filters to the admin panel.
