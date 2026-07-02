@@ -1,0 +1,1 @@
+-- SQLite Schema for Quizzes, Questions, Leaderboard
