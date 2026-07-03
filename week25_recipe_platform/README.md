@@ -1,5 +1,7 @@
 # 🍽️ Week 25 — Recipe Platform
 
+**Category:** Full Stack | **Status:** Completed
+
 A full-stack recipe management application. Users can **add**, **edit**, **browse**, and **delete** recipes with optional photo uploads. Built as Week 25 of the Project 52 Phase 2 challenge.
 
 ---
