@@ -1,5 +1,7 @@
 # Week 26: Kanban Board (Trello Clone)
 
+**Category:** Full Stack | **Status:** Completed
+
 A full-stack, drag-and-drop Kanban board application featuring persistent state management, deeply nested relational data, and smooth UI interactions.
 
 ## 🚀 Project Overview
