@@ -1,5 +1,7 @@
 # 📊 Expense Analytics Dashboard (Project 52 - Week 23)
 
+**Category:** Full Stack | **Status:** Completed
+
 A full-stack, enterprise-grade financial dashboard built to track, visualize, and export personal expenses. Built with a focus on strict architectural patterns, robust security, and high-performance UI/UX.
 
 ![Day7.1](../../PROJECT52/Picture/week23/day7.1.png)
