@@ -7,7 +7,8 @@ SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "schema.sql"
 
 def get_db():
     """Return a SQLite connection with row_factory set."""
-    conn = sqlite3.connect(DB_PATH)
+    use_uri = DB_PATH.startswith("file:")
+    conn = sqlite3.connect(DB_PATH, uri=use_uri, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
