@@ -1,8 +1,12 @@
 import sqlite3
 import os
 
-DB_PATH = os.environ.get("DATABASE_PATH", "data/quiz.db")
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "schema.sql")
+# Resolve paths relative to this file so the server can be run from any directory
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_DEFAULT_DB = os.path.normpath(os.path.join(_BASE_DIR, "..", "data", "quiz.db"))
+
+DB_PATH = os.environ.get("DATABASE_PATH", _DEFAULT_DB)
+SCHEMA_PATH = os.path.normpath(os.path.join(_BASE_DIR, "..", "data", "schema.sql"))
 
 
 def get_db():
