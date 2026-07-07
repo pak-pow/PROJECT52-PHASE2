@@ -15,8 +15,9 @@ import os
 import sys
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-_DIR     = os.path.dirname(os.path.abspath(__file__))
-DB_PATH  = os.environ.get("DATABASE_PATH", os.path.join(_DIR, "quiz.db"))
+_DIR        = os.path.dirname(os.path.abspath(__file__))
+DB_PATH     = os.environ.get("DATABASE_PATH", os.path.join(_DIR, "quiz.db"))
+SCHEMA_PATH = os.path.join(_DIR, "schema.sql")
 
 # ── Sample Data ───────────────────────────────────────────────────────────────
 
@@ -104,12 +105,20 @@ def get_connection():
     return conn
 
 
+def init_schema(conn):
+    """Create tables from schema.sql if they don't exist."""
+    with open(SCHEMA_PATH, "r") as f:
+        sql = f.read()
+    conn.executescript(sql)
+    conn.commit()
+
+
 def reset_data(conn):
     """Delete all quiz and question rows (leaderboard cascades automatically)."""
     conn.execute("DELETE FROM questions")
     conn.execute("DELETE FROM quizzes")
     conn.commit()
-    print("  ✓ Existing data cleared.")
+    print("  [OK] Existing data cleared.")
 
 
 def seed(conn):
@@ -124,7 +133,7 @@ def seed(conn):
 
         if existing:
             quiz_id = existing["id"]
-            print(f"  → Quiz already exists: '{quiz_data['title']}' (id={quiz_id}) — skipping.")
+            print(f"  [SKIP] Quiz already exists: '{quiz_data['title']}' (id={quiz_id})")
         else:
             cursor.execute(
                 """INSERT INTO quizzes (title, description, category, time_limit_seconds)
@@ -137,7 +146,7 @@ def seed(conn):
                 ),
             )
             quiz_id = cursor.lastrowid
-            print(f"  ✓ Inserted quiz: '{quiz_data['title']}' (id={quiz_id})")
+            print(f"  [OK] Inserted quiz: '{quiz_data['title']}' (id={quiz_id})")
 
         # Insert questions for this quiz
         questions = QUESTIONS.get(quiz_data["title"], [])
@@ -157,9 +166,9 @@ def seed(conn):
                 inserted += 1
 
         if inserted:
-            print(f"    ✓ Inserted {inserted} question(s).")
+            print(f"    [OK] Inserted {inserted} question(s).")
         else:
-            print(f"    → Questions already exist — skipping.")
+            print(f"    [SKIP] Questions already exist.")
 
     conn.commit()
 
@@ -169,11 +178,12 @@ def seed(conn):
 if __name__ == "__main__":
     reset = "--reset" in sys.argv
 
-    print(f"\n🌱  Quiz Platform Seeder")
-    print(f"    DB: {DB_PATH}")
-    print(f"    Mode: {'RESET + seed' if reset else 'safe seed (skip existing)'}\n")
+    print(f"\n[SEEDER] Quiz Platform Seeder")
+    print(f"  DB  : {DB_PATH}")
+    print(f"  Mode: {'RESET + seed' if reset else 'safe seed (skip existing)'}\n")
 
     conn = get_connection()
+    init_schema(conn)
 
     if reset:
         print("  Resetting data...")
@@ -182,4 +192,4 @@ if __name__ == "__main__":
     seed(conn)
     conn.close()
 
-    print("\n✅  Done!\n")
+    print("\n[DONE] Seeding complete!\n")
