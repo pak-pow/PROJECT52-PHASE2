@@ -8,7 +8,12 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGIN}})
+    CORS(app, resources={r"/api/*": {"origins": [
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:3000",
+        "null",  # file:// protocol (opening index.html directly)
+    ]}})
     
     with app.app_context():
         init_db()
