@@ -1,3 +1,7 @@
+-- ── Tables ────────────────────────────────────────────────────────────────
+-- schema.sql defines structure ONLY.
+-- To populate sample data, run: python data/seed.py
+
 CREATE TABLE IF NOT EXISTS quizzes (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     title               TEXT NOT NULL,
@@ -24,39 +28,3 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
-
-INSERT OR IGNORE INTO quizzes (id, title, description, category, time_limit_seconds)
-VALUES (1, 'Web Development Basics', 'Test your knowledge of HTML, CSS, and JavaScript fundamentals.', 'Web Dev', 60);
-
-INSERT OR IGNORE INTO quizzes (id, title, description, category, time_limit_seconds)
-VALUES (2, 'Python Programming Trivia', 'How well do you know Python? Cover syntax, types, and idioms.', 'Python', 90);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (1, 1, 'What does HTML stand for?', '["HyperText Markup Language","HighText Machine Language","HyperText and links Markup Language","None of the above"]', 0);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (2, 1, 'Which CSS property controls the text size?', '["font-size","text-size","font-style","text-style"]', 0);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (3, 1, 'Which JavaScript keyword declares a block-scoped variable?', '["var","let","define","set"]', 1);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (4, 1, 'What is the correct HTML element for the largest heading?', '["<h6>","<heading>","<h1>","<head>"]', 2);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (5, 1, 'Which event fires when a user clicks an element?', '["onhover","onclick","onpress","onselect"]', 1);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (6, 2, 'What data type is the result of: 3 / 2 in Python 3?', '["int","float","double","str"]', 1);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (7, 2, 'Which keyword is used to define a function in Python?', '["function","def","fun","define"]', 1);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (8, 2, 'What is the output of: bool(0)?', '["True","False","None","0"]', 1);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (9, 2, 'Which built-in function returns the length of an object?', '["size()","count()","len()","length()"]', 2);
-
-INSERT OR IGNORE INTO questions (id, quiz_id, question_text, options, correct_option_index)
-VALUES (10, 2, 'What symbol is used for single-line comments in Python?', '["//","--","#","/*"]', 2);
