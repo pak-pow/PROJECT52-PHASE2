@@ -1,4 +1,4 @@
-import { getHeadline } from "../utils/helpers.js";
+import { getHeadline, escapeHtml } from "../utils/helpers.js";
 
 /* ── HTML Template ───────────────────────────────────────────── */
 export const RESULTS_HTML = `
@@ -44,19 +44,24 @@ export function renderResults(data, state) {
     .map((r) => {
       const cls      = r.is_correct ? "correct" : "incorrect";
       const icon     = r.is_correct ? "✓" : "✗";
+      
+      const submittedEscaped = escapeHtml(r.submitted_answer ?? "No answer (timed out)");
+      const correctEscaped   = escapeHtml(r.correct_answer);
+      const questionEscaped  = escapeHtml(r.question_text);
+
       const answerLine = r.is_correct
-        ? `Your answer: <strong>${r.correct_answer}</strong>`
-        : `Your answer: <strong>${r.submitted_answer ?? "No answer (timed out)"}</strong>
-           · Correct: <strong>${r.correct_answer}</strong>`;
+        ? `Your answer: <strong>${correctEscaped}</strong>`
+        : `Your answer: <strong>${submittedEscaped}</strong> · Correct: <strong>${correctEscaped}</strong>`;
 
       return `
         <div class="breakdown-row ${cls}">
           <span class="breakdown-icon">${icon}</span>
           <div class="breakdown-body">
-            <p class="breakdown-question">${r.question_text}</p>
+            <p class="breakdown-question">${questionEscaped}</p>
             <p class="breakdown-answer">${answerLine}</p>
           </div>
         </div>`;
     })
     .join("");
 }
+

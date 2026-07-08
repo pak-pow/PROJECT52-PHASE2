@@ -35,6 +35,8 @@ export const QUIZ_HTML = `
   </main>
 `;
 
+import { escapeHtml } from "../utils/helpers.js";
+
 /* ── Renderers ───────────────────────────────────────────────── */
 export function renderQuiz(quiz, state) {
 
@@ -65,9 +67,10 @@ export function renderQuestion(index, state) {
   grid.innerHTML = question.options
     .map(
       (opt, i) =>
-        `<button class="option-btn" id="opt-${i}" data-index="${i}">${opt}</button>`
+        `<button class="option-btn" id="opt-${i}" data-index="${i}">${escapeHtml(opt)}</button>`
     )
     .join("");
+
 
   // Reset Next button
   const btnNext       = document.getElementById("btn-next");
