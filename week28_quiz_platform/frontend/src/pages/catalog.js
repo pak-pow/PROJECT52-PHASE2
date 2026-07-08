@@ -1,3 +1,37 @@
+/* ── HTML Template ───────────────────────────────────────────── */
+export const CATALOG_HTML = `
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">&#x26A1;</span>
+        <span class="logo-text">Quiz<span class="logo-accent">Arena</span></span>
+      </div>
+      <p class="header-sub">Pick a quiz. Beat the clock. Own the leaderboard.</p>
+    </div>
+  </header>
+
+  <main class="catalog-main">
+    <div class="section-heading">
+      <h1>Available Quizzes</h1>
+      <p class="section-sub">Select a quiz below to begin</p>
+    </div>
+    <div id="quiz-catalog-grid" class="catalog-grid">
+      <div class="quiz-card skeleton">
+        <div class="skeleton-badge"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-meta"></div>
+      </div>
+      <div class="quiz-card skeleton">
+        <div class="skeleton-badge"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-meta"></div>
+      </div>
+    </div>
+  </main>
+`;
+
+/* ── Renderer ────────────────────────────────────────────────── */
+
 export function renderCatalog(quizzes, onQuizSelect) {
   const grid = document.getElementById("quiz-catalog-grid");
 

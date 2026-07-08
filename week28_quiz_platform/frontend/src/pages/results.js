@@ -1,6 +1,33 @@
 import { getHeadline } from "../utils/helpers.js";
 
+/* ── HTML Template ───────────────────────────────────────────── */
+export const RESULTS_HTML = `
+  <main class="results-main">
+    <div class="results-hero">
+      <div class="score-ring">
+        <span id="results-score" class="score-number">0</span>
+        <span class="score-divider">/</span>
+        <span id="results-total" class="score-total">0</span>
+      </div>
+      <h2 id="results-headline" class="results-headline">&#8212;</h2>
+      <p id="results-meta" class="results-meta"></p>
+    </div>
+
+    <div class="breakdown-section">
+      <h3 class="breakdown-heading">Question Breakdown</h3>
+      <div id="results-breakdown" class="breakdown-list"></div>
+    </div>
+
+    <div class="results-actions">
+      <button id="btn-view-leaderboard" class="btn-primary">&#127942; View Leaderboard</button>
+      <button id="btn-play-again-results" class="btn-secondary">Play Again</button>
+    </div>
+  </main>
+`;
+
+/* ── Renderer ────────────────────────────────────────────────── */
 export function renderResults(data, state) {
+
   // Save result in state so leaderboard can reference total
   state.lastResult = data;
 

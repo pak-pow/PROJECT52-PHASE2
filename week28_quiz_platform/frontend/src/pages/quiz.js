@@ -1,4 +1,43 @@
+/* ── HTML Template ───────────────────────────────────────────── */
+export const QUIZ_HTML = `
+  <header class="quiz-header">
+    <div class="quiz-header-inner">
+      <button id="btn-quit-quiz" class="btn-quit" title="Quit quiz">&#8592; Quit</button>
+      <span id="quiz-header-title" class="quiz-header-title">Quiz</span>
+      <span id="quiz-progress-label" class="quiz-progress-label">1 / 5</span>
+    </div>
+    <div class="progress-track">
+      <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+    </div>
+  </header>
+
+  <main class="quiz-main">
+    <div class="timer-wrapper">
+      <svg class="timer-ring" viewBox="0 0 120 120" id="timer-svg">
+        <circle class="timer-ring-bg" cx="60" cy="60" r="52" />
+        <circle class="timer-ring-fg" cx="60" cy="60" r="52" id="timer-circle" />
+      </svg>
+      <div class="timer-center">
+        <span id="timer-display" class="timer-number">60</span>
+        <span class="timer-label">sec</span>
+      </div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <p class="question-number" id="question-number">Question 1</p>
+      <h2 class="question-text" id="question-text">Loading...</h2>
+      <div class="options-grid" id="options-grid"></div>
+    </div>
+
+    <div class="quiz-nav">
+      <button id="btn-next" class="btn-primary" disabled>Next Question &#8594;</button>
+    </div>
+  </main>
+`;
+
+/* ── Renderers ───────────────────────────────────────────────── */
 export function renderQuiz(quiz, state) {
+
   // Reset state for a fresh quiz run
   state.currentQuiz          = quiz;
   state.questions            = quiz.questions;

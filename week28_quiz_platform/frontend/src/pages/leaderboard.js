@@ -1,6 +1,37 @@
 import { getRankBadge, getRankClass } from "../utils/helpers.js";
 
+/* ── HTML Template ───────────────────────────────────────────── */
+export const LEADERBOARD_HTML = `
+  <main class="leaderboard-main">
+    <div class="leaderboard-header">
+      <h1 class="leaderboard-title">&#127942; Leaderboard</h1>
+      <p id="leaderboard-quiz-name" class="leaderboard-quiz-name"></p>
+    </div>
+
+    <div class="leaderboard-table-wrapper">
+      <table class="leaderboard-table" id="leaderboard-table">
+        <thead>
+          <tr>
+            <th class="col-rank">Rank</th>
+            <th class="col-user">Player</th>
+            <th class="col-score">Score</th>
+            <th class="col-time">Time</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
+    </div>
+
+    <div class="leaderboard-actions">
+      <button id="btn-play-again-lb" class="btn-primary">Play Another Quiz</button>
+      <button id="btn-back-results" class="btn-secondary">&#8592; Back to Results</button>
+    </div>
+  </main>
+`;
+
+/* ── Renderer ────────────────────────────────────────────────── */
 export function renderLeaderboard(data, state) {
+
   document.getElementById("leaderboard-quiz-name").textContent = data.quiz_title;
 
   const tbody = document.getElementById("leaderboard-body");
