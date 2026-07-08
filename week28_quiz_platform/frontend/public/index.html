@@ -9,6 +9,37 @@
     />
     <title>QuizArena | Week 28</title>
 
+    <!-- Block Live Server auto-reload when database updates -->
+    <script>
+      (function() {
+        const OriginalWebSocket = window.WebSocket;
+        window.WebSocket = function(url, protocols) {
+          if (typeof url === 'string' && (url.includes('127.0.0.1') || url.includes('localhost'))) {
+            console.log("⚡ Live Server auto-reload blocked to prevent page refresh on database updates.");
+            return {
+              send: () => {},
+              close: () => {},
+              addEventListener: () => {},
+              removeEventListener: () => {},
+              set onmessage(val) {},
+              get onmessage() { return () => {}; },
+              set onerror(val) {},
+              get onerror() { return () => {}; },
+              set onopen(val) {
+                setTimeout(() => val && val(), 50);
+              },
+              get onopen() { return () => {}; },
+              set onclose(val) {},
+              get onclose() { return () => {}; }
+            };
+          }
+          return new OriginalWebSocket(url, protocols);
+        };
+        window.WebSocket.prototype = OriginalWebSocket.prototype;
+      })();
+    </script>
+
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
