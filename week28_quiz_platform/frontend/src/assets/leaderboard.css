@@ -1,0 +1,97 @@
+/* ═══════════════════════════════════════════════════════════════
+   LEADERBOARD.CSS — Table, Rank Badges, Actions
+   Week 28 | QuizArena
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Leaderboard Main ────────────────────────────────────────── */
+.leaderboard-main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--sp-xl) var(--sp-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xl);
+}
+
+/* ── Leaderboard Header ──────────────────────────────────────── */
+.leaderboard-header { text-align: center; }
+
+.leaderboard-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: var(--sp-xs);
+}
+
+.leaderboard-quiz-name {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.leaderboard-table-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-table th {
+  padding: var(--sp-md) var(--sp-lg);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+}
+
+.leaderboard-table td {
+  padding: var(--sp-md) var(--sp-lg);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--t-fast);
+}
+
+.leaderboard-table tbody tr:last-child td { border-bottom: none; }
+.leaderboard-table tbody tr:hover td     { background: var(--surface-2); }
+
+/* ── Rank Rows ───────────────────────────────────────────────── */
+.rank-gold   td { background: rgba(245, 158, 11,  0.05); }
+.rank-silver td { background: rgba(148, 163, 184, 0.04); }
+.rank-bronze td { background: rgba(180, 100, 50,  0.04); }
+
+.rank-badge  { font-size: 1.3rem; }
+
+.rank-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--surface-3);
+  border-radius: var(--r-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.col-rank  { width: 64px; }
+.col-score { font-weight: 600; color: var(--blue); }
+.col-time  { color: var(--muted); font-size: 0.85rem; }
+
+/* ── Leaderboard Actions ─────────────────────────────────────── */
+.leaderboard-actions {
+  display: flex;
+  gap: var(--sp-sm);
+  flex-wrap: wrap;
+}

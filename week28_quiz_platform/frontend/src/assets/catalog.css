@@ -1,0 +1,177 @@
+/* ═══════════════════════════════════════════════════════════════
+   CATALOG.CSS — Site Header, Catalog Grid, Quiz Cards, Skeleton
+   Week 28 | QuizArena
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Site Header ─────────────────────────────────────────────── */
+.site-header {
+  padding: var(--sp-xl) var(--sp-lg);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse at 50% 0%, rgba(65,150,243,0.08) 0%, transparent 70%);
+}
+
+.header-inner { max-width: 700px; margin: 0 auto; }
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-sm);
+}
+
+.logo-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 12px var(--blue));
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--white);
+}
+
+.logo-accent {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+/* ── Catalog Main ────────────────────────────────────────────── */
+.catalog-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--sp-xl) var(--sp-lg);
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: var(--sp-xl);
+}
+
+.section-heading h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: var(--sp-xs);
+}
+
+.section-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ── Catalog Grid ────────────────────────────────────────────── */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-lg);
+}
+
+/* ── Quiz Card ───────────────────────────────────────────────── */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-lg);
+  cursor: pointer;
+  transition: transform var(--t-normal), border-color var(--t-normal), box-shadow var(--t-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient);
+  opacity: 0;
+  transition: opacity var(--t-normal);
+  border-radius: inherit;
+}
+
+.quiz-card:hover              { transform: translateY(-4px); border-color: var(--blue); box-shadow: var(--shadow-blue); }
+.quiz-card:hover::before      { opacity: 0.04; }
+.quiz-card:active             { transform: translateY(-1px); }
+
+.card-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: rgba(65, 150, 243, 0.1);
+  border: 1px solid rgba(65, 150, 243, 0.2);
+  padding: var(--sp-xs) var(--sp-sm);
+  border-radius: var(--r-full);
+  margin-bottom: var(--sp-md);
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: var(--sp-sm);
+  line-height: 1.3;
+}
+
+.card-desc {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: var(--sp-lg);
+  line-height: 1.5;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: var(--sp-md);
+}
+
+.card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.card-meta-item span:first-child { font-size: 0.9rem; }
+
+.card-cta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap var(--t-fast);
+}
+
+.quiz-card:hover .card-cta { gap: 8px; }
+
+/* ── Skeleton Loader ─────────────────────────────────────────── */
+.quiz-card.skeleton {
+  pointer-events: none;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-badge { width: 80px; height: 22px; background: var(--surface-3); border-radius: var(--r-full); margin-bottom: var(--sp-md); }
+.skeleton-title { width: 75%; height: 20px; background: var(--surface-3); border-radius: var(--r-sm); margin-bottom: var(--sp-sm); }
+.skeleton-meta  { width: 50%; height: 14px; background: var(--surface-3); border-radius: var(--r-sm); }
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

@@ -1,0 +1,63 @@
+/* ═══════════════════════════════════════════════════════════════
+   MODAL.CSS — Username Overlay, Card, Input
+   Week 28 | QuizArena
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Modal Overlay ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-lg);
+  z-index: 100;
+  animation: fadeIn var(--t-normal) both;
+}
+
+.modal-overlay.hidden { display: none; }
+
+/* ── Modal Card ──────────────────────────────────────────────── */
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeSlideUp var(--t-normal) both;
+}
+
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: var(--sp-xs);
+}
+
+.modal-sub {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-bottom: var(--sp-lg);
+}
+
+/* ── Modal Input ─────────────────────────────────────────────── */
+.modal-input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-md);
+  color: var(--white);
+  font-size: 1rem;
+  margin-bottom: var(--sp-md);
+  transition: border-color var(--t-fast);
+}
+
+.modal-input:focus        { outline: none; border-color: var(--blue); }
+.modal-input::placeholder { color: var(--muted); }
+
+/* ── Modal Actions ───────────────────────────────────────────── */
+.modal-actions { display: flex; justify-content: flex-end; }

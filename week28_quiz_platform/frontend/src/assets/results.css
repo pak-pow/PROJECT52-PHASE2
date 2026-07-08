@@ -1,0 +1,119 @@
+/* ═══════════════════════════════════════════════════════════════
+   RESULTS.CSS — Score Hero, Breakdown Rows, Actions
+   Week 28 | QuizArena
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Results Main ────────────────────────────────────────────── */
+.results-main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--sp-xl) var(--sp-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xl);
+}
+
+/* ── Score Hero ──────────────────────────────────────────────── */
+.results-hero {
+  text-align: center;
+  padding: var(--sp-xl);
+  background: radial-gradient(ellipse at 50% 0%, rgba(65,150,243,0.07) 0%, transparent 70%),
+              var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+}
+
+.score-ring {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-xs);
+  margin-bottom: var(--sp-md);
+}
+
+.score-number {
+  font-size: 5rem;
+  font-weight: 800;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.score-divider {
+  font-size: 2.5rem;
+  color: var(--muted-2);
+  font-weight: 300;
+}
+
+.score-total {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.results-headline {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: var(--sp-xs);
+}
+
+.results-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ── Breakdown ───────────────────────────────────────────────── */
+.breakdown-section { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+.breakdown-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.breakdown-list { display: flex; flex-direction: column; gap: var(--sp-sm); }
+
+.breakdown-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-md);
+}
+
+.breakdown-row.correct   { border-left: 3px solid var(--green); }
+.breakdown-row.incorrect { border-left: 3px solid var(--red); }
+
+.breakdown-icon {
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.breakdown-row.correct   .breakdown-icon { color: var(--green); }
+.breakdown-row.incorrect .breakdown-icon { color: var(--red); }
+
+.breakdown-body { flex: 1; min-width: 0; }
+
+.breakdown-question {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: var(--sp-xs);
+  color: var(--white);
+}
+
+.breakdown-answer         { font-size: 0.8rem; color: var(--muted); }
+.breakdown-answer strong  { color: var(--white); }
+
+/* ── Results Actions ─────────────────────────────────────────── */
+.results-actions {
+  display: flex;
+  gap: var(--sp-sm);
+  flex-wrap: wrap;
+}
