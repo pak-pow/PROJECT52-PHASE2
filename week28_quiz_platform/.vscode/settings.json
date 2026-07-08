@@ -1,23 +1,5 @@
 {
   "liveServer.settings.ignoreFiles": [
-    "**/*.py",
-    "**/*.pyc",
-    "**/*.pyo",
-    "**/*.pyd",
-    "**/__pycache__/**",
-    "**/backend/**",
-    "**/*.db",
-    "**/*.db-wal",
-    "**/*.db-shm",
-    "**/*.db-journal",
-    "**/*.sqlite*",
-    "**/*.db*",
-    "**/*.sql",
-    "**/*.txt",
-    "**/*.cfg",
-    "**/*.ini",
-    "**/*.md",
-    ".git/**",
-    ".gitignore"
+    "**"
   ]
 }
