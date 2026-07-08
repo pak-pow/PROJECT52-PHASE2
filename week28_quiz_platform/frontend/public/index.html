@@ -3,242 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A fast, competitive quiz platform with live leaderboards. Test your knowledge across Web Dev and Python categories." />
+    <meta
+      name="description"
+      content="A fast, competitive quiz platform with live leaderboards. Test your knowledge across Web Dev and Python categories."
+    />
     <title>QuizArena | Week 28</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../src/assets/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles (split by view) -->
+    <link rel="stylesheet" href="../src/assets/base.css" />
+    <link rel="stylesheet" href="../src/assets/catalog.css" />
+    <link rel="stylesheet" href="../src/assets/quiz.css" />
+    <link rel="stylesheet" href="../src/assets/results.css" />
+    <link rel="stylesheet" href="../src/assets/leaderboard.css" />
+    <link rel="stylesheet" href="../src/assets/modal.css" />
   </head>
 
   <body>
     <div id="app">
+      <!-- View shells — HTML is injected by each page JS module on boot -->
+      <section id="view-catalog"     class="view active"></section>
+      <section id="view-quiz"        class="view"></section>
+      <section id="view-results"     class="view"></section>
+      <section id="view-leaderboard" class="view"></section>
 
-      <!-- ══════════════════════════════════════════════════
-           VIEW 1: CATALOG
-           ══════════════════════════════════════════════════ -->
-      <section id="view-catalog" class="view active">
-        <header class="site-header">
-          <div class="header-inner">
-            <div class="logo">
-              <span class="logo-icon">⚡</span>
-              <span class="logo-text">Quiz<span class="logo-accent">Arena</span></span>
-            </div>
-            <p class="header-sub">Pick a quiz. Beat the clock. Own the leaderboard.</p>
-          </div>
-        </header>
-
-        <main class="catalog-main">
-          <div class="section-heading">
-            <h1>Available Quizzes</h1>
-            <p class="section-sub">Select a quiz below to begin</p>
-          </div>
-
-          <!-- Quiz cards are injected here by JS -->
-          <div id="quiz-catalog-grid" class="catalog-grid">
-
-            <!-- Static placeholder card (shown while loading) -->
-            <div class="quiz-card skeleton">
-              <div class="skeleton-badge"></div>
-              <div class="skeleton-title"></div>
-              <div class="skeleton-meta"></div>
-            </div>
-            <div class="quiz-card skeleton">
-              <div class="skeleton-badge"></div>
-              <div class="skeleton-title"></div>
-              <div class="skeleton-meta"></div>
-            </div>
-
-          </div>
-        </main>
-      </section>
-
-      <!-- ══════════════════════════════════════════════════
-           VIEW 2: QUIZ RUNNER
-           ══════════════════════════════════════════════════ -->
-      <section id="view-quiz" class="view">
-        <header class="quiz-header">
-          <div class="quiz-header-inner">
-            <button id="btn-quit-quiz" class="btn-quit" title="Quit quiz">← Quit</button>
-            <span id="quiz-header-title" class="quiz-header-title">Web Development Basics</span>
-            <span id="quiz-progress-label" class="quiz-progress-label">1 / 5</span>
-          </div>
-          <!-- Linear progress bar -->
-          <div class="progress-track">
-            <div id="progress-bar" class="progress-bar" style="width: 20%"></div>
-          </div>
-        </header>
-
-        <main class="quiz-main">
-          <!-- Countdown timer ring -->
-          <div class="timer-wrapper">
-            <svg class="timer-ring" viewBox="0 0 120 120" id="timer-svg">
-              <circle class="timer-ring-bg" cx="60" cy="60" r="52" />
-              <circle class="timer-ring-fg" cx="60" cy="60" r="52" id="timer-circle" />
-            </svg>
-            <div class="timer-center">
-              <span id="timer-display" class="timer-number">60</span>
-              <span class="timer-label">sec</span>
-            </div>
-          </div>
-
-          <!-- Question card -->
-          <div class="question-card" id="question-card">
-            <p class="question-number" id="question-number">Question 1</p>
-            <h2 class="question-text" id="question-text">
-              What does HTML stand for?
-            </h2>
-
-            <!-- Answer options — injected by JS -->
-            <div class="options-grid" id="options-grid">
-              <button class="option-btn" id="opt-0">HyperText Markup Language</button>
-              <button class="option-btn" id="opt-1">HighText Machine Language</button>
-              <button class="option-btn" id="opt-2">HyperText and links Markup Language</button>
-              <button class="option-btn" id="opt-3">None of the above</button>
-            </div>
-          </div>
-
-          <!-- Navigation -->
-          <div class="quiz-nav">
-            <button id="btn-next" class="btn-primary" disabled>Next Question →</button>
-          </div>
-        </main>
-      </section>
-
-      <!-- ══════════════════════════════════════════════════
-           VIEW 3: RESULTS
-           ══════════════════════════════════════════════════ -->
-      <section id="view-results" class="view">
-        <main class="results-main">
-
-          <!-- Score hero -->
-          <div class="results-hero">
-            <div class="score-ring">
-              <span id="results-score" class="score-number">4</span>
-              <span class="score-divider">/</span>
-              <span id="results-total" class="score-total">5</span>
-            </div>
-            <h2 id="results-headline" class="results-headline">Great job! 🎉</h2>
-            <p id="results-meta" class="results-meta">Completed in <strong>42 seconds</strong></p>
-          </div>
-
-          <!-- Per-question breakdown -->
-          <div class="breakdown-section">
-            <h3 class="breakdown-heading">Question Breakdown</h3>
-            <div id="results-breakdown" class="breakdown-list">
-
-              <!-- Static preview row -->
-              <div class="breakdown-row correct">
-                <span class="breakdown-icon">✓</span>
-                <div class="breakdown-body">
-                  <p class="breakdown-question">What does HTML stand for?</p>
-                  <p class="breakdown-answer">Your answer: <strong>HyperText Markup Language</strong></p>
-                </div>
-              </div>
-
-              <div class="breakdown-row incorrect">
-                <span class="breakdown-icon">✗</span>
-                <div class="breakdown-body">
-                  <p class="breakdown-question">Which CSS property controls the text size?</p>
-                  <p class="breakdown-answer">Your answer: <strong>text-size</strong> · Correct: <strong>font-size</strong></p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="results-actions">
-            <button id="btn-view-leaderboard" class="btn-primary">🏆 View Leaderboard</button>
-            <button id="btn-play-again-results" class="btn-secondary">Play Again</button>
-          </div>
-
-        </main>
-      </section>
-
-      <!-- ══════════════════════════════════════════════════
-           VIEW 4: LEADERBOARD
-           ══════════════════════════════════════════════════ -->
-      <section id="view-leaderboard" class="view">
-        <main class="leaderboard-main">
-
-          <div class="leaderboard-header">
-            <h1 class="leaderboard-title">🏆 Leaderboard</h1>
-            <p id="leaderboard-quiz-name" class="leaderboard-quiz-name">Web Development Basics</p>
-          </div>
-
-          <div class="leaderboard-table-wrapper">
-            <table class="leaderboard-table" id="leaderboard-table">
-              <thead>
-                <tr>
-                  <th class="col-rank">Rank</th>
-                  <th class="col-user">Player</th>
-                  <th class="col-score">Score</th>
-                  <th class="col-time">Time</th>
-                </tr>
-              </thead>
-              <tbody id="leaderboard-body">
-
-                <!-- Static preview rows -->
-                <tr class="rank-gold">
-                  <td class="col-rank"><span class="rank-badge">🥇</span></td>
-                  <td class="col-user">vincent</td>
-                  <td class="col-score">5 / 5</td>
-                  <td class="col-time">18s</td>
-                </tr>
-                <tr class="rank-silver">
-                  <td class="col-rank"><span class="rank-badge">🥈</span></td>
-                  <td class="col-user">alice</td>
-                  <td class="col-score">5 / 5</td>
-                  <td class="col-time">34s</td>
-                </tr>
-                <tr class="rank-bronze">
-                  <td class="col-rank"><span class="rank-badge">🥉</span></td>
-                  <td class="col-user">bob</td>
-                  <td class="col-score">4 / 5</td>
-                  <td class="col-time">27s</td>
-                </tr>
-                <tr>
-                  <td class="col-rank"><span class="rank-number">4</span></td>
-                  <td class="col-user">carol</td>
-                  <td class="col-score">3 / 5</td>
-                  <td class="col-time">55s</td>
-                </tr>
-
-              </tbody>
-            </table>
-          </div>
-
-          <div class="leaderboard-actions">
-            <button id="btn-play-again-lb" class="btn-primary">Play Another Quiz</button>
-            <button id="btn-back-results" class="btn-secondary">← Back to Results</button>
-          </div>
-
-        </main>
-      </section>
-
-      <!-- ══════════════════════════════════════════════════
-           MODAL: Username prompt before submitting
-           ══════════════════════════════════════════════════ -->
-      <div id="modal-username" class="modal-overlay hidden">
-        <div class="modal-card">
-          <h2 class="modal-title">Enter Your Name</h2>
-          <p class="modal-sub">Your name will appear on the leaderboard.</p>
-          <input
-            type="text"
-            id="input-username"
-            class="modal-input"
-            placeholder="e.g. vincent"
-            maxlength="24"
-            autocomplete="off"
-          />
-          <div class="modal-actions">
-            <button id="btn-submit-username" class="btn-primary">Submit Answers →</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /#app -->
+      <!-- Modal shell — injected by modal.js on boot -->
+      <div id="modal-container"></div>
+    </div>
 
     <script type="module" src="../src/main.js"></script>
   </body>

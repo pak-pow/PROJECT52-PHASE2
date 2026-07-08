@@ -1,11 +1,21 @@
 import { fetchQuizzes, fetchQuiz, submitQuiz, fetchLeaderboard } from "./api/quizApi.js";
 import { showView, getTimeTaken }        from "./utils/helpers.js";
 import { startTimer, stopTimer }         from "./utils/timer.js";
-import { renderCatalog }                 from "./pages/catalog.js";
-import { renderQuiz, renderQuestion }    from "./pages/quiz.js";
-import { renderResults }                 from "./pages/results.js";
-import { renderLeaderboard }             from "./pages/leaderboard.js";
-import { openModal, closeModal }         from "./components/modal.js";
+import { CATALOG_HTML, renderCatalog }              from "./pages/catalog.js";
+import { QUIZ_HTML, renderQuiz, renderQuestion }    from "./pages/quiz.js";
+import { RESULTS_HTML, renderResults }              from "./pages/results.js";
+import { LEADERBOARD_HTML, renderLeaderboard }      from "./pages/leaderboard.js";
+import { MODAL_HTML, openModal, closeModal }        from "./components/modal.js";
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT — Inject HTML templates into view shells
+   Must happen before any event listeners or DOM queries below.
+   ═══════════════════════════════════════════════════════════════ */
+document.getElementById("view-catalog").innerHTML     = CATALOG_HTML;
+document.getElementById("view-quiz").innerHTML        = QUIZ_HTML;
+document.getElementById("view-results").innerHTML     = RESULTS_HTML;
+document.getElementById("view-leaderboard").innerHTML = LEADERBOARD_HTML;
+document.getElementById("modal-container").innerHTML  = MODAL_HTML;
 
 /* ═══════════════════════════════════════════════════════════════
    STATE — single source of truth for the entire app
@@ -20,6 +30,7 @@ const state = {
   startTime:            null,
   totalTime:            0,
   lastResult:           null,
+  isSubmitting:         false,   // guard against double-submit
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -27,6 +38,7 @@ const state = {
    ═══════════════════════════════════════════════════════════════ */
 
 async function loadCatalog() {
+  state.isSubmitting = false;
   showView("catalog");
   try {
     const quizzes = await fetchQuizzes();
@@ -34,7 +46,7 @@ async function loadCatalog() {
   } catch (err) {
     document.getElementById("quiz-catalog-grid").innerHTML = `
       <p style="color:var(--red);text-align:center;grid-column:1/-1;padding:40px 0;">
-        ⚠️ Could not connect to backend. Make sure Flask is running on port 5000.
+        Could not connect to backend. Make sure Flask is running on port 5000.
       </p>`;
     console.error(err);
   }
@@ -78,7 +90,7 @@ document.getElementById("btn-next").addEventListener("click", () => {
     state.currentQuestionIndex = nextIndex;
     renderQuestion(nextIndex, state);
   } else {
-    // Last question answered — stop timer and open modal
+    // Last question — stop timer and open username modal
     stopTimer(state);
     openModal();
   }
@@ -86,11 +98,20 @@ document.getElementById("btn-next").addEventListener("click", () => {
 
 // ── Submit username from modal ────────────────────────────────
 document.getElementById("btn-submit-username").addEventListener("click", async () => {
+  // Guard: prevent double-submit
+  if (state.isSubmitting) return;
+
   const username = document.getElementById("input-username").value.trim();
   if (!username) {
     document.getElementById("input-username").focus();
     return;
   }
+
+  // Lock UI during async call
+  state.isSubmitting = true;
+  const submitBtn = document.getElementById("btn-submit-username");
+  submitBtn.disabled    = true;
+  submitBtn.textContent = "Submitting...";
 
   closeModal();
 
@@ -103,8 +124,13 @@ document.getElementById("btn-submit-username").addEventListener("click", async (
     renderResults(result, state);
     showView("results");
   } catch (err) {
+    // Re-open modal so user can retry
+    openModal();
+    submitBtn.disabled    = false;
+    submitBtn.textContent = "Submit Answers \u2192";
+    state.isSubmitting    = false;
+    console.error("Submit failed:", err);
     alert("Something went wrong submitting your quiz. Please try again.");
-    console.error(err);
   }
 });
 
@@ -121,7 +147,7 @@ document.getElementById("btn-quit-quiz").addEventListener("click", () => {
   loadCatalog();
 });
 
-// ── View Leaderboard ──────────────────────────────────────────
+// ── View Leaderboard (from Results) ──────────────────────────
 document.getElementById("btn-view-leaderboard").addEventListener("click", async () => {
   try {
     const data = await fetchLeaderboard(state.currentQuiz.id);
@@ -145,6 +171,6 @@ document.getElementById("btn-back-results").addEventListener("click", () => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   BOOT
+   INIT
    ═══════════════════════════════════════════════════════════════ */
 loadCatalog();
