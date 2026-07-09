@@ -1,3 +1,5 @@
+import { escapeHtml } from "../utils/helpers.js";
+
 /* ── HTML Template ───────────────────────────────────────────── */
 export const QUIZ_HTML = `
   <header class="quiz-header">
@@ -14,8 +16,14 @@ export const QUIZ_HTML = `
   <main class="quiz-main">
     <div class="timer-wrapper">
       <svg class="timer-ring" viewBox="0 0 120 120" id="timer-svg">
+        <defs>
+          <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--blue)" />
+            <stop offset="100%" stop-color="var(--purple)" />
+          </linearGradient>
+        </defs>
         <circle class="timer-ring-bg" cx="60" cy="60" r="52" />
-        <circle class="timer-ring-fg" cx="60" cy="60" r="52" id="timer-circle" />
+        <circle class="timer-ring-fg" cx="60" cy="60" r="52" id="timer-circle" style="stroke: url(#timer-gradient);" />
       </svg>
       <div class="timer-center">
         <span id="timer-display" class="timer-number">60</span>
@@ -34,8 +42,6 @@ export const QUIZ_HTML = `
     </div>
   </main>
 `;
-
-import { escapeHtml } from "../utils/helpers.js";
 
 /* ── Renderers ───────────────────────────────────────────────── */
 export function renderQuiz(quiz, state) {
