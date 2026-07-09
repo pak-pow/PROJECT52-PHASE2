@@ -20,6 +20,11 @@ htmlcov/
 # Databases
 *.sqlite3
 *.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite*
+
 
 # OS generated files
 .DS_Store
