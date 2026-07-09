@@ -123,6 +123,7 @@ document.getElementById("btn-submit-username").addEventListener("click", async (
     });
     renderResults(result, state);
     showView("results");
+    state.isSubmitting = false;
   } catch (err) {
     // Re-open modal so user can retry
     openModal();
