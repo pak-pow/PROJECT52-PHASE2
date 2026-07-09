@@ -58,10 +58,15 @@ def validate_submission(data, expected_count):
     if len(answers) != expected_count:
         return False, f"Expected {expected_count} answers, got {len(answers)}."
 
+    for ans in answers:
+        if not isinstance(ans, int):
+            return False, "All elements in 'answers' must be integer indices."
+
     if time_taken is None or not isinstance(time_taken, (int, float)) or time_taken < 0:
         return False, "Field 'time_taken' must be a non-negative number (seconds)."
 
     return True, None
+
 
 
 # ── Grading ───────────────────────────────────────────────────────────────────
