@@ -19,5 +19,15 @@ def client(tmp_path):
     from app import create_app
     app = create_app()
     app.config["TESTING"] = True
+
+    # Seed the test database
+    from data.seed import seed, get_connection
+    conn = get_connection()
+    try:
+        seed(conn)
+    finally:
+        conn.close()
+
     with app.test_client() as client:
         yield client
+
