@@ -34,6 +34,18 @@ QUIZZES = [
         "category":           "Python",
         "time_limit_seconds": 90,
     },
+    {
+        "title":              "JavaScript Deep Dive",
+        "description":        "Master closures, prototype inheritance, DOM, and type coercion.",
+        "category":           "JavaScript",
+        "time_limit_seconds": 120,
+    },
+    {
+        "title":              "Database Systems & SQL",
+        "description":        "Test your knowledge of relations, SQL, indexes, and normalization.",
+        "category":           "Databases",
+        "time_limit_seconds": 75,
+    },
 ]
 
 # Questions are keyed by quiz title for readability.
@@ -91,6 +103,60 @@ QUESTIONS = {
         {
             "text":    "What symbol is used for single-line comments in Python?",
             "options": ["//", "--", "#", "/*"],
+            "answer":  2,
+        },
+    ],
+    "JavaScript Deep Dive": [
+        {
+            "text":    "Which of the following is NOT a primitive data type in JavaScript?",
+            "options": ["string", "boolean", "object", "symbol"],
+            "answer":  2,
+        },
+        {
+            "text":    "What is the result of: typeof null in JavaScript?",
+            "options": ["null", "object", "undefined", "string"],
+            "answer":  1,
+        },
+        {
+            "text":    "Which method is used to add one or more elements to the end of an array?",
+            "options": ["push()", "pop()", "shift()", "unshift()"],
+            "answer":  0,
+        },
+        {
+            "text":    "What does DOM stand for?",
+            "options": ["Document Object Model", "Domain Object Model", "Direct Object Manipulation", "Document Oriented Middleware"],
+            "answer":  0,
+        },
+        {
+            "text":    "Which symbol is used for strict equality comparison?",
+            "options": ["=", "==", "===", "!="],
+            "answer":  2,
+        },
+    ],
+    "Database Systems & SQL": [
+        {
+            "text":    "What does SQL stand for?",
+            "options": ["Structured Query Language", "Strong Query Language", "Structured Question Language", "Sequential Query Language"],
+            "answer":  0,
+        },
+        {
+            "text":    "Which SQL clause is used to filter query results based on aggregate functions?",
+            "options": ["WHERE", "HAVING", "GROUP BY", "ORDER BY"],
+            "answer":  1,
+        },
+        {
+            "text":    "What type of join returns all rows from the left table, and matched rows from the right table?",
+            "options": ["INNER JOIN", "RIGHT JOIN", "LEFT JOIN", "FULL JOIN"],
+            "answer":  2,
+        },
+        {
+            "text":    "Which SQL constraint uniquely identifies each record in a database table?",
+            "options": ["FOREIGN KEY", "UNIQUE", "PRIMARY KEY", "CHECK"],
+            "answer":  2,
+        },
+        {
+            "text":    "Which SQL command is used to delete a table's structure along with its data?",
+            "options": ["DELETE", "TRUNCATE", "DROP", "REMOVE"],
             "answer":  2,
         },
     ],
