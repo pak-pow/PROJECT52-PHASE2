@@ -166,6 +166,33 @@ document.getElementById("btn-play-again-results").addEventListener("click", load
 // ── Play Another Quiz (from Leaderboard view) ─────────────────
 document.getElementById("btn-play-again-lb").addEventListener("click", loadCatalog);
 
+// ── Keyboard Shortcuts (1-4, Enter) for Quiz View ────────────
+window.addEventListener("keydown", (e) => {
+  const quizView = document.getElementById("view-quiz");
+  if (!quizView || !quizView.classList.contains("active")) return;
+
+  // If username modal is open, ignore quiz keyboard shortcuts
+  const modal = document.getElementById("modal-username");
+  if (modal && !modal.classList.contains("hidden")) return;
+
+  // 1-4 keys to select option buttons
+  if (e.key >= "1" && e.key <= "4") {
+    const optIndex = parseInt(e.key) - 1;
+    const optBtn = document.getElementById(`opt-${optIndex}`);
+    if (optBtn) {
+      optBtn.click();
+    }
+  }
+
+  // Enter key to click Next/Submit
+  if (e.key === "Enter") {
+    const btnNext = document.getElementById("btn-next");
+    if (btnNext && !btnNext.disabled) {
+      btnNext.click();
+    }
+  }
+});
+
 // ── Back to Results (from Leaderboard view) ───────────────────
 document.getElementById("btn-back-results").addEventListener("click", () => {
   showView("results");
