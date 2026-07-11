@@ -68,6 +68,39 @@
   font-size: 0.9rem;
 }
 
+/* ── Filter Bar ──────────────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-xl);
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: var(--sp-sm) var(--sp-md);
+  border-radius: var(--r-full);
+  transition: all var(--t-fast);
+}
+
+.filter-btn:hover {
+  color: var(--white);
+  border-color: var(--border-hover);
+  background: var(--surface-3);
+}
+
+.filter-btn.active {
+  background: var(--gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(65, 150, 243, 0.2);
+}
+
 /* ── Catalog Grid ────────────────────────────────────────────── */
 .catalog-grid {
   display: grid;
