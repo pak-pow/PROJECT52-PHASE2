@@ -35,6 +35,10 @@ htmlcov/
 ehthumbs.db
 Thumbs.db
 
+# File uploads & thumbnails
+uploads/
+thumbnails/
+
 # Node
 node_modules/
 npm-debug.log
