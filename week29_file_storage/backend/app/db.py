@@ -22,7 +22,7 @@ def init_db():
     """Read and execute schema.sql to create tables."""
     conn = get_db()
     try:
-        with open(SCHEMA_PATH, "r") as f:
+        with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
             sql = f.read()
         conn.executescript(sql)
         conn.commit()
