@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Week 29 — File Upload & Storage System. Upload, organize, preview, and download your files." />
+
+    <title>FileVault — Upload & Storage</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="src/assets/base.css" />
+    <link rel="stylesheet" href="src/assets/auth.css" />
+    <link rel="stylesheet" href="src/assets/upload.css" />
+    <link rel="stylesheet" href="src/assets/gallery.css" />
+    <link rel="stylesheet" href="src/assets/modal.css" />
+
+    <script type="module" src="src/main.js"></script>
+</head>
+<body>
+
+    <!-- ── Auth Screen ────────────────────────────────────────── -->
+    <section id="auth-screen" class="screen active">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <span class="logo-icon">📁</span>
+                <h1>FileVault</h1>
+                <p class="tagline">Secure file storage, beautifully simple.</p>
+            </div>
+            <form id="auth-form">
+                <div class="form-group">
+                    <label for="auth-username">Username</label>
+                    <input type="text" id="auth-username" placeholder="Enter username" required minlength="3" />
+                </div>
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" placeholder="Enter password" required minlength="6" />
+                </div>
+                <button type="submit" id="auth-login-btn" class="btn btn-primary">Log In</button>
+                <button type="button" id="auth-register-btn" class="btn btn-secondary">Create Account</button>
+                <p id="auth-error" class="error-msg" role="alert"></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- ── Main App ───────────────────────────────────────────── -->
+    <section id="app-screen" class="screen">
+        <header class="app-header">
+            <div class="header-left">
+                <span class="logo-icon-sm">📁</span>
+                <h2>FileVault</h2>
+            </div>
+            <div class="header-right">
+                <span id="current-user" class="username-badge"></span>
+                <button id="logout-btn" class="btn btn-ghost">Logout</button>
+            </div>
+        </header>
+
+        <nav class="toolbar">
+            <div class="view-tabs">
+                <button class="tab-btn active" data-view="dashboard">My Files</button>
+                <button class="tab-btn" data-view="upload">Upload</button>
+            </div>
+            <div class="category-filters" id="category-filters">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="image">Images</button>
+                <button class="filter-btn" data-category="document">Documents</button>
+                <button class="filter-btn" data-category="audio">Audio</button>
+                <button class="filter-btn" data-category="video">Video</button>
+                <button class="filter-btn" data-category="other">Other</button>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <!-- Dynamic content injected by JS -->
+        </main>
+    </section>
+
+    <!-- ── Preview Modal ──────────────────────────────────────── -->
+    <div id="preview-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card">
+            <button class="modal-close" aria-label="Close preview">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+</body>
+</html>
