@@ -261,6 +261,36 @@ body {
     color: var(--text-secondary);
 }
 
+.layout-toggles {
+    display: flex;
+    gap: var(--space-xs);
+    background: var(--bg-primary);
+    padding: 3px;
+    border-radius: var(--radius-md);
+}
+
+.toggle-btn {
+    padding: var(--space-xs) var(--space-md);
+    font-family: var(--font-family);
+    font-size: var(--font-xs);
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: transparent;
+    transition: all var(--transition-fast);
+}
+.toggle-btn.active {
+    background: var(--bg-card);
+    color: var(--accent-hover);
+    box-shadow: var(--shadow-sm);
+}
+.toggle-btn:hover:not(.active) {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
 /* ── Main Content ────────────────────────────────────────── */
 #main-content {
     flex: 1;
