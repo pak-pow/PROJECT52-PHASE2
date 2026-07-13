@@ -11,7 +11,7 @@ import { openPreview } from "../components/preview.js";
  * @param {HTMLElement} container
  * @param {string} category - category filter (or "all")
  */
-export async function renderDashboard(container, category = "all") {
+export async function renderDashboard(container, category = "all", layout = "grid") {
     container.innerHTML = `<p style="color:var(--text-muted)">Loading files…</p>`;
 
     try {
@@ -28,7 +28,7 @@ export async function renderDashboard(container, category = "all") {
         }
 
         const grid = document.createElement("div");
-        grid.className = "file-grid";
+        grid.className = `file-${layout}`;
 
         for (const file of files) {
             const card = createFileCard(file);
