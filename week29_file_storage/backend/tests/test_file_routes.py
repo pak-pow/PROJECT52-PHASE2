@@ -102,6 +102,32 @@ class TestFileUpload:
         body = resp.get_json()
         assert len(body["errors"]) == 1
 
+    def test_upload_image_generates_thumbnail(self, client, auth_header):
+        from PIL import Image
+        img_io = io.BytesIO()
+        img = Image.new("RGB", (10, 10), color="red")
+        img.save(img_io, format="PNG")
+        img_io.seek(0)
+
+        data = {"files": (img_io, "test.png", "image/png")}
+        resp = client.post(
+            "/api/files/upload",
+            headers=auth_header,
+            data=data,
+            content_type="multipart/form-data",
+        )
+        assert resp.status_code == 201
+        body = resp.get_json()
+        assert len(body["uploaded"]) == 1
+        assert body["uploaded"][0]["category"] == "image"
+        assert body["uploaded"][0]["has_thumbnail"] is True
+
+        file_id = body["uploaded"][0]["id"]
+        thumb_resp = client.get(f"/api/files/{file_id}/thumbnail", headers=auth_header)
+        assert thumb_resp.status_code == 200
+        assert thumb_resp.mimetype == "image/jpeg"
+
+
 
 # ═══════════════════════════════════════════════════════════════
 #  File List / Get / Delete Tests
