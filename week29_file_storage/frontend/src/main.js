@@ -49,11 +49,25 @@ function setupAuth() {
 async function handleAuth(action, errorEl) {
     const username = document.getElementById("auth-username").value.trim();
     const password = document.getElementById("auth-password").value;
+    const loginBtn = document.getElementById("auth-login-btn");
+    const registerBtn = document.getElementById("auth-register-btn");
     errorEl.textContent = "";
 
     if (!username || !password) {
         errorEl.textContent = "Please fill in all fields.";
         return;
+    }
+
+    // Set loading states
+    const oldLoginText = loginBtn.textContent;
+    const oldRegisterText = registerBtn.textContent;
+    loginBtn.disabled = true;
+    registerBtn.disabled = true;
+
+    if (action === "login") {
+        loginBtn.textContent = "Logging In…";
+    } else {
+        registerBtn.textContent = "Registering…";
     }
 
     try {
@@ -70,6 +84,12 @@ async function handleAuth(action, errorEl) {
         }
     } catch {
         errorEl.textContent = "Cannot connect to server.";
+    } finally {
+        // Reset loading states
+        loginBtn.disabled = false;
+        registerBtn.disabled = false;
+        loginBtn.textContent = oldLoginText;
+        registerBtn.textContent = oldRegisterText;
     }
 }
 
