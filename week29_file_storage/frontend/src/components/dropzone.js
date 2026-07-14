@@ -50,59 +50,104 @@ export function renderDropzone(container, onUploadComplete) {
 }
 
 
+const ALLOWED_MIME_TYPES = new Set([
+    "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain", "text/csv", "text/markdown",
+    "audio/mpeg", "audio/wav", "audio/ogg",
+    "video/mp4", "video/webm",
+    "application/zip", "application/x-tar", "application/gzip"
+]);
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
 async function handleFiles(files, queueEl, onComplete) {
-    // Show items in queue
-    const items = [];
+    const validFiles = [];
+    const uploadItemElements = [];
+
     for (const file of files) {
+        let err = null;
+        if (file.size > MAX_FILE_SIZE) {
+            err = "Exceeds 10 MB limit";
+        } else if (file.type && !ALLOWED_MIME_TYPES.has(file.type)) {
+            err = "Unsupported file type";
+        }
+
         const icon = getCategoryIcon(guessCategory(file.type));
         const itemEl = document.createElement("div");
         itemEl.className = "upload-item";
-        itemEl.innerHTML = `
-            <span class="upload-item-icon">${icon}</span>
-            <div class="upload-item-info">
-                <div class="upload-item-name">${escapeHtml(file.name)}</div>
-                <div class="upload-item-size">${formatBytes(file.size)}</div>
-                <div class="progress-bar-track"><div class="progress-bar-fill"></div></div>
-            </div>
-            <span class="upload-item-status pending">Uploading…</span>
-        `;
-        queueEl.appendChild(itemEl);
-        items.push(itemEl);
+
+        if (err) {
+            itemEl.innerHTML = `
+                <span class="upload-item-icon">⚠️</span>
+                <div class="upload-item-info">
+                    <div class="upload-item-name" style="color:var(--error)">${escapeHtml(file.name)}</div>
+                    <div class="upload-item-size">${formatBytes(file.size)} · <span style="color:var(--error)">${err}</span></div>
+                </div>
+                <span class="upload-item-status error">Blocked</span>
+            `;
+            queueEl.appendChild(itemEl);
+        } else {
+            itemEl.innerHTML = `
+                <span class="upload-item-icon">${icon}</span>
+                <div class="upload-item-info">
+                    <div class="upload-item-name">${escapeHtml(file.name)}</div>
+                    <div class="upload-item-size">${formatBytes(file.size)}</div>
+                    <div class="progress-bar-track"><div class="progress-bar-fill"></div></div>
+                </div>
+                <span class="upload-item-status pending">Uploading…</span>
+            `;
+            queueEl.appendChild(itemEl);
+            validFiles.push(file);
+            uploadItemElements.push(itemEl);
+        }
     }
 
+    if (!validFiles.length) return;
+
     try {
-        const result = await uploadFiles(files, (pct) => {
-            items.forEach((el) => {
-                el.querySelector(".progress-bar-fill").style.width = `${pct}%`;
+        const result = await uploadFiles(validFiles, (pct) => {
+            uploadItemElements.forEach((el) => {
+                const fill = el.querySelector(".progress-bar-fill");
+                if (fill) fill.style.width = `${pct}%`;
             });
         });
 
         if (result.ok) {
-            items.forEach((el) => {
-                el.querySelector(".progress-bar-fill").style.width = "100%";
+            uploadItemElements.forEach((el) => {
+                const fill = el.querySelector(".progress-bar-fill");
+                if (fill) fill.style.width = "100%";
                 const status = el.querySelector(".upload-item-status");
-                status.textContent = "Done ✓";
-                status.className = "upload-item-status success";
+                if (status) {
+                    status.textContent = "Done ✓";
+                    status.className = "upload-item-status success";
+                }
             });
-            if (onComplete) setTimeout(onComplete, 600);
+            if (onComplete) setTimeout(onComplete, 800);
         } else {
-            items.forEach((el) => {
+            uploadItemElements.forEach((el) => {
                 const status = el.querySelector(".upload-item-status");
-                status.textContent = "Failed";
-                status.className = "upload-item-status error";
+                if (status) {
+                    status.textContent = "Failed";
+                    status.className = "upload-item-status error";
+                }
             });
         }
     } catch (err) {
-        items.forEach((el) => {
+        uploadItemElements.forEach((el) => {
             const status = el.querySelector(".upload-item-status");
-            status.textContent = "Error";
-            status.className = "upload-item-status error";
+            if (status) {
+                status.textContent = "Error";
+                status.className = "upload-item-status error";
+            }
         });
     }
 }
 
 
 function guessCategory(mime) {
+    if (!mime) return "other";
     if (mime.startsWith("image/")) return "image";
     if (mime.startsWith("audio/")) return "audio";
     if (mime.startsWith("video/")) return "video";
