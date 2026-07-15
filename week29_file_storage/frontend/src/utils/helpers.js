@@ -16,11 +16,24 @@ export function formatBytes(bytes) {
 }
 
 /**
- * Get a file-type emoji icon from a category string.
+ * Get a file-type emoji icon based on filename extension or category.
+ * @param {string} filename
  * @param {string} category
  * @returns {string}
  */
-export function getCategoryIcon(category) {
+export function getFileIcon(filename = "", category = "") {
+    const ext = filename.split(".").pop().toLowerCase();
+
+    // Specific Extensions
+    if (ext === "pdf") return "📕";
+    if (["zip", "rar", "tar", "gz", "7z"].includes(ext)) return "🗜️";
+    if (["txt", "md", "csv", "json", "js", "py", "html", "css"].includes(ext)) return "📝";
+    if (["doc", "docx", "xls", "xlsx", "ppt", "pptx"].includes(ext)) return "📘";
+    if (["mp3", "wav", "ogg", "flac"].includes(ext)) return "🎵";
+    if (["mp4", "webm", "mkv", "avi"].includes(ext)) return "🎬";
+    if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext)) return "🖼️";
+
+    // Category Fallbacks
     const icons = {
         image: "🖼️",
         document: "📄",
@@ -29,6 +42,10 @@ export function getCategoryIcon(category) {
         other: "📦",
     };
     return icons[category] || "📦";
+}
+
+export function getCategoryIcon(category) {
+    return getFileIcon("", category);
 }
 
 /**
