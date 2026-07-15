@@ -61,7 +61,6 @@
     color: white;
 }
 
-/* ── Modal Content ───────────────────────────────────────── */
 .modal-preview {
     padding: var(--space-lg);
     display: flex;
@@ -70,11 +69,35 @@
     background: var(--bg-primary);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     min-height: 200px;
+    width: 100%;
 }
 .modal-preview img {
     max-width: 100%;
     max-height: 50vh;
     border-radius: var(--radius-sm);
+}
+.modal-preview .media-player {
+    width: 100%;
+    max-height: 50vh;
+    outline: none;
+    border-radius: var(--radius-sm);
+}
+.modal-text-preview {
+    width: 100%;
+    max-height: 45vh;
+    background: var(--bg-secondary);
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow: auto;
+    text-align: left;
+}
+#modal-text-code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 .modal-preview .no-preview-icon {
     font-size: 5rem;
