@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { uploadFiles } from "../api/fileApi.js";
-import { formatBytes, getCategoryIcon } from "../utils/helpers.js";
+import { formatBytes, getFileIcon } from "../utils/helpers.js";
 
 /**
  * Render the drag-and-drop upload zone into a container element.
@@ -74,7 +74,7 @@ async function handleFiles(files, queueEl, onComplete) {
             err = "Unsupported file type";
         }
 
-        const icon = getCategoryIcon(guessCategory(file.type));
+        const icon = getFileIcon(file.name, guessCategory(file.type));
         const itemEl = document.createElement("div");
         itemEl.className = "upload-item";
 
