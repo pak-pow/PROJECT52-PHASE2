@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { listFiles, deleteFile, thumbnailUrl } from "../api/fileApi.js";
-import { formatBytes, formatDate, getCategoryIcon } from "../utils/helpers.js";
+import { formatBytes, formatDate, getFileIcon } from "../utils/helpers.js";
 import { openPreview } from "../components/preview.js";
 
 /**
@@ -50,7 +50,7 @@ function createFileCard(file) {
 
     const previewHtml = file.has_thumbnail
         ? `<img src="${thumbnailUrl(file.id)}" alt="${escapeHtml(file.original_name)}" loading="lazy" />`
-        : `<span class="file-card-icon">${getCategoryIcon(file.category)}</span>`;
+        : `<span class="file-card-icon">${getFileIcon(file.original_name, file.category)}</span>`;
 
     card.innerHTML = `
         <div class="file-card-preview">${previewHtml}</div>
@@ -76,7 +76,7 @@ function createFileCard(file) {
         .then(r => r.blob())
         .then(blob => { img.src = URL.createObjectURL(blob); })
         .catch(() => {
-            img.outerHTML = `<span class="file-card-icon">${getCategoryIcon(file.category)}</span>`;
+            img.outerHTML = `<span class="file-card-icon">${getFileIcon(file.original_name, file.category)}</span>`;
         });
     }
 
