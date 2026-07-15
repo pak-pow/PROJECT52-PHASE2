@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setupAuth();
     setupNavigation();
 
+    document.addEventListener("file-deleted", () => {
+        if (currentView === "dashboard") {
+            renderCurrentView();
+        }
+    });
+
     // Check if user is already logged in
     const token = localStorage.getItem("fv_token");
     if (token) {
