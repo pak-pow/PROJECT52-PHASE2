@@ -26,6 +26,9 @@ def generate_stored_name(original_name):
 
 def serialize_file(row):
     """Convert a file DB row to a public dict."""
+    uploaded_at = row["uploaded_at"]
+    if uploaded_at and "T" not in uploaded_at:
+        uploaded_at = f"{uploaded_at.replace(' ', 'T')}Z"
     return {
         "id": row["id"],
         "original_name": row["original_name"],
@@ -33,5 +36,5 @@ def serialize_file(row):
         "file_size": row["file_size"],
         "category": row["category"],
         "has_thumbnail": bool(row["has_thumbnail"]),
-        "uploaded_at": row["uploaded_at"],
+        "uploaded_at": uploaded_at,
     }
