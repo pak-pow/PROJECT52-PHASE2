@@ -84,18 +84,29 @@ export function uploadFiles(files, onProgress) {
     });
 }
 
+async function fetchWithAuth(url, options = {}) {
+    const headers = {
+        ...authHeaders(),
+        ...(options.headers || {}),
+    };
+    const resp = await fetch(url, { ...options, headers });
+    if (resp.status === 401) {
+        localStorage.removeItem("fv_token");
+        localStorage.removeItem("fv_user");
+        window.location.reload();
+        throw new Error("Session expired.");
+    }
+    return resp;
+}
+
 export async function listFiles(category) {
     const qs = category && category !== "all" ? `?category=${category}` : "";
-    const resp = await fetch(`${API_BASE}/files${qs}`, {
-        headers: { ...authHeaders() },
-    });
+    const resp = await fetchWithAuth(`${API_BASE}/files${qs}`);
     return resp.json();
 }
 
 export async function getFile(id) {
-    const resp = await fetch(`${API_BASE}/files/${id}`, {
-        headers: { ...authHeaders() },
-    });
+    const resp = await fetchWithAuth(`${API_BASE}/files/${id}`);
     return resp.json();
 }
 
@@ -108,9 +119,8 @@ export function thumbnailUrl(id) {
 }
 
 export async function deleteFile(id) {
-    const resp = await fetch(`${API_BASE}/files/${id}`, {
+    const resp = await fetchWithAuth(`${API_BASE}/files/${id}`, {
         method: "DELETE",
-        headers: { ...authHeaders() },
     });
     return { ok: resp.ok, data: await resp.json() };
 }
