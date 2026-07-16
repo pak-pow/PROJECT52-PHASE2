@@ -5,7 +5,7 @@ import shutil
 # Ensure path is correct to import app modules
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-from app.db import init_db
+from app.db import init_db, get_db
 from app.models.user_model import create_user
 from app.models.file_model import insert_file
 from app.config.settings import Config
@@ -19,6 +19,16 @@ except ImportError:
 
 
 def seed():
+    print("Dropping old database tables...")
+    conn = get_db()
+    try:
+        conn.execute("DROP TABLE IF EXISTS files")
+        conn.execute("DROP TABLE IF EXISTS sessions")
+        conn.execute("DROP TABLE IF EXISTS users")
+        conn.commit()
+    finally:
+        conn.close()
+
     print("Initializing database...")
     init_db()
 
@@ -52,13 +62,24 @@ def seed():
             "content": b"Welcome to FileVault!\nThis is a simple text file seeded to show list/grid layouts."
         },
         {
-            "original_name": "lofi_beat.mp3",
-            "stored_name": "lofi_beat.mp3",
-            "mime_type": "audio/mpeg",
+            "original_name": "lofi_beat.wav",
+            "stored_name": "lofi_beat.wav",
+            "mime_type": "audio/wav",
             "category": "audio",
-            "content": b"MOCK MP3 CONTENT"
+            "content": None
         }
     ]
+
+    # Generate 1-second silent WAV
+    import wave
+    import io
+    wav_io = io.BytesIO()
+    with wave.open(wav_io, 'wb') as wav_file:
+        wav_file.setnchannels(1)
+        wav_file.setsampwidth(2)
+        wav_file.setframerate(22050)
+        wav_file.writeframes(b'\x00' * 44100)
+    wav_content = wav_io.getvalue()
 
     for f in files_to_seed:
         dest_path = os.path.join(Config.UPLOAD_DIR, f["stored_name"])
@@ -72,6 +93,9 @@ def seed():
                 # Fallback text file
                 with open(dest_path, "wb") as fh:
                     fh.write(b"MOCK IMAGE")
+        elif f["mime_type"] == "audio/wav":
+            with open(dest_path, "wb") as fh:
+                fh.write(wav_content)
         else:
             with open(dest_path, "wb") as fh:
                 fh.write(f["content"])
