@@ -2,7 +2,7 @@
    Preview Modal Component
    ═══════════════════════════════════════════════════════════════ */
 
-import { thumbnailUrl, downloadUrl, deleteFile } from "../api/fileApi.js";
+import { thumbnailUrl, downloadUrl, deleteFile, renameFile } from "../api/fileApi.js";
 import { formatBytes, formatDate, getFileIcon } from "../utils/helpers.js";
 
 const overlay = () => document.getElementById("preview-modal");
@@ -55,7 +55,10 @@ export function openPreview(file) {
             ${previewElHtml}
         </div>
         <div class="modal-details">
-            <h3 class="modal-filename">${escapeHtml(file.original_name)}</h3>
+            <div class="modal-filename-container" id="modal-filename-container">
+                <h3 class="modal-filename" id="modal-filename-text">${escapeHtml(file.original_name)}</h3>
+                <button class="edit-name-btn" id="modal-edit-name-btn" title="Rename File">✏️</button>
+            </div>
             <div class="modal-meta-grid">
                 <span class="modal-meta-label">Type</span>
                 <span class="modal-meta-value">${file.mime_type}</span>
@@ -121,6 +124,82 @@ export function openPreview(file) {
             closePreview();
             document.dispatchEvent(new CustomEvent("file-deleted"));
         }
+    });
+
+    // Hook up inline rename editor
+    const nameText = content.querySelector("#modal-filename-text");
+    const editBtn = content.querySelector("#modal-edit-name-btn");
+    const filenameContainer = content.querySelector("#modal-filename-container");
+
+    editBtn.addEventListener("click", () => {
+        const currentName = file.original_name;
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "modal-filename-input";
+        input.value = currentName;
+
+        const saveBtn = document.createElement("button");
+        saveBtn.className = "btn btn-primary btn-sm";
+        saveBtn.textContent = "Save";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.className = "btn btn-secondary btn-sm";
+        cancelBtn.textContent = "Cancel";
+
+        const editorContainer = document.createElement("div");
+        editorContainer.className = "modal-filename-editor";
+        editorContainer.appendChild(input);
+        editorContainer.appendChild(saveBtn);
+        editorContainer.appendChild(cancelBtn);
+
+        // Swap file title to editor
+        filenameContainer.style.display = "none";
+        filenameContainer.parentNode.insertBefore(editorContainer, filenameContainer);
+
+        input.focus();
+        // Select all text except the extension if possible
+        const dotIdx = currentName.lastIndexOf(".");
+        if (dotIdx > 0) {
+            input.setSelectionRange(0, dotIdx);
+        } else {
+            input.select();
+        }
+
+        const closeEditor = () => {
+            editorContainer.remove();
+            filenameContainer.style.display = "flex";
+        };
+
+        cancelBtn.addEventListener("click", closeEditor);
+
+        const doSave = async () => {
+            const newName = input.value.trim();
+            if (!newName) {
+                alert("Filename cannot be empty.");
+                return;
+            }
+            saveBtn.disabled = true;
+            cancelBtn.disabled = true;
+
+            const res = await renameFile(file.id, newName);
+            if (res.ok) {
+                file.original_name = newName;
+                document.dispatchEvent(new CustomEvent("file-deleted")); // Refresh dashboard
+                closeEditor();
+                openPreview(file); // Redraw preview view
+            } else {
+                alert(res.data.error || "Failed to rename file.");
+                saveBtn.disabled = false;
+                cancelBtn.disabled = false;
+            }
+        };
+
+        saveBtn.addEventListener("click", doSave);
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") doSave();
+            if (e.key === "Escape") closeEditor();
+        });
     });
 
     modal.classList.add("open");
