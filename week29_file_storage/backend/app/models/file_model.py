@@ -62,3 +62,18 @@ def delete_file_by_id(file_id, user_id):
         return dict(row)
     finally:
         conn.close()
+
+
+def update_file_name(file_id, user_id, new_name):
+    """Update the original name of a file record."""
+    conn = get_db()
+    try:
+        conn.execute(
+            "UPDATE files SET original_name = ? WHERE id = ? AND user_id = ?",
+            (new_name, file_id, user_id)
+        )
+        conn.commit()
+    except Exception as e:
+        raise e
+    finally:
+        conn.close()

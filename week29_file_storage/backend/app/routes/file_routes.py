@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, send_file, g  # type: ignore
 from app.services.auth_service import require_auth
 from app.services.file_service import validate_file, generate_stored_name, serialize_file
 from app.services.thumbnail_service import can_generate_thumbnail, generate_thumbnail, get_thumbnail_path, delete_thumbnail
-from app.models.file_model import insert_file, get_all_files, get_file_by_id, delete_file_by_id
+from app.models.file_model import insert_file, get_all_files, get_file_by_id, delete_file_by_id, update_file_name
 from app.storage.local import LocalStorage
 from app.config.settings import Config
 
@@ -135,3 +135,23 @@ def delete_file(file_id):
         delete_thumbnail(info["stored_name"])
 
     return jsonify({"message": "File deleted."}), 200
+
+
+@file_bp.route("/<int:file_id>", methods=["PUT"])
+@require_auth
+def rename_file(file_id):
+    """Rename a file's original name."""
+    data = request.get_json(silent=True)
+    if not data or "original_name" not in data:
+        return jsonify({"error": "Missing original_name parameter."}), 400
+
+    new_name = data["original_name"].strip()
+    if not new_name:
+        return jsonify({"error": "Filename cannot be empty."}), 400
+
+    row = get_file_by_id(file_id, g.user["id"])
+    if not row:
+        return jsonify({"error": "File not found."}), 404
+
+    update_file_name(file_id, g.user["id"], new_name)
+    return jsonify({"message": "File renamed successfully."}), 200
