@@ -124,3 +124,12 @@ export async function deleteFile(id) {
     });
     return { ok: resp.ok, data: await resp.json() };
 }
+
+export async function renameFile(id, originalName) {
+    const resp = await fetchWithAuth(`${API_BASE}/files/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ original_name: originalName }),
+    });
+    return { ok: resp.ok, data: await resp.json() };
+}
