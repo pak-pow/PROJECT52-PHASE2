@@ -142,7 +142,7 @@
 .modal-filename-editor {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-sm);
     margin-bottom: var(--space-md);
     width: 100%;
 }
@@ -152,7 +152,7 @@
     background: var(--bg-primary);
     border: 1px solid var(--border-accent);
     color: var(--text-primary);
-    padding: var(--space-xs) var(--space-sm);
+    padding: var(--space-sm);
     font-family: var(--font-family);
     font-size: var(--font-sm);
     border-radius: var(--radius-sm);
@@ -164,8 +164,9 @@
 }
 
 .btn-sm {
-    padding: var(--space-xs) var(--space-sm);
+    padding: 8px 14px;
     font-size: var(--font-xs);
+    border-radius: var(--radius-sm);
 }
 
 .modal-meta-grid {
