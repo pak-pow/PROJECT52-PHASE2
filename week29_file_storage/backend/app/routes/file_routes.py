@@ -42,13 +42,17 @@ def upload_files():
         if can_generate_thumbnail(f.content_type or ""):
             has_thumb = generate_thumbnail(dest, stored_name)
 
+        # Get actual saved file size from disk
+        import os
+        file_size = os.path.getsize(dest)
+
         # Insert metadata into database
         file_id = insert_file(
             user_id=g.user["id"],
             original_name=f.filename,
             stored_name=stored_name,
             mime_type=f.content_type or "application/octet-stream",
-            file_size=f.content_length or 0,
+            file_size=file_size,
             category=category,
             has_thumbnail=has_thumb,
         )
