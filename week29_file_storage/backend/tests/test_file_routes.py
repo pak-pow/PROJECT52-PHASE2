@@ -193,6 +193,25 @@ class TestFileOperations:
         resp = client.delete("/api/files/999", headers=auth_header)
         assert resp.status_code == 404
 
+    def test_rename_file_success(self, client, auth_header):
+        up = self._upload(client, auth_header)
+        file_id = up.get_json()["uploaded"][0]["id"]
+        resp = client.put(f"/api/files/{file_id}", headers=auth_header, json={
+            "original_name": "renamed_video.mp4"
+        })
+        assert resp.status_code == 200
+        # Verify renaming reflected
+        get_resp = client.get(f"/api/files/{file_id}", headers=auth_header)
+        assert get_resp.get_json()["original_name"] == "renamed_video.mp4"
+
+    def test_rename_file_empty(self, client, auth_header):
+        up = self._upload(client, auth_header)
+        file_id = up.get_json()["uploaded"][0]["id"]
+        resp = client.put(f"/api/files/{file_id}", headers=auth_header, json={
+            "original_name": "   "
+        })
+        assert resp.status_code == 400
+
 
 # ═══════════════════════════════════════════════════════════════
 #  Health Check
