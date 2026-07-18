@@ -6,11 +6,12 @@ A full-stack file management platform where authenticated users can upload, orga
 
 - **User Authentication** — Register/login with token-based session auth
 - **Drag-and-Drop Uploads** — Premium dropzone with progress bars
-- **File Gallery** — Grid view with thumbnails, category badges, and animated cards
-- **Preview Modal** — Full-size image preview with metadata details
+- **File Gallery** — Grid/List switcher views with thumbnails, category badges, and animated cards
+- **Preview Modal & Players** — Inline media streaming for audio/video (ObjectURLs), text previewer, and details pane
+- **Inline Rename Editor** — Rename uploaded files directly inside the preview modal (protects file type extension)
 - **Category Filters** — Filter by Images, Documents, Audio, Video, or Other
 - **Auto-Thumbnails** — 200×200 JPEG thumbnails generated for uploaded images (Pillow)
-- **File Validation** — MIME type whitelist, 10 MB size limit
+- **File Validation** — MIME type whitelist, 10 MB size limit, and actual server-side disk size checks
 - **Safe Storage** — UUID-based filenames prevent path traversal and collisions
 - **Storage Abstraction** — Local filesystem adapter with a cloud-ready interface
 
@@ -53,6 +54,7 @@ python wsgi.py
 | `POST`   | `/api/files/upload`          | Yes  | Upload files (multipart)       |
 | `GET`    | `/api/files`                 | Yes  | List files (optional `?category=`) |
 | `GET`    | `/api/files/<id>`            | Yes  | Get single file metadata       |
+| `PUT`    | `/api/files/<id>`            | Yes  | Rename file's original name    |
 | `GET`    | `/api/files/<id>/download`   | Yes  | Download the actual file       |
 | `GET`    | `/api/files/<id>/thumbnail`  | Yes  | Serve the image thumbnail      |
 | `DELETE` | `/api/files/<id>`            | Yes  | Delete file from disk and DB   |
