@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════
+   feed.css — Home feed & Explore page styles
+   ═══════════════════════════════════════════ */
+
+/* ── Inline Compose Bar ───────────────────── */
+.compose-inline {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+}
+
+.compose-inline-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.compose-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    min-height: 52px;
+}
+.compose-textarea::placeholder { color: var(--text-muted); }
+.compose-textarea:focus { min-height: 80px; }
+
+.compose-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-sm);
+}
+
+/* ── Explore header accent ────────────────── */
+#page-explore .page-header h2 { color: var(--text-primary); }
