@@ -104,11 +104,19 @@ document.querySelectorAll(".nav-item").forEach(el => {
     el.addEventListener("click", (e) => {
         e.preventDefault();
         const page = el.dataset.page;
+        const alreadyOnPage = document.getElementById(`page-${page}`)?.classList.contains("active");
         if (page === "profile") {
             loadProfile(currentUser?.username);
         } else {
             showPage(page);
-            if (page === "feed") { resetFeed(); loadFeed(); }
+            if (page === "feed") {
+                if (alreadyOnPage) {
+                    // Already on home — just scroll to top
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                } else {
+                    resetFeed(); loadFeed();
+                }
+            }
             if (page === "explore") { resetExplore(); loadExplore(); }
         }
     });
@@ -138,7 +146,12 @@ composeSubmit.addEventListener("click", async () => {
     charCounter.textContent = "280";
     document.getElementById("compose-image-input").value = "";
     showToast("Posted! 🎉", "success");
-    resetFeed(); loadFeed();
+    // Prepend new post to top of feed — no full reload
+    const newCard = renderPostCard(data, { showDelete: true });
+    newCard.classList.add("post-card--new");
+    feedList.prepend(newCard);
+    // Remove empty-state message if present
+    feedList.querySelector(".empty-state")?.remove();
 });
 
 // ── Avatar helper ──────────────────────────────────────────

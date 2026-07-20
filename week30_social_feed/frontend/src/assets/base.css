@@ -326,12 +326,21 @@ img { max-width: 100%; display: block; }
     100% { opacity: 0.4; }
 }
 
-/* ── Empty State ──────────────────────────────────────── */
+/* ── Empty State ──────────────────────────────────────────── */
 .empty-state {
     text-align: center;
     color: var(--text-muted);
     padding: var(--space-xl);
     font-size: 0.9rem;
+}
+
+/* ── New post slide-in ────────────────────────────────────── */
+.post-card--new {
+    animation: slide-in 0.3s ease;
+}
+@keyframes slide-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Feed Loader ──────────────────────────────────────── */
