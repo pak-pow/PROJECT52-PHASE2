@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   feed.css — Home feed & Explore page styles
+   feed.css — Home feed, Explore & Post Detail
    ═══════════════════════════════════════════ */
 
 /* ── Inline Compose Bar ───────────────────── */
@@ -43,3 +43,22 @@
 
 /* ── Explore header accent ────────────────── */
 #page-explore .page-header h2 { color: var(--text-primary); }
+
+/* ── Post detail variant ──────────────────── */
+.post-card--detail {
+    border-bottom: 4px solid var(--border);
+    cursor: default;
+}
+.post-card--detail:hover { background: transparent; }
+.post-card--detail .post-content { font-size: 1.1rem; line-height: 1.7; }
+.post-card--detail .post-time { font-size: 0.85rem; display: block; margin-top: var(--space-sm); color: var(--text-muted); }
+
+/* ── Reply compose box ────────────────────── */
+.reply-compose {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+    background: var(--bg-surface);
+}

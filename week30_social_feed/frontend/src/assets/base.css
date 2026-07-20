@@ -293,6 +293,7 @@ img { max-width: 100%; display: block; }
 .action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 .like-btn.liked { color: var(--like-color); }
 .like-btn:hover { color: var(--like-color); }
+.delete-btn:hover { color: var(--error); }
 
 /* ── Skeleton Loading ─────────────────────────────────── */
 .skeleton-list { display: flex; flex-direction: column; gap: 1px; }
