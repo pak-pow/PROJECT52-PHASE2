@@ -16,9 +16,10 @@ def create_app(test_config=None):
     # ── CORS ──────────────────────────────────────────────────
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    # ── Ensure upload directories exist ───────────────────────
-    os.makedirs(app.config["AVATAR_DIR"], exist_ok=True)
-    os.makedirs(app.config["POST_IMAGE_DIR"], exist_ok=True)
+    # ── Ensure required directories exist ─────────────────────
+    os.makedirs(os.path.dirname(app.config["DB_PATH"]),  exist_ok=True)
+    os.makedirs(app.config["AVATAR_DIR"],                exist_ok=True)
+    os.makedirs(app.config["POST_IMAGE_DIR"],            exist_ok=True)
 
     # ── Init DB ───────────────────────────────────────────────
     with app.app_context():
