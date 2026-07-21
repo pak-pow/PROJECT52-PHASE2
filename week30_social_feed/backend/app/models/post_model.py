@@ -61,13 +61,10 @@ def get_home_feed(user_id, limit=20, before_id=None):
 
 
 def get_explore_feed(limit=20, before_id=None):
-    """Return globally trending posts (most liked in last 24h, excluding replies)."""
+    """Return globally trending posts sorted by like count (no time window — works for any age data)."""
     conn = get_db()
     try:
-        where = """
-            WHERE p.reply_to_id IS NULL
-              AND p.created_at >= datetime('now', '-24 hours')
-        """
+        where = " WHERE p.reply_to_id IS NULL"
         params = []
         if before_id:
             where += " AND p.id < ?"

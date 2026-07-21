@@ -85,7 +85,11 @@ def follow(username):
         result = toggle_follow(g.user["id"], user["id"])
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
-    return jsonify(result), 200
+    count = get_follower_count(user["id"])
+    return jsonify({
+        "following":       result["following"],
+        "followers_count": count,
+    }), 200
 
 
 @user_bp.route("/<username>/followers", methods=["GET"])

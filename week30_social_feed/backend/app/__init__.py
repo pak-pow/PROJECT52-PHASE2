@@ -14,7 +14,12 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     # ── CORS ──────────────────────────────────────────────────
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": "*"}},
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    )
 
     # ── Ensure required directories exist ─────────────────────
     os.makedirs(os.path.dirname(app.config["DB_PATH"]),  exist_ok=True)

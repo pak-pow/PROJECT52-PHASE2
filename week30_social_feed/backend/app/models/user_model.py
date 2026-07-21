@@ -1,3 +1,4 @@
+import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore
 from app.db import get_db
 
@@ -18,6 +19,8 @@ def create_user(username, display_name, password):
         )
         conn.commit()
         return cursor.lastrowid
+    except sqlite3.IntegrityError as e:
+        raise ValueError("Username is already taken.") from e
     finally:
         conn.close()
 
