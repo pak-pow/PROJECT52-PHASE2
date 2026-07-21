@@ -3,9 +3,9 @@
  * Bootstraps auth state and wires up all page navigation.
  */
 import { getSessionUser, saveSession, clearSession, apiLogin, apiRegister, apiLogout } from "./api/authApi.js";
-import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiGetPost, postImageUrl } from "./api/postApi.js";
+import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiDeletePost, apiGetPost, postImageUrl } from "./api/postApi.js";
 import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl } from "./api/userApi.js";
-import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount, debounce } from "./utils/helpers.js";
+import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "./utils/helpers.js";
 
 // ── DOM References ─────────────────────────────────────────
 const authScreen        = document.getElementById("auth-screen");
@@ -29,11 +29,13 @@ const exploreLoader     = document.getElementById("explore-loader");
 const backBtn           = document.getElementById("back-btn");
 
 // ── App State ──────────────────────────────────────────────
-let currentUser = null;
-let feedLastId  = null;
-let feedDone    = false;
-let exploreLastId = null;
-let exploreDone   = false;
+let currentUser  = null;
+let feedLastId   = null;
+let feedDone     = false;
+let feedLoading  = false;
+let exploreLastId  = null;
+let exploreDone    = false;
+let exploreLoading = false;
 
 // ── Tab switching (Login / Register) ───────────────────────
 document.querySelectorAll(".auth-tab").forEach(tab => {
@@ -228,22 +230,25 @@ function renderPostCard(post, opts = {}) {
         loadProfile(post.username);
     });
 
-    // Like handler (optimistic UI)
     const likeBtn = card.querySelector(".like-btn");
+    likeBtn.dataset.count = post.like_count || 0;  // store raw count for accurate optimistic update
     likeBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
         const wasLiked = likeBtn.classList.contains("liked");
-        const countEl  = likeBtn.querySelector(".like-count");
-        const current  = parseInt(countEl.textContent) || 0;
+        const current  = parseInt(likeBtn.dataset.count, 10) || 0;
+        const next     = wasLiked ? Math.max(0, current - 1) : current + 1;
         likeBtn.classList.toggle("liked", !wasLiked);
-        likeBtn.innerHTML = `${!wasLiked ? "❤️" : "🤍"} <span class="like-count">${formatCount(wasLiked ? Math.max(0, current - 1) : current + 1)}</span>`;
+        likeBtn.innerHTML = `${!wasLiked ? "❤️" : "🤍"} <span class="like-count">${formatCount(next)}</span>`;
+        likeBtn.dataset.count = next;
         const { ok, data } = await apiLikePost(post.id);
         if (ok) {
             likeBtn.classList.toggle("liked", data.liked);
             likeBtn.innerHTML = `${data.liked ? "❤️" : "🤍"} <span class="like-count">${formatCount(data.count)}</span>`;
+            likeBtn.dataset.count = data.count;
         } else {
             likeBtn.classList.toggle("liked", wasLiked);
             likeBtn.innerHTML = `${wasLiked ? "❤️" : "🤍"} <span class="like-count">${formatCount(current)}</span>`;
+            likeBtn.dataset.count = current;
         }
     });
 
@@ -252,6 +257,22 @@ function renderPostCard(post, opts = {}) {
         e.stopPropagation();
         loadPostDetail(post.id);
     });
+
+    // Delete button (own posts only)
+    const deleteBtn = card.querySelector(".delete-btn");
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            if (!confirm("Delete this post?")) return;
+            const { ok } = await apiDeletePost(post.id);
+            if (ok) {
+                card.remove();
+                showToast("Post deleted.", "success");
+            } else {
+                showToast("Could not delete post.", "error");
+            }
+        });
+    }
 
     return card;
 }
@@ -281,13 +302,15 @@ async function loadFeed(append = false) {
 }
 
 // ── Explore: load + infinite scroll ───────────────────────
-function resetExplore() { exploreList.innerHTML = ""; exploreLastId = null; exploreDone = false; }
+function resetExplore() { exploreList.innerHTML = ""; exploreLastId = null; exploreDone = false; exploreLoading = false; }
 
 async function loadExplore(append = false) {
-    if (exploreDone) return;
+    if (exploreDone || exploreLoading) return;
+    exploreLoading = true;
     if (!append) exploreList.innerHTML = skeletons();
     exploreLoader.classList.toggle("hidden", !append);
     const posts = await apiExplore(exploreLastId);
+    exploreLoading = false;
     if (!append) exploreList.innerHTML = "";
     if (!posts.length && !append) {
         exploreList.innerHTML = '<p class="empty-state">Nothing trending yet. Be the first to post!</p>';
@@ -442,6 +465,8 @@ async function loadPostDetail(postId) {
         if (!rOk) { showToast(rData.error || "Could not reply.", "error"); return; }
         replyInput.value = ""; replyCounter.textContent = "280";
         showToast("Replied!", "success");
+        // Clear empty-state placeholder on first reply
+        repliesContainer.querySelector(".empty-state")?.remove();
         // Prepend new reply
         const newCard = renderPostCard(rData, { showDelete: true });
         repliesContainer.prepend(newCard);
@@ -499,5 +524,15 @@ function bootApp() {
     loadFeed();
 }
 
-// ── Boot ───────────────────────────────────────────────────
+// ── @mention delegated click ─────────────────────────
+document.addEventListener("click", (e) => {
+    const mention = e.target.closest(".mention");
+    if (mention) {
+        e.preventDefault();
+        const username = mention.textContent.replace(/^@/, "").trim();
+        if (username) loadProfile(username);
+    }
+});
+
+// ── Boot ──────────────────────────────────────────────
 bootApp();
