@@ -115,9 +115,8 @@ def following(username):
 
 
 @user_bp.route("/<username>/avatar", methods=["GET"])
-@require_auth
 def serve_avatar(username):
-    """GET /api/users/<username>/avatar — stream the user's avatar image."""
+    """GET /api/users/<username>/avatar — stream the user's avatar image (public)."""
     user = get_user_by_username(username)
     if not user or not user["avatar_path"]:
         return jsonify({"error": "Avatar not found."}), 404
