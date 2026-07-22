@@ -127,3 +127,59 @@ def get_post_count(user_id):
         ).fetchone()[0]
     finally:
         conn.close()
+
+
+def has_reposted(user_id, post_id):
+    """Return True if user_id has already reposted post_id."""
+    conn = get_db()
+    try:
+        return bool(conn.execute(
+            "SELECT 1 FROM posts WHERE user_id = ? AND repost_of_id = ?",
+            (user_id, post_id),
+        ).fetchone())
+    finally:
+        conn.close()
+
+
+def get_reposted_post_ids(user_id, post_ids):
+    """Return set of original post_ids that user_id has reposted."""
+    if not post_ids:
+        return set()
+    conn = get_db()
+    try:
+        placeholders = ",".join("?" * len(post_ids))
+        rows = conn.execute(
+            f"SELECT repost_of_id FROM posts WHERE user_id = ? AND repost_of_id IN ({placeholders})",
+            [user_id, *post_ids],
+        ).fetchall()
+        return {r["repost_of_id"] for r in rows}
+    finally:
+        conn.close()
+
+
+def toggle_repost(user_id, post_id):
+    """Create or delete a repost of post_id by user_id.
+    Returns {'reposted': bool, 'count': int}.
+    """
+    conn = get_db()
+    try:
+        existing = conn.execute(
+            "SELECT id FROM posts WHERE user_id = ? AND repost_of_id = ?",
+            (user_id, post_id),
+        ).fetchone()
+        if existing:
+            conn.execute("DELETE FROM posts WHERE id = ?", (existing["id"],))
+            reposted = False
+        else:
+            conn.execute(
+                "INSERT INTO posts (user_id, content, repost_of_id) VALUES (?, '', ?)",
+                (user_id, post_id),
+            )
+            reposted = True
+        conn.commit()
+        count = conn.execute(
+            "SELECT COUNT(*) FROM posts WHERE repost_of_id = ?", (post_id,)
+        ).fetchone()[0]
+        return {"reposted": reposted, "count": count}
+    finally:
+        conn.close()

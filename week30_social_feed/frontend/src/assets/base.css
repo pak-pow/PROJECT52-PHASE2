@@ -291,7 +291,8 @@ img { max-width: 100%; display: block; }
     transition: color var(--transition), background var(--transition);
 }
 .action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
-.like-btn.liked { color: var(--like-color); }
+.like-btn.liked   { color: var(--like-color); }
+.repost-btn.reposted { color: #22c55e; }
 .like-btn:hover { color: var(--like-color); }
 .delete-btn:hover { color: var(--error); }
 

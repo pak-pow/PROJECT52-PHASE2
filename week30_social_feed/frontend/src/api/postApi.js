@@ -41,6 +41,11 @@ export async function apiLikePost(postId) {
     return { ok: resp.ok, data: await resp.json() };
 }
 
+export async function apiRepostPost(postId) {
+    const resp = await fetchAuth(`${API_BASE}/posts/${postId}/repost`, { method: "POST" });
+    return { ok: resp.ok, data: await resp.json() };
+}
+
 export function postImageUrl(postId) {
     return `${API_BASE}/posts/${postId}/image`;
 }

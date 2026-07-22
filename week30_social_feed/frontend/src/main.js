@@ -3,7 +3,7 @@
  * Bootstraps auth state and wires up all page navigation.
  */
 import { getSessionUser, saveSession, clearSession, apiLogin, apiRegister, apiLogout } from "./api/authApi.js";
-import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiDeletePost, apiGetPost, postImageUrl } from "./api/postApi.js";
+import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiDeletePost, apiRepostPost, apiGetPost, postImageUrl } from "./api/postApi.js";
 import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl } from "./api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "./utils/helpers.js";
 
@@ -224,8 +224,8 @@ function renderPostCard(post, opts = {}) {
                 <button class="action-btn reply-btn" data-post-id="${post.id}" aria-label="Replies">
                     💬 <span>${formatCount(post.reply_count || 0)}</span>
                 </button>
-                <button class="action-btn repost-btn" data-post-id="${post.id}" aria-label="Repost">
-                    🔁 <span>${formatCount(post.repost_count || 0)}</span>
+                <button class="action-btn repost-btn ${post.reposted_by_me ? "reposted" : ""}" data-post-id="${post.id}" aria-label="Repost">
+                    🔁 <span class="repost-count">${formatCount(post.repost_count || 0)}</span>
                 </button>
                 ${opts.showDelete && post.username === currentUser?.username
                     ? `<button class="action-btn delete-btn" data-post-id="${post.id}" aria-label="Delete">🗑️</button>`
@@ -283,6 +283,32 @@ function renderPostCard(post, opts = {}) {
         loadPostDetail(post.id);
     });
 
+    // Repost (optimistic UI)
+    const repostBtn = card.querySelector(".repost-btn");
+    repostBtn.dataset.count = post.repost_count || 0;
+    repostBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const wasReposted = repostBtn.classList.contains("reposted");
+        const current = parseInt(repostBtn.dataset.count, 10) || 0;
+        const next = wasReposted ? Math.max(0, current - 1) : current + 1;
+        repostBtn.classList.toggle("reposted", !wasReposted);
+        repostBtn.innerHTML = `🔁 <span class="repost-count">${formatCount(next)}</span>`;
+        repostBtn.dataset.count = next;
+        const { ok, data } = await apiRepostPost(post.id);
+        if (ok) {
+            repostBtn.classList.toggle("reposted", data.reposted);
+            repostBtn.innerHTML = `🔁 <span class="repost-count">${formatCount(data.count)}</span>`;
+            repostBtn.dataset.count = data.count;
+            if (!wasReposted && data.reposted) showToast("Reposted!", "success");
+            if (wasReposted && !data.reposted) showToast("Repost removed.", "success");
+        } else {
+            // Roll back
+            repostBtn.classList.toggle("reposted", wasReposted);
+            repostBtn.innerHTML = `🔁 <span class="repost-count">${formatCount(current)}</span>`;
+            repostBtn.dataset.count = current;
+            showToast(data.error || "Could not repost.", "error");
+        }
+    });
     // Delete button (own posts only)
     const deleteBtn = card.querySelector(".delete-btn");
     if (deleteBtn) {

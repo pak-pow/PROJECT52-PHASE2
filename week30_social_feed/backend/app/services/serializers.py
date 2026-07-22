@@ -1,12 +1,13 @@
 """Serializers for posts and users — convert SQLite Row objects to JSON-safe dicts."""
 
 
-def serialize_post(row, liked_ids=None):
+def serialize_post(row, liked_ids=None, reposted_ids=None):
     """Convert a post DB row to a public-facing dict.
 
     Args:
         row: sqlite3.Row with post + joined user columns.
-        liked_ids: set of post_ids liked by the current user (for liked_by_me flag).
+        liked_ids: set of post_ids liked by the current user.
+        reposted_ids: set of post_ids reposted by the current user.
     """
     created_at = row["created_at"] or ""
     if created_at and "T" not in created_at:
@@ -26,7 +27,8 @@ def serialize_post(row, liked_ids=None):
         "like_count": row["like_count"],
         "reply_count": row["reply_count"],
         "repost_count": row["repost_count"],
-        "liked_by_me": (row["id"] in liked_ids) if liked_ids is not None else False,
+        "liked_by_me":    (row["id"] in liked_ids)    if liked_ids    is not None else False,
+        "reposted_by_me": (row["id"] in reposted_ids) if reposted_ids is not None else False,
         "created_at": created_at,
     }
 

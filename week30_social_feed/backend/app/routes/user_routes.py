@@ -5,7 +5,7 @@ from app.services.serializers import serialize_user, serialize_mini_user
 from app.services.image_service import save_avatar
 from app.services.serializers import serialize_post
 from app.models.user_model import get_user_by_username, update_user_profile
-from app.models.post_model import get_user_posts, get_post_count
+from app.models.post_model import get_user_posts, get_post_count, get_reposted_post_ids
 from app.models.like_model import get_liked_post_ids
 from app.models.follow_model import (
     toggle_follow, get_follower_count, get_following_count,
@@ -42,8 +42,9 @@ def get_posts(username):
     before_id = request.args.get("before", type=int)
     rows = get_user_posts(user["id"], Config.FEED_PAGE_SIZE, before_id)
     post_ids = [r["id"] for r in rows]
-    liked = get_liked_post_ids(g.user["id"], post_ids)
-    return jsonify([serialize_post(r, liked) for r in rows]), 200
+    liked    = get_liked_post_ids(g.user["id"], post_ids)
+    reposted = get_reposted_post_ids(g.user["id"], post_ids)
+    return jsonify([serialize_post(r, liked, reposted) for r in rows]), 200
 
 
 @user_bp.route("/me", methods=["PUT"])

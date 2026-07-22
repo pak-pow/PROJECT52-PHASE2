@@ -6,6 +6,7 @@ from app.services.image_service import save_post_image
 from app.models.post_model import (
     create_post, get_post_by_id, get_home_feed,
     get_explore_feed, delete_post, get_replies_to,
+    toggle_repost, has_reposted, get_reposted_post_ids,
 )
 from app.models.like_model import toggle_like, get_liked_post_ids
 from app.config.settings import Config
@@ -20,8 +21,9 @@ def home_feed():
     before_id = request.args.get("before", type=int)
     rows = get_home_feed(g.user["id"], Config.FEED_PAGE_SIZE, before_id)
     post_ids = [r["id"] for r in rows]
-    liked = get_liked_post_ids(g.user["id"], post_ids)
-    return jsonify([serialize_post(r, liked) for r in rows]), 200
+    liked    = get_liked_post_ids(g.user["id"], post_ids)
+    reposted = get_reposted_post_ids(g.user["id"], post_ids)
+    return jsonify([serialize_post(r, liked, reposted) for r in rows]), 200
 
 
 @post_bp.route("/explore", methods=["GET"])
@@ -31,8 +33,9 @@ def explore():
     before_id = request.args.get("before", type=int)
     rows = get_explore_feed(Config.EXPLORE_PAGE_SIZE, before_id)
     post_ids = [r["id"] for r in rows]
-    liked = get_liked_post_ids(g.user["id"], post_ids)
-    return jsonify([serialize_post(r, liked) for r in rows]), 200
+    liked    = get_liked_post_ids(g.user["id"], post_ids)
+    reposted = get_reposted_post_ids(g.user["id"], post_ids)
+    return jsonify([serialize_post(r, liked, reposted) for r in rows]), 200
 
 
 @post_bp.route("", methods=["POST"])
@@ -68,11 +71,12 @@ def get_single(post_id):
     if not row:
         return jsonify({"error": "Post not found."}), 404
     replies = get_replies_to(post_id)
-    all_ids = [post_id] + [r["id"] for r in replies]
-    liked = get_liked_post_ids(g.user["id"], all_ids)
+    all_ids  = [post_id] + [r["id"] for r in replies]
+    liked    = get_liked_post_ids(g.user["id"], all_ids)
+    reposted = get_reposted_post_ids(g.user["id"], all_ids)
     return jsonify({
-        "post": serialize_post(row, liked),
-        "replies": [serialize_post(r, liked) for r in replies],
+        "post":    serialize_post(row, liked, reposted),
+        "replies": [serialize_post(r, liked, reposted) for r in replies],
     }), 200
 
 
@@ -107,3 +111,16 @@ def serve_image(post_id):
     if not os.path.exists(path):
         return jsonify({"error": "Image file not found on server."}), 500
     return send_file(path, mimetype="image/jpeg")
+
+
+@post_bp.route("/<int:post_id>/repost", methods=["POST"])
+@require_auth
+def repost(post_id):
+    """POST /api/posts/<id>/repost — toggle repost on/off."""
+    original = get_post_by_id(post_id)
+    if not original:
+        return jsonify({"error": "Post not found."}), 404
+    if original["user_id"] == g.user["id"]:
+        return jsonify({"error": "You cannot repost your own post."}), 400
+    result = toggle_repost(g.user["id"], post_id)
+    return jsonify(result), 200
