@@ -109,6 +109,10 @@
             <div class="avatar avatar-md" id="compose-avatar">?</div>
             <div class="compose-inline-right">
               <textarea id="compose-input" class="compose-textarea" placeholder="What's on your mind?" maxlength="280" rows="2"></textarea>
+              <div id="compose-image-preview" class="image-preview hidden">
+                <img id="compose-preview-img" src="" alt="Preview" />
+                <button class="image-preview-remove" id="compose-remove-image" title="Remove image">✕</button>
+              </div>
               <div class="compose-actions">
                 <span class="char-counter" id="char-counter">280</span>
                 <label class="btn-ghost icon-btn" for="compose-image-input" title="Attach image">📷</label>

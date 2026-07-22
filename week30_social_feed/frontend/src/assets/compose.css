@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   compose.css — Compose modal styles
+   compose.css — Compose & image preview styles
    ═══════════════════════════════════════════ */
 
 /* Modal post button  */
@@ -15,21 +15,25 @@
     font-size: 1rem;
 }
 
-/* Image preview */
+/* ── Image preview ─────────────────────────── */
 .image-preview {
     position: relative;
     margin-top: var(--space-sm);
+    display: inline-block;
 }
 .image-preview img {
+    display: block;
     border-radius: var(--radius-md);
-    max-height: 200px;
+    max-height: 180px;
+    max-width: 100%;
     object-fit: cover;
+    border: 1px solid var(--border);
 }
-.image-preview .remove-image {
+.image-preview-remove {
     position: absolute;
-    top: var(--space-xs);
-    right: var(--space-xs);
-    background: rgba(0,0,0,0.7);
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.75);
     color: #fff;
     border-radius: 50%;
     width: 24px;
@@ -38,5 +42,8 @@
     align-items: center;
     justify-content: center;
     font-size: 0.75rem;
+    cursor: pointer;
+    border: none;
+    transition: background var(--transition);
 }
-.remove-image:hover { background: var(--error); }
+.image-preview-remove:hover { background: var(--error); }

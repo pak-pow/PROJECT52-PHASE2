@@ -146,7 +146,9 @@ composeSubmit.addEventListener("click", async () => {
     if (!ok) { showToast(data.error || "Could not post.", "error"); return; }
     composeInput.value = "";
     charCounter.textContent = "280";
-    document.getElementById("compose-image-input").value = "";
+    const imgInput = document.getElementById("compose-image-input");
+    imgInput.value = "";
+    document.getElementById("compose-image-preview").classList.add("hidden");
     showToast("Posted! 🎉", "success");
     // Prepend new post to top of feed — no full reload
     const newCard = renderPostCard(data, { showDelete: true });
@@ -154,6 +156,29 @@ composeSubmit.addEventListener("click", async () => {
     feedList.prepend(newCard);
     // Remove empty-state message if present
     feedList.querySelector(".empty-state")?.remove();
+});
+
+// ── Compose: image preview ─────────────────────────────────
+const composeImageInput  = document.getElementById("compose-image-input");
+const composePreview     = document.getElementById("compose-image-preview");
+const composePreviewImg  = document.getElementById("compose-preview-img");
+const composeRemoveImage = document.getElementById("compose-remove-image");
+
+composeImageInput.addEventListener("change", () => {
+    const file = composeImageInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        composePreviewImg.src = e.target.result;
+        composePreview.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+});
+
+composeRemoveImage.addEventListener("click", () => {
+    composeImageInput.value = "";
+    composePreviewImg.src = "";
+    composePreview.classList.add("hidden");
 });
 
 // ── Avatar helper ──────────────────────────────────────────
