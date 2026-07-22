@@ -42,3 +42,8 @@ export async function apiUpdateProfile(displayName, bio, avatarFile = null) {
 export function avatarUrl(username) {
     return `${API_BASE}/users/${username}/avatar`;
 }
+
+export async function apiGetSuggestions() {
+    const resp = await fetchAuth(`${API_BASE}/users/suggestions`);
+    return resp.ok ? await resp.json() : [];
+}

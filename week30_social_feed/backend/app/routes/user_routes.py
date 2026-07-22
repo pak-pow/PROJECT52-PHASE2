@@ -1,5 +1,6 @@
 import os
 from flask import Blueprint, request, jsonify, g, send_file
+from app.db import get_db
 from app.services.auth_service import require_auth
 from app.services.serializers import serialize_user, serialize_mini_user
 from app.services.image_service import save_avatar
@@ -112,6 +113,29 @@ def following(username):
     if not user:
         return jsonify({"error": "User not found."}), 404
     rows = get_following(user["id"])
+    return jsonify([serialize_mini_user(r) for r in rows]), 200
+
+
+@user_bp.route("/suggestions", methods=["GET"])
+@require_auth
+def suggestions():
+    """GET /api/users/suggestions — users you might want to follow."""
+    conn = get_db()
+    try:
+        rows = conn.execute(
+            """SELECT u.id, u.username, u.display_name, u.avatar_path,
+                      (SELECT COUNT(*) FROM follows WHERE following_id = u.id) AS follower_count
+               FROM users u
+               WHERE u.id != ?
+                 AND u.id NOT IN (
+                       SELECT following_id FROM follows WHERE follower_id = ?
+                 )
+               ORDER BY follower_count DESC
+               LIMIT 5""",
+            (g.user["id"], g.user["id"]),
+        ).fetchall()
+    finally:
+        conn.close()
     return jsonify([serialize_mini_user(r) for r in rows]), 200
 
 

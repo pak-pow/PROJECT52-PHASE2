@@ -433,6 +433,57 @@ img { max-width: 100%; display: block; }
 /* ── Back button ──────────────────────────────────────── */
 .back-btn { font-size: 0.9rem; }
 
+/* ── Who to Follow sidebar ───────────────────────────── */
+.suggestions-loading,
+.suggestions-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: var(--space-sm) 0;
+}
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border);
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-info {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+}
+.suggestion-info:hover .suggestion-name { color: var(--accent-light); }
+.suggestion-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color var(--transition);
+}
+.suggestion-username {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+.suggestion-follow-btn {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-full);
+    color: var(--accent-light);
+    transition: background var(--transition), color var(--transition);
+    white-space: nowrap;
+}
+.suggestion-follow-btn:hover,
+.suggestion-follow-btn.following {
+    background: var(--accent);
+    color: #fff;
+}
+
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1024px) {
     .main-app { grid-template-columns: var(--sidebar-width) 1fr; }
