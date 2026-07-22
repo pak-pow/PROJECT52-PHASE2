@@ -56,7 +56,9 @@ def verify_password(username, password):
 
 
 def update_user_profile(user_id, display_name=None, bio=None, avatar_path=None):
-    """Update mutable profile fields. Only updates provided (non-None) fields."""
+    """Update mutable profile fields. Only updates provided (non-None) fields.
+    Returns the updated user row.
+    """
     conn = get_db()
     try:
         if display_name is not None:
@@ -72,5 +74,6 @@ def update_user_profile(user_id, display_name=None, bio=None, avatar_path=None):
                 "UPDATE users SET avatar_path = ? WHERE id = ?", (avatar_path, user_id)
             )
         conn.commit()
+        return conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     finally:
         conn.close()

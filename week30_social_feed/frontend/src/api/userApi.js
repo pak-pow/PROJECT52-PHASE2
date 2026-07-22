@@ -47,3 +47,12 @@ export async function apiGetSuggestions() {
     const resp = await fetchAuth(`${API_BASE}/users/suggestions`);
     return resp.ok ? await resp.json() : [];
 }
+
+export async function apiUpdateProfile({ displayName, bio, avatarFile } = {}) {
+    const form = new FormData();
+    if (displayName !== undefined) form.append("display_name", displayName);
+    if (bio         !== undefined) form.append("bio",          bio);
+    if (avatarFile)                form.append("avatar",       avatarFile);
+    const resp = await fetchAuth(`${API_BASE}/users/me`, { method: "PUT", body: form });
+    return { ok: resp.ok, data: await resp.json() };
+}

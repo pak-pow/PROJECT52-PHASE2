@@ -4,7 +4,7 @@
  */
 import { getSessionUser, saveSession, clearSession, apiLogin, apiRegister, apiLogout } from "./api/authApi.js";
 import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiDeletePost, apiRepostPost, apiGetPost, postImageUrl } from "./api/postApi.js";
-import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl, apiGetSuggestions } from "./api/userApi.js";
+import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl, apiGetSuggestions, apiUpdateProfile } from "./api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "./utils/helpers.js";
 
 // ── DOM References ─────────────────────────────────────────
@@ -454,6 +454,14 @@ async function loadProfile(username) {
         });
     }
 
+    // Edit profile button (own profile)
+    if (isMe) {
+        const editBtn = container.querySelector("#edit-profile-btn");
+        if (editBtn) {
+            editBtn.addEventListener("click", () => openEditProfileModal(profile, container));
+        }
+    }
+
     // Render user posts
     const postsList = container.querySelector("#profile-posts");
     if (!posts.length) {
@@ -461,6 +469,116 @@ async function loadProfile(username) {
     } else {
         posts.forEach(p => postsList.appendChild(renderPostCard(p, { showDelete: isMe })));
     }
+}
+
+// ── Edit Profile Modal ──────────────────────────
+function openEditProfileModal(profile, profileContainer) {
+    const modal      = document.getElementById("edit-profile-modal");
+    const closeBtn   = document.getElementById("edit-profile-close-btn");
+    const saveBtn    = document.getElementById("edit-profile-save-btn");
+    const nameInput  = document.getElementById("edit-display-name");
+    const bioInput   = document.getElementById("edit-bio");
+    const bioCounter = document.querySelector(".edit-bio-counter");
+    const avatarPrev = document.getElementById("edit-profile-avatar-preview");
+    const avatarInput = document.getElementById("edit-avatar-input");
+    const errorEl    = document.getElementById("edit-profile-error");
+
+    // Pre-fill current values
+    nameInput.value = profile.display_name || "";
+    bioInput.value  = profile.bio || "";
+    bioCounter.textContent = 160 - bioInput.value.length;
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
+
+    // Show current avatar
+    const initials = (profile.display_name || profile.username || "?")[0].toUpperCase();
+    avatarPrev.textContent = initials;
+    avatarPrev.style.cssText = "";
+    const prevImg = new Image();
+    prevImg.onload = () => {
+        avatarPrev.textContent = "";
+        avatarPrev.style.cssText = `background-image:url(${prevImg.src});background-size:cover;background-position:center;`;
+    };
+    prevImg.src = avatarUrl(profile.username);
+
+    // Reset file input
+    avatarInput.value = "";
+    let pendingAvatarFile = null;
+
+    // Avatar file change → preview
+    const onAvatarChange = () => {
+        const file = avatarInput.files[0];
+        if (!file) return;
+        pendingAvatarFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            avatarPrev.textContent = "";
+            avatarPrev.style.cssText = `background-image:url(${e.target.result});background-size:cover;background-position:center;`;
+        };
+        reader.readAsDataURL(file);
+    };
+    avatarInput.addEventListener("change", onAvatarChange, { once: true });
+
+    // Bio counter
+    const onBioInput = () => {
+        bioCounter.textContent = 160 - bioInput.value.length;
+    };
+    bioInput.addEventListener("input", onBioInput);
+
+    modal.classList.remove("hidden");
+    nameInput.focus();
+
+    // Close helpers
+    const closeModal = () => {
+        modal.classList.add("hidden");
+        bioInput.removeEventListener("input", onBioInput);
+    };
+    closeBtn.onclick  = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+    // Save
+    saveBtn.onclick = async () => {
+        const displayName = nameInput.value.trim();
+        const bio         = bioInput.value.trim();
+        if (!displayName) {
+            errorEl.textContent = "Display name cannot be empty.";
+            errorEl.classList.remove("hidden");
+            return;
+        }
+        saveBtn.disabled = true; saveBtn.textContent = "Saving…";
+        const { ok, data } = await apiUpdateProfile({
+            displayName,
+            bio,
+            avatarFile: pendingAvatarFile,
+        });
+        saveBtn.disabled = false; saveBtn.textContent = "Save";
+        if (!ok) {
+            errorEl.textContent = data.error || "Could not save profile.";
+            errorEl.classList.remove("hidden");
+            return;
+        }
+        closeModal();
+        showToast("Profile updated! ✨", "success");
+        // Update sidebar live
+        sidebarDisplayName.textContent = data.display_name;
+        currentUser.displayName = data.display_name;
+        // Update session storage
+        saveSession(
+            localStorage.getItem("sf_token"),
+            data.username,
+            data.display_name,
+            data.avatar_path,
+        );
+        // Refresh avatar in sidebar
+        const newAvImg = new Image();
+        newAvImg.onload = () => {
+            sidebarAvatar.textContent = "";
+            sidebarAvatar.style.cssText = `background-image:url(${newAvImg.src}?t=${Date.now()});background-size:cover;background-position:center;`;
+        };
+        newAvImg.src = avatarUrl(data.username) + `?t=${Date.now()}`;
+        // Reload profile page in place
+        loadProfile(data.username);
+    };
 }
 
 // ── Post detail + replies ──────────────────────────────────

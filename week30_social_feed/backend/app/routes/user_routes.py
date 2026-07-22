@@ -67,13 +67,19 @@ def update_profile():
             return jsonify({"error": "Unsupported avatar image type."}), 415
         avatar_path = save_avatar(avatar_file)
 
-    update_user_profile(
+    updated = update_user_profile(
         g.user["id"],
         display_name=display_name,
         bio=bio if bio else None,
         avatar_path=avatar_path,
     )
-    return jsonify({"message": "Profile updated successfully."}), 200
+    return jsonify({
+        "message":      "Profile updated successfully.",
+        "display_name": updated["display_name"],
+        "bio":          updated["bio"],
+        "avatar_path":  updated["avatar_path"],
+        "username":     updated["username"],
+    }), 200
 
 
 @user_bp.route("/<username>/follow", methods=["POST"])

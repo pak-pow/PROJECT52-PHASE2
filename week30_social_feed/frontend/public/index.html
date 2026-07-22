@@ -184,6 +184,33 @@
     </div>
   </div>
 
+  <!-- Edit Profile Modal -->
+  <div id="edit-profile-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Edit profile">
+    <div class="modal-card">
+      <div class="modal-header">
+        <button class="btn-ghost modal-close" id="edit-profile-close-btn">✕</button>
+        <h3>Edit Profile</h3>
+        <button class="btn-primary" id="edit-profile-save-btn">Save</button>
+      </div>
+      <div class="modal-body edit-profile-body">
+        <!-- Avatar section -->
+        <div class="edit-profile-avatar-section">
+          <div class="avatar avatar-xl" id="edit-profile-avatar-preview">?</div>
+          <label class="btn-ghost icon-btn edit-avatar-label" for="edit-avatar-input" title="Change avatar">📷 Change</label>
+          <input type="file" id="edit-avatar-input" accept="image/*" class="hidden" />
+        </div>
+        <!-- Fields -->
+        <div class="edit-profile-fields">
+          <label class="edit-field-label" for="edit-display-name">Display Name</label>
+          <input type="text" id="edit-display-name" class="edit-field-input" maxlength="50" placeholder="Your display name" />
+          <label class="edit-field-label" for="edit-bio">Bio <span class="edit-bio-counter">160</span></label>
+          <textarea id="edit-bio" class="compose-textarea edit-field-textarea" maxlength="160" rows="3" placeholder="Tell people about yourself…"></textarea>
+        </div>
+      </div>
+      <div id="edit-profile-error" class="edit-profile-error hidden"></div>
+    </div>
+  </div>
+
   <!-- Toast notification -->
   <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
 

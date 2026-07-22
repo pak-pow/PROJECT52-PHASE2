@@ -64,3 +64,66 @@
 .profile-stat { display: flex; gap: 4px; font-size: 0.875rem; }
 .profile-stat strong { color: var(--text-primary); font-weight: 700; }
 .profile-stat span { color: var(--text-muted); }
+
+/* ── Edit Profile Modal ─────────────────────── */
+.edit-profile-body {
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+.edit-profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+}
+.edit-avatar-label {
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    padding: 4px var(--space-md);
+}
+.edit-profile-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0 var(--space-xs);
+}
+.edit-field-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.edit-field-input {
+    width: 100%;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color var(--transition);
+}
+.edit-field-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+.edit-field-textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+.edit-bio-counter {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+.edit-profile-error {
+    color: var(--error);
+    font-size: 0.85rem;
+    padding: var(--space-sm) var(--space-lg);
+    border-top: 1px solid var(--border);
+}
