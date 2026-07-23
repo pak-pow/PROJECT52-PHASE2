@@ -33,6 +33,32 @@ export function skeletons(n = 5) {
 }
 
 /**
+ * Profile skeleton loading markup generator matching exact profile header dimensions.
+ */
+export function profileSkeleton() {
+    return `
+        <div class="skeleton-profile-header">
+            <div class="skeleton-banner"></div>
+            <div class="skeleton-avatar-wrap">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-btn"></div>
+            </div>
+            <div class="skeleton-info">
+                <div class="skeleton-line skeleton-name"></div>
+                <div class="skeleton-line skeleton-handle"></div>
+                <div class="skeleton-line skeleton-bio"></div>
+                <div class="skeleton-stats">
+                    <div class="skeleton-line skeleton-stat"></div>
+                    <div class="skeleton-line skeleton-stat"></div>
+                    <div class="skeleton-line skeleton-stat"></div>
+                </div>
+            </div>
+        </div>
+        ${skeletons(2)}
+    `;
+}
+
+/**
  * Render a post card article element with events.
  */
 export function renderPostCard(post, opts = {}) {

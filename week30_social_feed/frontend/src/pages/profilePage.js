@@ -5,7 +5,7 @@ import { requireAuthPage } from "../utils/authCheck.js";
 import { initSidebar } from "../components/sidebar.js";
 import { initComposeModal } from "../components/composeModal.js";
 import { loadSuggestions } from "../components/suggestions.js";
-import { renderPostCard, skeletons } from "../components/postCard.js";
+import { renderPostCard, skeletons, profileSkeleton } from "../components/postCard.js";
 import { apiGetProfile, apiGetUserPosts, apiToggleFollow, apiUpdateProfile, avatarUrl } from "../api/userApi.js";
 import { saveSession } from "../api/authApi.js";
 import { showToast, escapeHtml, formatCount } from "../utils/helpers.js";
@@ -20,7 +20,7 @@ if (currentUser) {
     const container = document.getElementById("profile-container");
 
     async function loadProfile() {
-        container.innerHTML = skeletons(3);
+        container.innerHTML = profileSkeleton();
 
         const [{ ok, data: profile }, posts] = await Promise.all([
             apiGetProfile(username),
