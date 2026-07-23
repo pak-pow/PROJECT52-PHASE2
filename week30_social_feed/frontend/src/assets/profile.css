@@ -12,22 +12,22 @@
     height: 140px;
     background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
     border-radius: var(--radius-md);
-    margin-bottom: calc(-1 * var(--space-xl));
 }
 
 .profile-avatar-wrap {
     position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     padding: 0 var(--space-md);
-    margin-bottom: var(--space-md);
+    margin-top: -40px;
+    margin-bottom: var(--space-sm);
 }
 
 .profile-avatar {
-    position: relative;
     border: 4px solid var(--bg-base);
-    transform: translateY(50%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Profile Skeleton Loading ────────────────── */
@@ -41,15 +41,16 @@
     background: var(--bg-elevated);
     border-radius: var(--radius-md);
     animation: shimmer 2s ease-in-out infinite;
-    margin-bottom: calc(-1 * var(--space-xl));
 }
 .skeleton-avatar-wrap {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     padding: 0 var(--space-md);
-    margin-bottom: var(--space-md);
+    margin-top: -40px;
+    margin-bottom: var(--space-sm);
     position: relative;
+    z-index: 2;
 }
 .skeleton-avatar {
     width: 80px;
@@ -57,7 +58,6 @@
     border-radius: 50%;
     background: var(--bg-elevated);
     border: 4px solid var(--bg-base);
-    transform: translateY(50%);
     animation: shimmer 2s ease-in-out infinite;
 }
 .skeleton-btn {
@@ -69,7 +69,7 @@
 }
 .skeleton-info {
     padding: 0 var(--space-md);
-    margin-top: var(--space-xl);
+    margin-top: var(--space-xs);
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
@@ -108,7 +108,10 @@
     border-color: var(--error);
 }
 
-.profile-info { padding: 0 var(--space-md); }
+.profile-info {
+    padding: 0 var(--space-md);
+    margin-top: var(--space-xs);
+}
 .profile-display-name { font-size: 1.25rem; font-weight: 700; }
 .profile-username { color: var(--text-muted); font-size: 0.875rem; margin-top: 2px; }
 .profile-bio { color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--space-sm); line-height: 1.5; }
