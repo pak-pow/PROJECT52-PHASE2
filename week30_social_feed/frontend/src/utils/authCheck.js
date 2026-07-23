@@ -35,13 +35,19 @@ export async function requireAuthPage() {
 
 /**
  * Enforce guest state on auth pages (login, register).
- * If user is already logged in, redirects to feed.html.
+ * If user is already logged in with a valid token, redirects to feed.html.
+ * If token is invalid or expired, clears session and stays on auth page.
  */
-export function requireGuestPage() {
+export async function requireGuestPage() {
     const user = getSessionUser();
     if (user && user.token) {
-        window.location.href = "feed.html";
-        return null;
+        const { ok } = await apiMe();
+        if (ok) {
+            window.location.href = "feed.html";
+            return null;
+        } else {
+            clearSession();
+        }
     }
     return true;
 }

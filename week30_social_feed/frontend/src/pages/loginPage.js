@@ -4,7 +4,7 @@
 import { apiLogin, saveSession } from "../api/authApi.js";
 import { requireGuestPage } from "../utils/authCheck.js";
 
-requireGuestPage();
+await requireGuestPage();
 
 const loginForm  = document.getElementById("login-form");
 const loginError = document.getElementById("login-error");

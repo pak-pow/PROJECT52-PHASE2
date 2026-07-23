@@ -46,7 +46,9 @@ export async function fetchAuth(url, options = {}) {
         const resp = await fetch(url, { ...options, headers });
         if (resp.status === 401) {
             clearSession();
-            window.location.href = "login.html";
+            if (!window.location.pathname.endsWith("login.html") && !window.location.pathname.endsWith("register.html")) {
+                window.location.href = "login.html";
+            }
         }
         return resp;
     } catch (err) {
