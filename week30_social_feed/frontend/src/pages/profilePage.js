@@ -10,7 +10,7 @@ import { apiGetProfile, apiGetUserPosts, apiToggleFollow, apiUpdateProfile, avat
 import { saveSession } from "../api/authApi.js";
 import { showToast, escapeHtml, formatCount } from "../utils/helpers.js";
 
-const currentUser = requireAuthPage();
+const currentUser = await requireAuthPage();
 if (currentUser) {
     initSidebar("profile");
     initComposeModal();

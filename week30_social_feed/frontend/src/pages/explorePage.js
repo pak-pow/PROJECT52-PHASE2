@@ -10,7 +10,7 @@ import { apiExplore } from "../api/postApi.js";
 import { apiSearchUsers, apiToggleFollow, avatarUrl } from "../api/userApi.js";
 import { showToast, escapeHtml, debounce } from "../utils/helpers.js";
 
-const currentUser = requireAuthPage();
+const currentUser = await requireAuthPage();
 if (currentUser) {
     initSidebar("explore");
     initComposeModal();

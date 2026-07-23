@@ -10,7 +10,7 @@ import { apiFeed, apiCreatePost } from "../api/postApi.js";
 import { showToast } from "../utils/helpers.js";
 import { avatarUrl } from "../api/userApi.js";
 
-const currentUser = requireAuthPage();
+const currentUser = await requireAuthPage();
 if (currentUser) {
     initSidebar("feed");
 

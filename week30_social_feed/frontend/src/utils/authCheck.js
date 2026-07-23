@@ -1,21 +1,36 @@
 /**
  * authCheck.js — Multi-Page Application authentication guards.
  */
-import { getSessionUser } from "../api/authApi.js";
+import { getSessionUser, clearSession, saveSession, apiMe } from "../api/authApi.js";
 import { setCurrentUser } from "./state.js";
 
 /**
  * Enforce authentication on protected pages (feed, explore, profile, post).
- * If user is not logged in, redirects to login.html.
+ * Validates session token against backend. If invalid/expired, redirects to login.html.
  */
-export function requireAuthPage() {
+export async function requireAuthPage() {
     const user = getSessionUser();
     if (!user || !user.token) {
+        clearSession();
         window.location.href = "login.html";
         return null;
     }
-    setCurrentUser(user);
-    return user;
+    const { ok, data } = await apiMe();
+    if (!ok) {
+        clearSession();
+        window.location.href = "login.html";
+        return null;
+    }
+    saveSession(user.token, data.username, data.display_name, data.avatar_path);
+    const updatedUser = {
+        token: user.token,
+        username: data.username,
+        displayName: data.display_name,
+        avatarPath: data.avatar_path,
+        bio: data.bio,
+    };
+    setCurrentUser(updatedUser);
+    return updatedUser;
 }
 
 /**

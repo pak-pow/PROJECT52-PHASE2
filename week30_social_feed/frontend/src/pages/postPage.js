@@ -9,7 +9,7 @@ import { renderPostCard, skeletons } from "../components/postCard.js";
 import { apiGetPost, apiCreatePost } from "../api/postApi.js";
 import { showToast } from "../utils/helpers.js";
 
-const currentUser = requireAuthPage();
+const currentUser = await requireAuthPage();
 if (currentUser) {
     initSidebar("");
     initComposeModal();
