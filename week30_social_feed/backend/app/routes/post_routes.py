@@ -29,9 +29,12 @@ def home_feed():
 @post_bp.route("/explore", methods=["GET"])
 @require_auth
 def explore():
-    """GET /api/posts/explore — trending global feed sorted by likes in last 24h."""
+    """GET /api/posts/explore — trending global feed sorted by likes.
+    Optional ?tag=<hashtag> to filter by hashtag.
+    """
     before_id = request.args.get("before", type=int)
-    rows = get_explore_feed(Config.EXPLORE_PAGE_SIZE, before_id)
+    tag = request.args.get("tag", "").strip() or None
+    rows = get_explore_feed(Config.EXPLORE_PAGE_SIZE, before_id, tag)
     post_ids = [r["id"] for r in rows]
     liked    = get_liked_post_ids(g.user["id"], post_ids)
     reposted = get_reposted_post_ids(g.user["id"], post_ids)

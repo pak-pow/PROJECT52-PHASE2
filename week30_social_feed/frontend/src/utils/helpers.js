@@ -35,11 +35,12 @@ export function escapeHtml(str) {
 }
 
 /**
- * Convert plain text to HTML, linkifying @mentions and URLs.
+ * Convert plain text to HTML, linkifying @mentions, #hashtags and URLs.
  */
 export function linkifyContent(text) {
     return escapeHtml(text)
         .replace(/@(\w+)/g, '<a href="#profile?u=$1" class="mention">@$1</a>')
+        .replace(/#([\w]+)/g, '<a href="#explore?tag=$1" class="hashtag">#$1</a>')
         .replace(
             /(https?:\/\/[^\s<>"]+)/g,
             '<a href="$1" target="_blank" rel="noopener noreferrer" class="ext-link">$1</a>'

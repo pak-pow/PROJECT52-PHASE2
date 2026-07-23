@@ -265,6 +265,41 @@ img { max-width: 100%; display: block; }
 }
 .post-display-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
 .post-display-name:hover { text-decoration: underline; }
+.mention {
+    color: var(--accent-light);
+    text-decoration: none;
+    cursor: pointer;
+}
+.mention:hover { text-decoration: underline; }
+
+.hashtag {
+    color: var(--accent-light);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+.hashtag:hover { text-decoration: underline; }
+
+.tag-filter-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    background: rgba(99,102,241,0.12);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-lg);
+    margin: var(--space-sm) var(--space-lg);
+    font-size: 0.875rem;
+    color: var(--accent-light);
+}
+.tag-clear-btn {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+.tag-clear-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
 .post-username { color: var(--text-muted); font-size: 0.8rem; }
 .post-time { color: var(--text-muted); font-size: 0.8rem; margin-left: auto; white-space: nowrap; }
 

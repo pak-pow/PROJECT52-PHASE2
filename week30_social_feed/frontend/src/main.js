@@ -449,11 +449,14 @@ async function loadExplore(append = false) {
     exploreLoading = true;
     if (!append) exploreList.innerHTML = skeletons();
     exploreLoader.classList.toggle("hidden", !append);
-    const posts = await apiExplore(exploreLastId);
+    const posts = await apiExplore(exploreLastId, activeTag);
     exploreLoading = false;
     if (!append) exploreList.innerHTML = "";
     if (!posts.length && !append) {
-        exploreList.innerHTML = '<p class="empty-state">Nothing trending yet. Be the first to post!</p>';
+        const msg = activeTag
+            ? `<p class="empty-state">No posts tagged <strong>#${escapeHtml(activeTag)}</strong> yet.</p>`
+            : '<p class="empty-state">Nothing trending yet. Be the first to post!</p>';
+        exploreList.innerHTML = msg;
         exploreDone = true;
         return;
     }
@@ -924,15 +927,54 @@ async function loadSuggestions() {
     });
 }
 
-// ── @mention delegated click ─────────────────────────
+// ── @mention & #hashtag delegated click ───────────────
 document.addEventListener("click", (e) => {
     const mention = e.target.closest(".mention");
     if (mention) {
         e.preventDefault();
         const username = mention.textContent.replace(/^@/, "").trim();
         if (username) loadProfile(username);
+        return;
+    }
+    const hashtag = e.target.closest(".hashtag");
+    if (hashtag) {
+        e.preventDefault();
+        const tag = hashtag.textContent.replace(/^#/, "").trim();
+        if (tag) loadExploreByTag(tag);
     }
 });
+
+// ── Hashtag filtered Explore ─────────────────────────
+let activeTag = null;
+
+function loadExploreByTag(tag) {
+    activeTag = tag;
+    showPage("explore");
+    // Show tag banner
+    let banner = document.getElementById("tag-filter-banner");
+    if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "tag-filter-banner";
+        banner.className = "tag-filter-banner";
+        const exploreSection = document.getElementById("page-explore");
+        exploreSection.insertBefore(banner, exploreSection.querySelector(".search-bar-wrap").nextSibling);
+    }
+    banner.innerHTML = `
+        <span>Showing posts tagged <strong>#${escapeHtml(tag)}</strong></span>
+        <button class="btn-ghost tag-clear-btn" id="tag-clear-btn">✕ Clear</button>
+    `;
+    banner.classList.remove("hidden");
+    document.getElementById("tag-clear-btn").addEventListener("click", () => {
+        activeTag = null;
+        banner.classList.add("hidden");
+        if (exploreSub) exploreSub.classList.remove("hidden");
+        resetExplore();
+        loadExplore();
+    });
+    if (exploreSub) exploreSub.classList.add("hidden");
+    resetExplore();
+    loadExplore();
+}
 
 // ── Boot ──────────────────────────────────────────────
 bootApp();

@@ -60,12 +60,19 @@ def get_home_feed(user_id, limit=20, before_id=None):
         conn.close()
 
 
-def get_explore_feed(limit=20, before_id=None):
-    """Return globally trending posts sorted by like count (no time window — works for any age data)."""
+def get_explore_feed(limit=20, before_id=None, tag=None):
+    """Return globally trending posts sorted by like count.
+    
+    Args:
+        tag: Optional hashtag string (without #). Filters to posts containing #<tag>.
+    """
     conn = get_db()
     try:
-        where = " WHERE p.reply_to_id IS NULL"
+        where = " WHERE p.reply_to_id IS NULL AND p.repost_of_id IS NULL"
         params = []
+        if tag:
+            where += " AND p.content LIKE ?"
+            params.append(f"%#{tag}%")
         if before_id:
             where += " AND p.id < ?"
             params.append(before_id)

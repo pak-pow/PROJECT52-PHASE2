@@ -9,9 +9,13 @@ export async function apiFeed(beforeId = null) {
     return resp.ok ? await resp.json() : [];
 }
 
-export async function apiExplore(beforeId = null) {
-    const qs = beforeId ? `?before=${beforeId}` : "";
-    const resp = await fetchAuth(`${API_BASE}/posts/explore${qs}`);
+export async function apiExplore(beforeId = null, tag = null) {
+    let url = `${API_BASE}/posts/explore`;
+    const params = new URLSearchParams();
+    if (beforeId) params.set("before", beforeId);
+    if (tag)      params.set("tag",    tag);
+    if ([...params].length) url += "?" + params.toString();
+    const resp = await fetchAuth(url);
     return resp.ok ? await resp.json() : [];
 }
 
