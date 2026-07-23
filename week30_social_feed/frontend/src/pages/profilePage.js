@@ -182,12 +182,27 @@ if (currentUser) {
             showToast("Profile updated! ✨", "success");
 
             saveSession(
-                localStorage.getItem("sf_token"),
+                sessionStorage.getItem("sf_token"),
                 data.username,
                 data.display_name,
                 data.avatar_path,
             );
-            window.location.reload();
+
+            // Update DOM in place — no full page reload
+            const dispNameEl = container.querySelector(".profile-display-name");
+            const bioEl = container.querySelector(".profile-bio");
+            if (dispNameEl) dispNameEl.textContent = data.display_name;
+            if (bioEl && data.bio) bioEl.textContent = data.bio;
+
+            const pfAvatar = container.querySelector("#pf-avatar");
+            if (pfAvatar) {
+                const newAvImg = new Image();
+                newAvImg.onload = () => {
+                    pfAvatar.textContent = "";
+                    pfAvatar.style.cssText = `background-image:url(${newAvImg.src}?t=${Date.now()});background-size:cover;background-position:center;`;
+                };
+                newAvImg.src = avatarUrl(data.username) + `?t=${Date.now()}`;
+            }
         };
     }
 

@@ -345,7 +345,7 @@ img { max-width: 100%; display: block; }
     height: 44px;
     border-radius: 50%;
     background: var(--bg-elevated);
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 2s ease-in-out infinite;
     flex-shrink: 0;
 }
 .skeleton-card::after {
@@ -354,12 +354,12 @@ img { max-width: 100%; display: block; }
     height: 44px;
     border-radius: var(--radius-sm);
     background: var(--bg-elevated);
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 2s ease-in-out infinite;
 }
 @keyframes shimmer {
-    0%   { opacity: 0.4; }
-    50%  { opacity: 1; }
-    100% { opacity: 0.4; }
+    0%   { opacity: 0.6; }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0.6; }
 }
 
 /* ── Empty State ──────────────────────────────────────────── */
