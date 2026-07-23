@@ -101,9 +101,8 @@ def like(post_id):
 
 
 @post_bp.route("/<int:post_id>/image", methods=["GET"])
-@require_auth
 def serve_image(post_id):
-    """GET /api/posts/<id>/image — stream the post image file."""
+    """GET /api/posts/<id>/image — stream the post image file (public)."""
     row = get_post_by_id(post_id)
     if not row or not row["image_path"]:
         return jsonify({"error": "Image not found."}), 404
