@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore / SocialFeed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/assets/base.css" />
+  <link rel="stylesheet" href="../src/assets/feed.css" />
+  <link rel="stylesheet" href="../src/assets/compose.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="main-app" class="main-app">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <span class="logo-icon">🌐</span>
+          <span class="logo-title">SocialFeed</span>
+        </div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <a href="feed.html"    class="nav-item"        data-page="feed">    <span class="nav-icon">🏠</span> <span class="nav-label">Home</span>    </a>
+          <a href="explore.html" class="nav-item active" data-page="explore"> <span class="nav-icon">🔥</span> <span class="nav-label">Explore</span> </a>
+          <a href="profile.html" class="nav-item"        data-page="profile"> <span class="nav-icon">👤</span> <span class="nav-label">Profile</span> </a>
+        </nav>
+        <button class="btn-primary sidebar-compose" id="sidebar-compose-btn">+ Post</button>
+        <div class="sidebar-user" id="sidebar-user">
+          <div class="avatar avatar-sm" id="sidebar-avatar">?</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-display-name" id="sidebar-display-name">—</span>
+            <span class="sidebar-username" id="sidebar-username">—</span>
+          </div>
+          <button class="btn-ghost btn-logout" id="logout-btn" title="Logout">↪</button>
+        </div>
+      </aside>
+
+      <!-- Mobile FAB -->
+      <button class="fab-compose" id="fab-compose-btn" aria-label="New post">✏️</button>
+
+      <!-- Main Content -->
+      <main class="content" id="content" role="main">
+        <section id="page-explore" class="page active">
+          <header class="page-header">
+            <h2>🔥 Explore</h2>
+          </header>
+          <!-- Search bar -->
+          <div class="search-bar-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="user-search-input" class="search-input" placeholder="Search people…" autocomplete="off" />
+            <button class="btn-ghost search-clear hidden" id="search-clear-btn" aria-label="Clear search">✕</button>
+          </div>
+          <!-- Search results -->
+          <div id="search-results" class="search-results hidden"></div>
+          <!-- Trending posts -->
+          <p class="page-sub explore-sub">Most liked posts in the last 24 hours</p>
+          <div id="explore-list" class="post-list" role="feed" aria-live="polite"></div>
+          <div id="explore-loader" class="feed-loader hidden">Loading more…</div>
+        </section>
+      </main>
+
+      <!-- Right Panel -->
+      <aside class="right-panel" id="right-panel" aria-label="Trending sidebar">
+        <div class="right-panel-inner">
+          <h3 class="panel-title">Who to follow</h3>
+          <div id="suggestions-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Compose Modal (mobile) -->
+  <div id="compose-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="New post">
+    <div class="modal-card">
+      <div class="modal-header">
+        <button class="btn-ghost modal-close" id="modal-close-btn">✕</button>
+        <h3>New Post</h3>
+        <button class="btn-primary modal-post-btn" id="modal-post-btn">Post</button>
+      </div>
+      <div class="modal-body">
+        <div class="avatar avatar-md" id="modal-avatar">?</div>
+        <div class="modal-compose-right">
+          <textarea id="modal-compose-input" class="compose-textarea" placeholder="What's on your mind?" maxlength="280" rows="4"></textarea>
+          <div id="modal-image-preview" class="image-preview hidden">
+            <img id="modal-preview-img" src="" alt="Preview" />
+            <button class="image-preview-remove" id="modal-remove-image" title="Remove image">✕</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="char-counter" id="modal-char-counter">280</span>
+        <label class="btn-ghost icon-btn" for="modal-image-input" title="Attach image">📷</label>
+        <input type="file" id="modal-image-input" accept="image/*" class="hidden" />
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+  <script type="module" src="../src/pages/explorePage.js"></script>
+</body>
+</html>

@@ -5,8 +5,6 @@ import { apiLikePost, apiDeletePost, apiRepostPost, postImageUrl } from "../api/
 import { avatarUrl } from "../api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "../utils/helpers.js";
 import { getCurrentUser } from "../utils/state.js";
-import { loadPostDetail } from "../pages/postDetail.js";
-import { loadProfile } from "../pages/profile.js";
 
 /**
  * Avatar element generator helper.
@@ -85,13 +83,13 @@ export function renderPostCard(post, opts = {}) {
     // Click card → post detail (but not action buttons or links)
     card.addEventListener("click", (e) => {
         if (e.target.closest(".action-btn") || e.target.closest("a") || e.target.closest("img")) return;
-        loadPostDetail(post.id);
+        window.location.href = `post.html?id=${post.id}`;
     });
 
     // Click username → profile
     card.querySelector(".post-display-name").addEventListener("click", (e) => {
         e.preventDefault();
-        loadProfile(post.username);
+        window.location.href = `profile.html?u=${encodeURIComponent(post.username)}`;
     });
 
     const likeBtn = card.querySelector(".like-btn");
@@ -119,7 +117,7 @@ export function renderPostCard(post, opts = {}) {
     // Reply → open post detail
     card.querySelector(".reply-btn").addEventListener("click", (e) => {
         e.stopPropagation();
-        loadPostDetail(post.id);
+        window.location.href = `post.html?id=${post.id}`;
     });
 
     // Repost (optimistic UI)

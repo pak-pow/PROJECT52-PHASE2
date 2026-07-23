@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | SocialFeed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/assets/base.css" />
+  <link rel="stylesheet" href="../src/assets/auth.css" />
+</head>
+<body>
+  <div id="app">
+    <section class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <span class="logo-icon">🌐</span>
+          <h1 class="logo-title">SocialFeed</h1>
+          <p class="logo-sub">Project52 · Week 30</p>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+          <a href="login.html" class="auth-tab active" role="tab" aria-selected="true">Login</a>
+          <a href="register.html" class="auth-tab" role="tab" aria-selected="false">Register</a>
+        </div>
+
+        <form id="login-form" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input id="login-username" type="text" placeholder="your_username" autocomplete="username" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <p class="auth-error hidden" id="login-error"></p>
+          <button type="submit" class="btn-primary btn-full" id="login-submit">Login</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+  <script type="module" src="../src/pages/loginPage.js"></script>
+</body>
+</html>

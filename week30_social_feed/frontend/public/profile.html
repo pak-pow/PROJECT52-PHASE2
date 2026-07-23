@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile / SocialFeed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/assets/base.css" />
+  <link rel="stylesheet" href="../src/assets/feed.css" />
+  <link rel="stylesheet" href="../src/assets/compose.css" />
+  <link rel="stylesheet" href="../src/assets/profile.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="main-app" class="main-app">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <span class="logo-icon">🌐</span>
+          <span class="logo-title">SocialFeed</span>
+        </div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <a href="feed.html"    class="nav-item"        data-page="feed">    <span class="nav-icon">🏠</span> <span class="nav-label">Home</span>    </a>
+          <a href="explore.html" class="nav-item"        data-page="explore"> <span class="nav-icon">🔥</span> <span class="nav-label">Explore</span> </a>
+          <a href="profile.html" class="nav-item active" data-page="profile"> <span class="nav-icon">👤</span> <span class="nav-label">Profile</span> </a>
+        </nav>
+        <button class="btn-primary sidebar-compose" id="sidebar-compose-btn">+ Post</button>
+        <div class="sidebar-user" id="sidebar-user">
+          <div class="avatar avatar-sm" id="sidebar-avatar">?</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-display-name" id="sidebar-display-name">—</span>
+            <span class="sidebar-username" id="sidebar-username">—</span>
+          </div>
+          <button class="btn-ghost btn-logout" id="logout-btn" title="Logout">↪</button>
+        </div>
+      </aside>
+
+      <!-- Mobile FAB -->
+      <button class="fab-compose" id="fab-compose-btn" aria-label="New post">✏️</button>
+
+      <!-- Main Content -->
+      <main class="content" id="content" role="main">
+        <section id="page-profile" class="page active">
+          <div id="profile-container"></div>
+        </section>
+      </main>
+
+      <!-- Right Panel -->
+      <aside class="right-panel" id="right-panel" aria-label="Trending sidebar">
+        <div class="right-panel-inner">
+          <h3 class="panel-title">Who to follow</h3>
+          <div id="suggestions-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="edit-profile-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Edit profile">
+    <div class="modal-card">
+      <div class="modal-header">
+        <button class="btn-ghost modal-close" id="edit-profile-close-btn">✕</button>
+        <h3>Edit Profile</h3>
+        <button class="btn-primary" id="edit-profile-save-btn">Save</button>
+      </div>
+      <div class="modal-body edit-profile-body">
+        <div class="edit-profile-avatar-section">
+          <div class="avatar avatar-xl" id="edit-profile-avatar-preview">?</div>
+          <label class="btn-ghost icon-btn edit-avatar-label" for="edit-avatar-input" title="Change avatar">📷 Change</label>
+          <input type="file" id="edit-avatar-input" accept="image/*" class="hidden" />
+        </div>
+        <div class="edit-profile-fields">
+          <label class="edit-field-label" for="edit-display-name">Display Name</label>
+          <input type="text" id="edit-display-name" class="edit-field-input" maxlength="50" placeholder="Your display name" />
+          <label class="edit-field-label" for="edit-bio">Bio <span class="edit-bio-counter">160</span></label>
+          <textarea id="edit-bio" class="compose-textarea edit-field-textarea" maxlength="160" rows="3" placeholder="Tell people about yourself…"></textarea>
+        </div>
+      </div>
+      <div id="edit-profile-error" class="edit-profile-error hidden"></div>
+    </div>
+  </div>
+
+  <!-- Compose Modal (mobile) -->
+  <div id="compose-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="New post">
+    <div class="modal-card">
+      <div class="modal-header">
+        <button class="btn-ghost modal-close" id="modal-close-btn">✕</button>
+        <h3>New Post</h3>
+        <button class="btn-primary modal-post-btn" id="modal-post-btn">Post</button>
+      </div>
+      <div class="modal-body">
+        <div class="avatar avatar-md" id="modal-avatar">?</div>
+        <div class="modal-compose-right">
+          <textarea id="modal-compose-input" class="compose-textarea" placeholder="What's on your mind?" maxlength="280" rows="4"></textarea>
+          <div id="modal-image-preview" class="image-preview hidden">
+            <img id="modal-preview-img" src="" alt="Preview" />
+            <button class="image-preview-remove" id="modal-remove-image" title="Remove image">✕</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="char-counter" id="modal-char-counter">280</span>
+        <label class="btn-ghost icon-btn" for="modal-image-input" title="Attach image">📷</label>
+        <input type="file" id="modal-image-input" accept="image/*" class="hidden" />
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+  <script type="module" src="../src/pages/profilePage.js"></script>
+</body>
+</html>

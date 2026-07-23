@@ -3,7 +3,6 @@
  */
 import { apiGetSuggestions, apiToggleFollow, avatarUrl } from "../api/userApi.js";
 import { escapeHtml, showToast } from "../utils/helpers.js";
-import { loadProfile } from "../pages/profile.js";
 
 export async function loadSuggestions() {
     const list = document.getElementById("suggestions-list");
@@ -37,7 +36,9 @@ export async function loadSuggestions() {
         img.src = avatarUrl(u.username);
 
         // Name click → profile
-        item.querySelector(".suggestion-info").addEventListener("click", () => loadProfile(u.username));
+        item.querySelector(".suggestion-info").addEventListener("click", () => {
+            window.location.href = `profile.html?u=${encodeURIComponent(u.username)}`;
+        });
 
         // Follow button
         const followBtn = item.querySelector(".suggestion-follow-btn");
