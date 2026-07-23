@@ -5,6 +5,15 @@ import { getSessionUser, clearSession, saveSession, apiMe } from "../api/authApi
 import { setCurrentUser } from "./state.js";
 
 /**
+ * Safe navigation helper: avoids reloading if already on target page.
+ */
+function safeRedirect(targetPage) {
+    if (!window.location.pathname.endsWith(targetPage)) {
+        window.location.href = targetPage;
+    }
+}
+
+/**
  * Enforce authentication on protected pages (feed, explore, profile, post).
  * Validates session token against backend. If invalid/expired, redirects to login.html.
  */
@@ -12,13 +21,13 @@ export async function requireAuthPage() {
     const user = getSessionUser();
     if (!user || !user.token) {
         clearSession();
-        window.location.href = "login.html";
+        safeRedirect("login.html");
         return null;
     }
     const { ok, data } = await apiMe();
     if (!ok) {
         clearSession();
-        window.location.href = "login.html";
+        safeRedirect("login.html");
         return null;
     }
     saveSession(user.token, data.username, data.display_name, data.avatar_path);
@@ -43,7 +52,7 @@ export async function requireGuestPage() {
     if (user && user.token) {
         const { ok } = await apiMe();
         if (ok) {
-            window.location.href = "feed.html";
+            safeRedirect("feed.html");
             return null;
         } else {
             clearSession();

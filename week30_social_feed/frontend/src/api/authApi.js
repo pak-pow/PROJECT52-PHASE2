@@ -7,22 +7,46 @@ import { showToast } from "../utils/helpers.js";
 
 export const API_BASE = "http://localhost:5000/api";
 
-// ── Local storage helpers ────────────────────────────────────
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
+function setStorage(key, val) {
+    sessionStorage.setItem(key, val);
+}
+
+function getStorage(key) {
+    return sessionStorage.getItem(key) || localStorage.getItem(key) || "";
+}
+
 export function saveSession(token, username, displayName, avatarPath) {
-    localStorage.setItem("sf_token", token);
-    localStorage.setItem("sf_username", username);
-    localStorage.setItem("sf_display_name", displayName || username);
-    localStorage.setItem("sf_avatar_path", avatarPath || "");
+    const expiresAt = Date.now() + SESSION_TTL_MS;
+    sessionStorage.setItem("sf_token", token);
+    sessionStorage.setItem("sf_username", username);
+    sessionStorage.setItem("sf_display_name", displayName || username);
+    sessionStorage.setItem("sf_avatar_path", avatarPath || "");
+    sessionStorage.setItem("sf_expires_at", String(expiresAt));
+}
+
+export function extendSession() {
+    const expiresAt = Date.now() + SESSION_TTL_MS;
+    if (sessionStorage.getItem("sf_token")) {
+        sessionStorage.setItem("sf_expires_at", String(expiresAt));
+    }
 }
 
 export function clearSession() {
-    ["sf_token", "sf_username", "sf_display_name", "sf_avatar_path"].forEach(k =>
-        localStorage.removeItem(k)
-    );
+    ["sf_token", "sf_username", "sf_display_name", "sf_avatar_path", "sf_expires_at"].forEach(k => {
+        sessionStorage.removeItem(k);
+        localStorage.removeItem(k);
+    });
 }
 
 export function getToken() {
-    return localStorage.getItem("sf_token") || "";
+    const expiresAt = parseInt(getStorage("sf_expires_at"), 10);
+    if (expiresAt && Date.now() > expiresAt) {
+        clearSession();
+        return "";
+    }
+    return getStorage("sf_token");
 }
 
 export function getSessionUser() {
@@ -30,9 +54,9 @@ export function getSessionUser() {
     if (!token) return null;
     return {
         token,
-        username: localStorage.getItem("sf_username") || "",
-        displayName: localStorage.getItem("sf_display_name") || "",
-        avatarPath: localStorage.getItem("sf_avatar_path") || "",
+        username: getStorage("sf_username"),
+        displayName: getStorage("sf_display_name"),
+        avatarPath: getStorage("sf_avatar_path"),
     };
 }
 
