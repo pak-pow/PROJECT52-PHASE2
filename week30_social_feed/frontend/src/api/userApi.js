@@ -56,3 +56,8 @@ export async function apiUpdateProfile({ displayName, bio, avatarFile } = {}) {
     const resp = await fetchAuth(`${API_BASE}/users/me`, { method: "PUT", body: form });
     return { ok: resp.ok, data: await resp.json() };
 }
+
+export async function apiSearchUsers(q) {
+    const resp = await fetchAuth(`${API_BASE}/users/search?q=${encodeURIComponent(q)}`);
+    return resp.ok ? await resp.json() : [];
+}

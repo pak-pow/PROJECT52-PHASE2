@@ -131,9 +131,18 @@
         <!-- Explore Page -->
         <section id="page-explore" class="page hidden">
           <header class="page-header">
-            <h2>🔥 Trending</h2>
-            <p class="page-sub">Most liked posts in the last 24 hours</p>
+            <h2>🔥 Explore</h2>
           </header>
+          <!-- Search bar -->
+          <div class="search-bar-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="user-search-input" class="search-input" placeholder="Search people…" autocomplete="off" />
+            <button class="btn-ghost search-clear hidden" id="search-clear-btn" aria-label="Clear search">✕</button>
+          </div>
+          <!-- Search results (replaces post feed while searching) -->
+          <div id="search-results" class="search-results hidden"></div>
+          <!-- Trending posts -->
+          <p class="page-sub explore-sub">Most liked posts in the last 24 hours</p>
           <div id="explore-list" class="post-list" role="feed" aria-live="polite"></div>
           <div id="explore-loader" class="feed-loader hidden">Loading more…</div>
         </section>

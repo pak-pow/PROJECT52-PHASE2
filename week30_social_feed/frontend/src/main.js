@@ -4,7 +4,7 @@
  */
 import { getSessionUser, saveSession, clearSession, apiLogin, apiRegister, apiLogout } from "./api/authApi.js";
 import { apiFeed, apiExplore, apiCreatePost, apiLikePost, apiDeletePost, apiRepostPost, apiGetPost, postImageUrl } from "./api/postApi.js";
-import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl, apiGetSuggestions, apiUpdateProfile } from "./api/userApi.js";
+import { apiGetProfile, apiGetUserPosts, apiToggleFollow, avatarUrl, apiGetSuggestions, apiUpdateProfile, apiSearchUsers } from "./api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "./utils/helpers.js";
 
 // ── DOM References ─────────────────────────────────────────
@@ -783,7 +783,95 @@ function bootApp() {
     loadSuggestions();
 }
 
-// ── Who to Follow sidebar ────────────────────────
+// ── User Search (Explore page) ─────────────────────────────
+const searchInput    = document.getElementById("user-search-input");
+const searchResults  = document.getElementById("search-results");
+const searchClearBtn = document.getElementById("search-clear-btn");
+const exploreList    = document.getElementById("explore-list");
+const exploreLoader  = document.getElementById("explore-loader");
+const exploreSub     = document.querySelector(".explore-sub");
+
+function renderSearchResults(users) {
+    searchResults.innerHTML = "";
+    if (!users.length) {
+        searchResults.innerHTML = '<p class="empty-state">No users found.</p>';
+        return;
+    }
+    users.forEach(u => {
+        const item = document.createElement("div");
+        item.className = "search-result-item";
+        const initials = (u.display_name || u.username || "?")[0].toUpperCase();
+        item.innerHTML = `
+            <div class="search-result-avatar avatar avatar-md">${escapeHtml(initials)}</div>
+            <div class="search-result-info">
+                <span class="search-result-name">${escapeHtml(u.display_name || u.username)}</span>
+                <span class="search-result-username">@${escapeHtml(u.username)}</span>
+            </div>
+            <button class="btn-ghost suggestion-follow-btn" data-username="${escapeHtml(u.username)}">Follow</button>
+        `;
+        // Avatar image
+        const avDiv = item.querySelector(".search-result-avatar");
+        const img = new Image();
+        img.onload = () => {
+            avDiv.textContent = "";
+            avDiv.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
+        };
+        img.src = avatarUrl(u.username);
+        // Click name → profile
+        item.querySelector(".search-result-info").addEventListener("click", () => loadProfile(u.username));
+        // Follow button
+        const followBtn = item.querySelector(".suggestion-follow-btn");
+        followBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            followBtn.disabled = true;
+            const { ok, data } = await apiToggleFollow(u.username);
+            followBtn.disabled = false;
+            if (!ok) { showToast("Could not follow.", "error"); return; }
+            followBtn.textContent = data.following ? "Following" : "Follow";
+            followBtn.classList.toggle("following", data.following);
+        });
+        searchResults.appendChild(item);
+    });
+}
+
+const doSearch = debounce(async (q) => {
+    if (!q.trim()) {
+        searchResults.classList.add("hidden");
+        exploreList.classList.remove("hidden");
+        exploreLoader.classList.remove("hidden");
+        if (exploreSub) exploreSub.classList.remove("hidden");
+        searchClearBtn.classList.add("hidden");
+        return;
+    }
+    searchClearBtn.classList.remove("hidden");
+    searchResults.classList.remove("hidden");
+    exploreList.classList.add("hidden");
+    exploreLoader.classList.add("hidden");
+    if (exploreSub) exploreSub.classList.add("hidden");
+    searchResults.innerHTML = '<p class="empty-state">Searching…</p>';
+    const users = await apiSearchUsers(q);
+    renderSearchResults(users);
+}, 300);
+
+searchInput.addEventListener("input", () => doSearch(searchInput.value));
+
+searchClearBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    doSearch("");
+    searchInput.focus();
+});
+
+// Clear search when leaving explore page
+window.addEventListener("navigate", (e) => {
+    if (e.detail?.page !== "explore" && searchInput.value) {
+        searchInput.value = "";
+        searchResults.classList.add("hidden");
+        exploreList.classList.remove("hidden");
+        if (exploreSub) exploreSub.classList.remove("hidden");
+        searchClearBtn.classList.add("hidden");
+    }
+});
+
 async function loadSuggestions() {
     const list = document.getElementById("suggestions-list");
     if (!list) return;

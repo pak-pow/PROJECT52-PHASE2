@@ -484,6 +484,8 @@ img { max-width: 100%; display: block; }
     color: #fff;
 }
 
+
+
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1024px) {
     .main-app { grid-template-columns: var(--sidebar-width) 1fr; }
