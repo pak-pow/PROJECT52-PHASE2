@@ -3,6 +3,8 @@
  * Uses Bearer token stored in localStorage under "sf_token".
  */
 
+import { showToast } from "../utils/helpers.js";
+
 export const API_BASE = "http://localhost:5000/api";
 
 // ── Local storage helpers ────────────────────────────────────
@@ -38,15 +40,23 @@ export function authHeaders() {
     return { Authorization: `Bearer ${getToken()}` };
 }
 
-// ── Fetch wrapper with auto-logout on 401 ────────────────────
 export async function fetchAuth(url, options = {}) {
     const headers = { ...authHeaders(), ...(options.headers || {}) };
-    const resp = await fetch(url, { ...options, headers });
-    if (resp.status === 401) {
-        clearSession();
-        window.location.reload();
+    try {
+        const resp = await fetch(url, { ...options, headers });
+        if (resp.status === 401) {
+            clearSession();
+            window.location.href = "login.html";
+        }
+        return resp;
+    } catch (err) {
+        showToast("Cannot connect to backend server. Is run.py running?", "error");
+        return {
+            ok: false,
+            status: 503,
+            json: async () => ({ error: "Backend server offline" }),
+        };
     }
-    return resp;
 }
 
 // ── Auth API calls ───────────────────────────────────────────
