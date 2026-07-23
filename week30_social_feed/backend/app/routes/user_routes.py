@@ -145,6 +145,32 @@ def suggestions():
     return jsonify([serialize_mini_user(r) for r in rows]), 200
 
 
+@user_bp.route("/search", methods=["GET"])
+@require_auth
+def search_users():
+    """GET /api/users/search?q=<term> — search users by username or display name."""
+    q = request.args.get("q", "").strip()
+    if not q:
+        return jsonify([]), 200
+    pattern = f"%{q}%"
+    conn = get_db()
+    try:
+        rows = conn.execute(
+            """SELECT u.id, u.username, u.display_name, u.avatar_path,
+                      (SELECT COUNT(*) FROM follows WHERE following_id = u.id) AS follower_count
+               FROM users u
+               WHERE u.username LIKE ? OR u.display_name LIKE ?
+               ORDER BY
+                   CASE WHEN u.username LIKE ? THEN 0 ELSE 1 END,
+                   follower_count DESC
+               LIMIT 20""",
+            (pattern, pattern, f"{q}%"),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify([serialize_mini_user(r) for r in rows]), 200
+
+
 @user_bp.route("/<username>/avatar", methods=["GET"])
 def serve_avatar(username):
     """GET /api/users/<username>/avatar — stream the user's avatar image (public)."""
