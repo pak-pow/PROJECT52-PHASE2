@@ -29,16 +29,6 @@ export async function apiGetFollowing(username) {
     return resp.ok ? await resp.json() : [];
 }
 
-export async function apiUpdateProfile(displayName, bio, avatarFile = null) {
-    const form = new FormData();
-    if (displayName) form.append("display_name", displayName);
-    if (bio !== null && bio !== undefined) form.append("bio", bio);
-    if (avatarFile) form.append("avatar", avatarFile);
-
-    const resp = await fetchAuth(`${API_BASE}/users/me`, { method: "PUT", body: form });
-    return { ok: resp.ok, data: await resp.json() };
-}
-
 export function avatarUrl(username) {
     return `${API_BASE}/users/${username}/avatar`;
 }
