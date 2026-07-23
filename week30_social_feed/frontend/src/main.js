@@ -181,6 +181,95 @@ composeRemoveImage.addEventListener("click", () => {
     composePreview.classList.add("hidden");
 });
 
+// ── Mobile Compose Modal ───────────────────────────────────
+const composeModal       = document.getElementById("compose-modal");
+const modalCloseBtn      = document.getElementById("modal-close-btn");
+const modalPostBtn       = document.getElementById("modal-post-btn");
+const modalInput         = document.getElementById("modal-compose-input");
+const modalCharCounter   = document.getElementById("modal-char-counter");
+const modalImageInput    = document.getElementById("modal-image-input");
+const modalImagePreview  = document.getElementById("modal-image-preview");
+const modalPreviewImg    = document.getElementById("modal-preview-img");
+const modalRemoveImage   = document.getElementById("modal-remove-image");
+const fabBtn             = document.getElementById("fab-compose-btn");
+
+function openComposeModal() {
+    // Populate avatar from session
+    const modalAvatar = document.getElementById("modal-avatar");
+    if (currentUser) {
+        modalAvatar.textContent = (currentUser.displayName || currentUser.username || "?")[0].toUpperCase();
+        const mAvImg = new Image();
+        mAvImg.onload = () => {
+            modalAvatar.textContent = "";
+            modalAvatar.style.cssText = `background-image:url(${mAvImg.src});background-size:cover;background-position:center;`;
+        };
+        mAvImg.src = avatarUrl(currentUser.username);
+    }
+    modalInput.value = "";
+    modalCharCounter.textContent = "280";
+    modalImageInput.value = "";
+    modalImagePreview.classList.add("hidden");
+    modalPreviewImg.src = "";
+    composeModal.classList.remove("hidden");
+    modalInput.focus();
+}
+
+function closeComposeModal() {
+    composeModal.classList.add("hidden");
+}
+
+// Open triggers
+fabBtn.addEventListener("click", openComposeModal);
+// sidebar-compose-btn already wires to inline compose on desktop;
+// on mobile it's hidden so FAB takes over — no conflict.
+
+// Close triggers
+modalCloseBtn.addEventListener("click", closeComposeModal);
+composeModal.addEventListener("click", (e) => { if (e.target === composeModal) closeComposeModal(); });
+
+// Char counter
+modalInput.addEventListener("input", () => {
+    modalCharCounter.textContent = 280 - modalInput.value.length;
+    modalCharCounter.classList.toggle("char-danger", modalInput.value.length > 260);
+});
+
+// Image preview in modal
+modalImageInput.addEventListener("change", () => {
+    const file = modalImageInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        modalPreviewImg.src = e.target.result;
+        modalImagePreview.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+});
+
+modalRemoveImage.addEventListener("click", () => {
+    modalImageInput.value = "";
+    modalPreviewImg.src = "";
+    modalImagePreview.classList.add("hidden");
+});
+
+// Modal post submit
+modalPostBtn.addEventListener("click", async () => {
+    const content   = modalInput.value.trim();
+    const imageFile = modalImageInput.files[0] || null;
+    if (!content && !imageFile) return;
+    modalPostBtn.disabled = true; modalPostBtn.textContent = "Posting…";
+    const { ok, data } = await apiCreatePost(content, imageFile);
+    modalPostBtn.disabled = false; modalPostBtn.textContent = "Post";
+    if (!ok) { showToast(data.error || "Could not post.", "error"); return; }
+    closeComposeModal();
+    showToast("Posted! 🎉", "success");
+    // Navigate to feed and prepend
+    showPage("feed");
+    const newCard = renderPostCard(data, { showDelete: true });
+    newCard.classList.add("post-card--new");
+    feedList.prepend(newCard);
+    feedList.querySelector(".empty-state")?.remove();
+});
+
 // ── Avatar helper ──────────────────────────────────────────
 function makeAvatarEl(username, displayName, sizeClass) {
     const div = document.createElement("div");

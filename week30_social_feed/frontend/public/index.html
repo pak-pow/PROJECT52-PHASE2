@@ -97,6 +97,9 @@
         </div>
       </aside>
 
+      <!-- Mobile FAB (shown only on mobile when sidebar collapses) -->
+      <button class="fab-compose" id="fab-compose-btn" aria-label="New post">✏️</button>
+
       <!-- Main Content -->
       <main class="content" id="content" role="main">
 
@@ -174,7 +177,13 @@
       </div>
       <div class="modal-body">
         <div class="avatar avatar-md" id="modal-avatar">?</div>
-        <textarea id="modal-compose-input" class="compose-textarea" placeholder="What's on your mind?" maxlength="280" rows="4"></textarea>
+        <div class="modal-compose-right">
+          <textarea id="modal-compose-input" class="compose-textarea" placeholder="What's on your mind?" maxlength="280" rows="4"></textarea>
+          <div id="modal-image-preview" class="image-preview hidden">
+            <img id="modal-preview-img" src="" alt="Preview" />
+            <button class="image-preview-remove" id="modal-remove-image" title="Remove image">✕</button>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <span class="char-counter" id="modal-char-counter">280</span>
