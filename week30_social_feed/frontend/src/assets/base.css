@@ -576,6 +576,47 @@ img { max-width: 100%; display: block; }
     box-shadow: 0 6px 20px rgba(99,102,241,0.6);
 }
 
+/* ── Mobile Bottom Navigation Bar ─────────────── */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+}
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-decoration: none;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition);
+}
+.mobile-nav-item.active {
+    color: var(--accent-light);
+    font-weight: 600;
+}
+.mobile-nav-icon {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .mobile-nav {
+        display: flex;
+    }
+}
+
 /* ── Compose modal body layout ───────────────── */
 .modal-compose-right {
     flex: 1;

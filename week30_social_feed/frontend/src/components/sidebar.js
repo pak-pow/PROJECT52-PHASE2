@@ -59,4 +59,26 @@ export function initSidebar(activePageName) {
             }
         });
     }
+
+    // Inject Mobile Bottom Navigation Bar if not present
+    if (!document.querySelector(".mobile-nav")) {
+        const mobileNav = document.createElement("nav");
+        mobileNav.className = "mobile-nav";
+        mobileNav.setAttribute("aria-label", "Mobile navigation");
+        mobileNav.innerHTML = `
+            <a href="feed.html" class="mobile-nav-item ${activePageName === "feed" ? "active" : ""}">
+                <span class="mobile-nav-icon">🏠</span>
+                <span class="mobile-nav-label">Home</span>
+            </a>
+            <a href="explore.html" class="mobile-nav-item ${activePageName === "explore" ? "active" : ""}">
+                <span class="mobile-nav-icon">🔥</span>
+                <span class="mobile-nav-label">Explore</span>
+            </a>
+            <a href="profile.html?u=${encodeURIComponent(currentUser.username)}" class="mobile-nav-item ${activePageName === "profile" ? "active" : ""}">
+                <span class="mobile-nav-icon">👤</span>
+                <span class="mobile-nav-label">Profile</span>
+            </a>
+        `;
+        document.body.appendChild(mobileNav);
+    }
 }
