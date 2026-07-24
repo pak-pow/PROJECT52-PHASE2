@@ -93,16 +93,21 @@ if (currentUser) {
 
         if (!posts.length && !append) {
             feedList.innerHTML = '<p class="empty-state">No posts yet. Follow some people or write your first post!</p>';
-            feedDone = true;
+        if (feedDone) {
+            feedLoader.classList.add("hidden");
+            if (obs) obs.unobserve(feedLoader);
             return;
         }
 
-        if (posts.length < 20) feedDone = true;
+        if (posts.length < 20) {
+            feedDone = true;
+            feedLoader.classList.add("hidden");
+            if (obs) obs.unobserve(feedLoader);
+        }
         posts.forEach(p => {
             feedList.appendChild(renderPostCard(p, { showDelete: true }));
             feedLastId = p.id;
         });
-        feedLoader.classList.add("hidden");
     }
 
     const obs = new IntersectionObserver((entries) => {
