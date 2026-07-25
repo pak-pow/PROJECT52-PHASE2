@@ -8,8 +8,10 @@ import { setCurrentUser } from "./state.js";
  * Safe navigation helper: avoids reloading if already on target page.
  */
 function safeRedirect(targetPage) {
-    if (!window.location.pathname.endsWith(targetPage)) {
-        window.location.href = targetPage;
+    const current = window.location.pathname;
+    if (!current.endsWith("/" + targetPage) && !current.endsWith(targetPage)) {
+        const basePath = current.substring(0, current.lastIndexOf("/") + 1);
+        window.location.href = `${basePath}${targetPage}`;
     }
 }
 
