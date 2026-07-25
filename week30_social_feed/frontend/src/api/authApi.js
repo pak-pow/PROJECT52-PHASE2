@@ -5,7 +5,7 @@
 
 import { showToast } from "../utils/helpers.js";
 
-export const API_BASE = "http://localhost:5000/api";
+export const API_BASE = "http://127.0.0.1:5000/api";
 
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 

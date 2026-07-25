@@ -5,6 +5,7 @@ import { clearSession, apiLogout } from "../api/authApi.js";
 import { avatarUrl } from "../api/userApi.js";
 import { getCurrentUser } from "../utils/state.js";
 import { initTheme, toggleTheme } from "../utils/theme.js";
+import { escapeHtml } from "../utils/helpers.js";
 
 export function initSidebar(activePageName) {
     initTheme();

@@ -7,7 +7,7 @@ import { initComposeModal } from "../components/composeModal.js";
 import { loadSuggestions } from "../components/suggestions.js";
 import { renderPostCard, skeletons } from "../components/postCard.js";
 import { apiFeed, apiCreatePost } from "../api/postApi.js";
-import { showToast } from "../utils/helpers.js";
+import { showToast, escapeHtml } from "../utils/helpers.js";
 import { avatarUrl } from "../api/userApi.js";
 
 const currentUser = await requireAuthPage();
