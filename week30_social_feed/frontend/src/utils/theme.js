@@ -6,6 +6,10 @@ export function initTheme() {
         (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
     setTheme(savedTheme);
+    const themeBtn = document.getElementById("theme-toggle-btn");
+    if (themeBtn) {
+        themeBtn.textContent = savedTheme === "dark" ? "🌙" : "☀️";
+    }
 }
 
 export function setTheme(theme) {

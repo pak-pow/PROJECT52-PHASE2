@@ -59,6 +59,22 @@
     --right-panel-width: 280px;
 }
 
+/* ── Light Mode Token Overrides ────────────────────────── */
+[data-theme="light"] {
+    --bg-base:      #f1f5f9;
+    --bg-surface:   #ffffff;
+    --bg-elevated:  #e2e8f0;
+    --bg-hover:     #cbd5e1;
+    --border:       #cbd5e1;
+
+    --text-primary:   #0f172a;
+    --text-secondary: #334155;
+    --text-muted:     #64748b;
+    --accent-glow:  rgba(99,102,241,0.12);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+}
+
 /* ── Reset ────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
