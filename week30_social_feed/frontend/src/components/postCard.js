@@ -74,6 +74,7 @@ export function renderPostCard(post, opts = {}) {
             <img class="avatar-img" src="${avatarUrl(post.username)}" alt="" loading="eager" onerror="this.remove()" />
         </div>
         <div class="post-body">
+            ${post.repost_of_id ? `<div class="repost-indicator">🔁 <span>${escapeHtml(post.display_name || post.username)} reposted</span></div>` : ""}
             <div class="post-header">
                 <a class="post-display-name" href="#" data-username="${escapeHtml(post.username)}">${escapeHtml(post.display_name || post.username)}</a>
                 <span class="post-username">@${escapeHtml(post.username)}</span>

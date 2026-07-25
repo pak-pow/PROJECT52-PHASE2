@@ -283,7 +283,17 @@ img { max-width: 100%; display: block; }
     transition: background var(--transition);
     cursor: pointer;
 }
-.post-card:hover { background: var(--bg-surface); }
+.post-card:hover { background: var(--bg-hover); }
+
+.repost-indicator {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-light);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 
 .post-body { flex: 1; min-width: 0; }
 

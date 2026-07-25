@@ -13,17 +13,26 @@ def serialize_post(row, liked_ids=None, reposted_ids=None):
     if created_at and "T" not in created_at:
         created_at = created_at.replace(" ", "T") + "Z"
 
+    is_repost = bool(row["repost_of_id"])
+    row_keys = row.keys() if hasattr(row, "keys") else []
+    content = row["orig_content"] if (is_repost and "orig_content" in row_keys and row["orig_content"] is not None) else row["content"]
+    image_path = row["orig_image_path"] if (is_repost and "orig_image_path" in row_keys and row["orig_image_path"] is not None) else row["image_path"]
+    repost_author_username = row["orig_username"] if (is_repost and "orig_username" in row_keys) else None
+    repost_author_display_name = row["orig_display_name"] if (is_repost and "orig_display_name" in row_keys) else None
+
     return {
         "id": row["id"],
         "user_id": row["user_id"],
         "username": row["username"],
         "display_name": row["display_name"],
         "avatar_path": row["avatar_path"],
-        "content": row["content"],
-        "image_path": row["image_path"],
-        "has_image": bool(row["image_path"]),
+        "content": content,
+        "image_path": image_path,
+        "has_image": bool(image_path),
         "reply_to_id": row["reply_to_id"],
         "repost_of_id": row["repost_of_id"],
+        "repost_author_username": repost_author_username,
+        "repost_author_display_name": repost_author_display_name,
         "like_count": row["like_count"],
         "reply_count": row["reply_count"],
         "repost_count": row["repost_count"],

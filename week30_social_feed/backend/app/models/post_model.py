@@ -20,11 +20,15 @@ def create_post(user_id, content, image_path=None, reply_to_id=None, repost_of_i
 _POST_SELECT = """
     SELECT p.*,
            u.username, u.display_name, u.avatar_path,
+           orig_u.username AS orig_username, orig_u.display_name AS orig_display_name,
+           orig.content AS orig_content, orig.image_path AS orig_image_path,
            (SELECT COUNT(*) FROM likes  WHERE post_id  = p.id)           AS like_count,
            (SELECT COUNT(*) FROM posts  WHERE reply_to_id  = p.id)       AS reply_count,
            (SELECT COUNT(*) FROM posts  WHERE repost_of_id = p.id)       AS repost_count
     FROM posts p
     JOIN users u ON u.id = p.user_id
+    LEFT JOIN posts orig ON orig.id = p.repost_of_id
+    LEFT JOIN users orig_u ON orig_u.id = orig.user_id
 """
 
 
