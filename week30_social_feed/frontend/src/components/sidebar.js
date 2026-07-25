@@ -4,8 +4,10 @@
 import { clearSession, apiLogout } from "../api/authApi.js";
 import { avatarUrl } from "../api/userApi.js";
 import { getCurrentUser } from "../utils/state.js";
+import { initTheme, toggleTheme } from "../utils/theme.js";
 
 export function initSidebar(activePageName) {
+    initTheme();
     const currentUser = getCurrentUser();
     if (!currentUser) return;
 
@@ -44,6 +46,15 @@ export function initSidebar(activePageName) {
             await apiLogout();
             clearSession();
             window.location.href = "login.html";
+        });
+    }
+
+    // Theme toggle button
+    const themeBtn = document.getElementById("theme-toggle-btn");
+    if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+            const nextTheme = toggleTheme();
+            themeBtn.textContent = nextTheme === "dark" ? "🌙" : "☀️";
         });
     }
 
