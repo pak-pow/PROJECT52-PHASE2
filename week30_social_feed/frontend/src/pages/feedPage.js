@@ -91,9 +91,11 @@ if (currentUser) {
         const posts = await apiFeed(feedLastId);
         if (!append) feedList.innerHTML = "";
 
-        if (!posts.length && !append) {
-            feedList.innerHTML = '<p class="empty-state">No posts yet. Follow some people or write your first post!</p>';
-        if (feedDone) {
+        if (!posts || !posts.length) {
+            if (!append) {
+                feedList.innerHTML = '<p class="empty-state">No posts yet. Follow some people or write your first post!</p>';
+            }
+            feedDone = true;
             feedLoader.classList.add("hidden");
             if (obs) obs.unobserve(feedLoader);
             return;
