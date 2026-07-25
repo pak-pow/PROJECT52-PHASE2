@@ -109,11 +109,20 @@ export function renderPostCard(post, opts = {}) {
         });
     }
 
-    // Click card → post detail (but not action buttons or links)
+    // Click card → post detail (but not action buttons, links, avatar, or post image)
     card.addEventListener("click", (e) => {
-        if (e.target.closest(".action-btn") || e.target.closest("a") || e.target.closest("img")) return;
+        if (e.target.closest(".action-btn") || e.target.closest("a") || e.target.closest(".post-avatar") || e.target.closest(".post-image")) return;
         window.location.href = `post.html?id=${post.id}`;
     });
+
+    // Click avatar → profile
+    const avatarEl = card.querySelector(".post-avatar");
+    if (avatarEl) {
+        avatarEl.addEventListener("click", (e) => {
+            e.stopPropagation();
+            window.location.href = `profile.html?u=${encodeURIComponent(post.username)}`;
+        });
+    }
 
     // Click username → profile
     card.querySelector(".post-display-name").addEventListener("click", (e) => {
