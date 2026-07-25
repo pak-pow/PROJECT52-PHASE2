@@ -5,6 +5,7 @@ import { apiLikePost, apiDeletePost, apiRepostPost, postImageUrl } from "../api/
 import { avatarUrl } from "../api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "../utils/helpers.js";
 import { getCurrentUser } from "../utils/state.js";
+import { openLightbox } from "./lightbox.js";
 
 /**
  * Avatar element generator helper.
@@ -105,6 +106,15 @@ export function renderPostCard(post, opts = {}) {
         avatarDiv.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
     };
     img.src = avatarUrl(post.username);
+
+    // Post image click -> open lightbox
+    const postImgEl = card.querySelector(".post-image");
+    if (postImgEl) {
+        postImgEl.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openLightbox(postImgEl.src, "Post image");
+        });
+    }
 
     // Click card → post detail (but not action buttons or links)
     card.addEventListener("click", (e) => {
