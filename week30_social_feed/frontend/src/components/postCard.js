@@ -6,6 +6,7 @@ import { avatarUrl } from "../api/userApi.js";
 import { showToast, relativeTime, escapeHtml, linkifyContent, formatCount } from "../utils/helpers.js";
 import { getCurrentUser } from "../utils/state.js";
 import { openLightbox } from "./lightbox.js";
+import { isBookmarked, toggleBookmark } from "../utils/bookmarks.js";
 
 /**
  * Avatar element generator helper.
@@ -91,6 +92,7 @@ export function renderPostCard(post, opts = {}) {
                 <button class="action-btn repost-btn ${post.reposted_by_me ? "reposted" : ""}" data-post-id="${post.id}" aria-label="Repost">
                     🔁 <span class="repost-count">${formatCount(post.repost_count || 0)}</span>
                 </button>
+                <button class="action-btn bookmark-btn ${isBookmarked(post.id) ? "bookmarked" : ""}" data-post-id="${post.id}" aria-label="Bookmark" title="Bookmark post">🔖</button>
                 <button class="action-btn share-btn" data-post-id="${post.id}" aria-label="Share" title="Copy post link">🔗</button>
                 ${opts.showDelete && post.username === currentUser?.username
                     ? `<button class="action-btn delete-btn" data-post-id="${post.id}" aria-label="Delete">🗑️</button>`
@@ -182,6 +184,17 @@ export function renderPostCard(post, opts = {}) {
             showToast(data.error || "Could not repost.", "error");
         }
     });
+
+    // Bookmark button
+    const bookmarkBtn = card.querySelector(".bookmark-btn");
+    if (bookmarkBtn) {
+        bookmarkBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const nowSaved = toggleBookmark(post.id);
+            bookmarkBtn.classList.toggle("bookmarked", nowSaved);
+            showToast(nowSaved ? "Post bookmarked! 🔖" : "Bookmark removed.", "info");
+        });
+    }
 
     // Share link button
     const shareBtn = card.querySelector(".share-btn");
