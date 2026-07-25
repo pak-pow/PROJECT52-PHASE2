@@ -91,6 +91,7 @@ export function renderPostCard(post, opts = {}) {
                 <button class="action-btn repost-btn ${post.reposted_by_me ? "reposted" : ""}" data-post-id="${post.id}" aria-label="Repost">
                     🔁 <span class="repost-count">${formatCount(post.repost_count || 0)}</span>
                 </button>
+                <button class="action-btn share-btn" data-post-id="${post.id}" aria-label="Share" title="Copy post link">🔗</button>
                 ${opts.showDelete && post.username === currentUser?.username
                     ? `<button class="action-btn delete-btn" data-post-id="${post.id}" aria-label="Delete">🗑️</button>`
                     : ""}
@@ -181,6 +182,21 @@ export function renderPostCard(post, opts = {}) {
             showToast(data.error || "Could not repost.", "error");
         }
     });
+
+    // Share link button
+    const shareBtn = card.querySelector(".share-btn");
+    if (shareBtn) {
+        shareBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/") + 1);
+            const shareUrl = `${window.location.origin}${basePath}post.html?id=${post.id}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast("Post link copied to clipboard! 📋", "success");
+            }).catch(() => {
+                showToast("Could not copy link.", "error");
+            });
+        });
+    }
 
     // Delete button
     const deleteBtn = card.querySelector(".delete-btn");
