@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS posts (
     reply_to_id   INTEGER  REFERENCES posts(id) ON DELETE SET NULL,
     repost_of_id  INTEGER  REFERENCES posts(id) ON DELETE SET NULL,
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    -- must have content OR image
-    CHECK(length(content) > 0 OR image_path IS NOT NULL)
+    -- must have content OR image OR be a repost
+    CHECK(length(content) > 0 OR image_path IS NOT NULL OR repost_of_id IS NOT NULL)
 );
 
 -- ── Likes (compound PK prevents duplicate likes) ───────────────
