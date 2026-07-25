@@ -30,13 +30,12 @@ export function initSidebar(activePageName) {
     if (sidebarDisplayName) sidebarDisplayName.textContent = currentUser.displayName || currentUser.username;
     if (sidebarUsername)    sidebarUsername.textContent    = `@${currentUser.username}`;
     if (sidebarAvatar) {
-        sidebarAvatar.textContent = (currentUser.displayName || currentUser.username || "?")[0].toUpperCase();
-        const img = new Image();
-        img.onload = () => {
-            sidebarAvatar.textContent = "";
-            sidebarAvatar.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
-        };
-        img.src = avatarUrl(currentUser.username);
+        const initial = (currentUser.displayName || currentUser.username || "?")[0].toUpperCase();
+        const src = avatarUrl(currentUser.username);
+        sidebarAvatar.innerHTML = `
+            <span class="avatar-initial">${escapeHtml(initial)}</span>
+            <img class="avatar-img" src="${src}" alt="" loading="eager" onerror="this.remove()" />
+        `;
     }
 
     // Logout button

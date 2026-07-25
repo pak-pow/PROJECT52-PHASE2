@@ -11,19 +11,15 @@ import { isBookmarked, toggleBookmark } from "../utils/bookmarks.js";
 /**
  * Avatar element generator helper.
  */
-export function makeAvatarEl(username, displayName, sizeClass) {
+export function makeAvatarEl(username, displayName, sizeClass = "avatar-md") {
     const div = document.createElement("div");
     div.className = `avatar ${sizeClass}`;
-    div.textContent = (displayName || username || "?")[0].toUpperCase();
-    
-    const img = new Image();
-    img.onload = () => {
-        div.textContent = "";
-        div.style.backgroundImage = `url(${img.src})`;
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center";
-    };
-    img.src = avatarUrl(username);
+    const initial = (displayName || username || "?")[0].toUpperCase();
+    const src = avatarUrl(username);
+    div.innerHTML = `
+        <span class="avatar-initial">${escapeHtml(initial)}</span>
+        <img class="avatar-img" src="${src}" alt="" loading="eager" onerror="this.remove()" />
+    `;
     return div;
 }
 
@@ -73,7 +69,10 @@ export function renderPostCard(post, opts = {}) {
     const hasImage = post.has_image;
 
     card.innerHTML = `
-        <div class="post-avatar avatar avatar-md">${initials}</div>
+        <div class="post-avatar avatar avatar-md">
+            <span class="avatar-initial">${escapeHtml(initials)}</span>
+            <img class="avatar-img" src="${avatarUrl(post.username)}" alt="" loading="eager" onerror="this.remove()" />
+        </div>
         <div class="post-body">
             <div class="post-header">
                 <a class="post-display-name" href="#" data-username="${escapeHtml(post.username)}">${escapeHtml(post.display_name || post.username)}</a>
@@ -100,15 +99,6 @@ export function renderPostCard(post, opts = {}) {
             </div>
         </div>
     `;
-
-    // Avatar image load
-    const avatarDiv = card.querySelector(".post-avatar");
-    const img = new Image();
-    img.onload = () => {
-        avatarDiv.textContent = "";
-        avatarDiv.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
-    };
-    img.src = avatarUrl(post.username);
 
     // Post image click -> open lightbox
     const postImgEl = card.querySelector(".post-image");

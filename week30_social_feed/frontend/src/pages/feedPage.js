@@ -26,13 +26,12 @@ if (currentUser) {
     const composeRemoveImage = document.getElementById("compose-remove-image");
 
     if (composeAvatar) {
-        composeAvatar.textContent = (currentUser.displayName || currentUser.username || "?")[0].toUpperCase();
-        const img = new Image();
-        img.onload = () => {
-            composeAvatar.textContent = "";
-            composeAvatar.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
-        };
-        img.src = avatarUrl(currentUser.username);
+        const initial = (currentUser.displayName || currentUser.username || "?")[0].toUpperCase();
+        const src = avatarUrl(currentUser.username);
+        composeAvatar.innerHTML = `
+            <span class="avatar-initial">${escapeHtml(initial)}</span>
+            <img class="avatar-img" src="${src}" alt="" loading="eager" onerror="this.remove()" />
+        `;
     }
 
     if (composeInput && composeSubmit) {

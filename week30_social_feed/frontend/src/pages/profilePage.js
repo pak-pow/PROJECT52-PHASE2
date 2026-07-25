@@ -36,7 +36,10 @@ if (currentUser) {
             <div class="profile-header">
                 <div class="profile-banner"></div>
                 <div class="profile-avatar-wrap">
-                    <div class="avatar avatar-xl profile-avatar" id="pf-avatar">${initials}</div>
+                    <div class="avatar avatar-xl profile-avatar" id="pf-avatar">
+                        <span class="avatar-initial">${escapeHtml(initials)}</span>
+                        <img class="avatar-img" src="${avatarUrl(username)}" alt="" loading="eager" onerror="this.remove()" />
+                    </div>
                     <div class="profile-actions">
                         ${isMe
                             ? `<button class="follow-btn" id="edit-profile-btn">Edit Profile</button>`
@@ -58,14 +61,6 @@ if (currentUser) {
             </div>
             <div id="profile-posts" class="post-list"></div>
         `;
-
-        const pfAvatar = container.querySelector("#pf-avatar");
-        const avImg = new Image();
-        avImg.onload = () => {
-            pfAvatar.textContent = "";
-            pfAvatar.style.cssText = `background-image:url(${avImg.src});background-size:cover;background-position:center;`;
-        };
-        avImg.src = avatarUrl(username);
 
         if (!isMe) {
             let following = profile.is_following;

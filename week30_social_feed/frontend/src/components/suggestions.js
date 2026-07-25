@@ -19,21 +19,16 @@ export async function loadSuggestions() {
         item.className = "suggestion-item";
         const initials = (u.display_name || u.username || "?")[0].toUpperCase();
         item.innerHTML = `
-            <div class="suggestion-avatar avatar avatar-sm">${initials}</div>
+            <div class="suggestion-avatar avatar avatar-sm">
+                <span class="avatar-initial">${escapeHtml(initials)}</span>
+                <img class="avatar-img" src="${avatarUrl(u.username)}" alt="" loading="eager" onerror="this.remove()" />
+            </div>
             <div class="suggestion-info">
                 <span class="suggestion-name">${escapeHtml(u.display_name || u.username)}</span>
                 <span class="suggestion-username">@${escapeHtml(u.username)}</span>
             </div>
             <button class="btn-ghost suggestion-follow-btn" data-username="${escapeHtml(u.username)}">Follow</button>
         `;
-        // Load avatar
-        const avDiv = item.querySelector(".suggestion-avatar");
-        const img = new Image();
-        img.onload = () => {
-            avDiv.textContent = "";
-            avDiv.style.cssText = `background-image:url(${img.src});background-size:cover;background-position:center;`;
-        };
-        img.src = avatarUrl(u.username);
 
         // Name click → profile
         item.querySelector(".suggestion-info").addEventListener("click", () => {
