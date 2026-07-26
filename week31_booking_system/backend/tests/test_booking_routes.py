@@ -1,8 +1,8 @@
 import os
 import sys
 
-# Ensure backend/ is in sys.path
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "backend"))
+# Ensure backend/ directory is in sys.path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
 from app import create_app
@@ -13,19 +13,15 @@ from app.config.settings import Config
 @pytest.fixture
 def app_instance(tmp_path):
     db_file = os.path.join(tmp_path, "test_booking.db")
-    
-    class TestConfig(Config):
-        TESTING = True
-        DEBUG = False
-        DB_PATH = db_file
+    Config.DB_PATH = db_file
 
     # Copy schema to test db directory
-    schema_src = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "backend", "data", "schema.sql")
+    schema_src = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "schema.sql")
     os.makedirs(os.path.join(tmp_path, "data"), exist_ok=True)
     with open(schema_src, "r", encoding="utf-8") as sf, open(os.path.join(tmp_path, "schema.sql"), "w", encoding="utf-8") as df:
         df.write(sf.read())
 
-    app = create_app(TestConfig)
+    app = create_app(Config)
     with app.app_context():
         init_db()
     return app
