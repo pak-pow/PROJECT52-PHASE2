@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify — Register</title>
+    <script>
+        (function() {
+            var t = localStorage.getItem("booking_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <style>
+        .auth-card {
+            max-width: 440px;
+            margin: 2.5rem auto;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+        .auth-card h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center; }
+        .auth-card p { color: var(--text-secondary); font-size: 0.95rem; text-align: center; margin-bottom: 1.75rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .form-input {
+            width: 100%;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .form-input:focus { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+    <header id="app-header" class="app-header"></header>
+
+    <main class="main-content">
+        <div class="auth-card">
+            <h2>Create an Account</h2>
+            <p>Join Bookify to reserve appointment time slots instantly</p>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="e.g. sarah_c" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="display_name">Full Name</label>
+                    <input type="text" id="display_name" class="form-input" placeholder="e.g. Sarah Connor" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="sarah@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password (min 6 characters)</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required minlength="6">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Create Account ➔</button>
+            </form>
+
+            <p style="margin-top: 1.5rem; margin-bottom: 0; font-size: 0.9rem;">
+                Already have an account? <a href="login.html" style="color: var(--accent-light); font-weight: 600;">Log in</a>
+            </p>
+        </div>
+    </main>
+
+    <script type="module">
+        import { renderNavbar } from "../src/components/navbar.js";
+        import { apiRegister } from "../src/api/authApi.js";
+        import { showToast } from "../src/utils/helpers.js";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderNavbar();
+            const form = document.getElementById("register-form");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const username = document.getElementById("username").value.trim();
+                const display_name = document.getElementById("display_name").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value;
+                try {
+                    await apiRegister(username, display_name, email, password);
+                    showToast("Account created successfully!", "success");
+                    setTimeout(() => window.location.href = "index.html", 500);
+                } catch (err) {
+                    showToast(err.message, "error");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
