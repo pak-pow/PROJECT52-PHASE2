@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify — Service Catalog & Appointments</title>
+    <!-- Synchronous Theme Pre-Initialization to prevent frame-0 flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem("booking_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/base.css">
+</head>
+<body>
+    <header id="app-header" class="app-header"></header>
+
+    <main class="main-content">
+        <section class="hero-banner">
+            <h1>Book Your Next Appointment</h1>
+            <p>Select a service, pick your preferred specialist, and reserve your ideal date and time in seconds.</p>
+        </section>
+
+        <!-- Category Filters -->
+        <div id="filter-bar" class="filter-bar">
+            <button class="filter-btn active" data-category="">All Services</button>
+            <button class="filter-btn" data-category="Health">Health & Medical</button>
+            <button class="filter-btn" data-category="Dental">Dental Care</button>
+            <button class="filter-btn" data-category="Coaching">Coaching & Mentorship</button>
+            <button class="filter-btn" data-category="Beauty">Beauty & Styling</button>
+        </div>
+
+        <!-- Services Grid -->
+        <div id="services-grid" class="services-grid">
+            <!-- Skeleton Loader -->
+            <div class="service-card skeleton" style="height: 220px;"></div>
+            <div class="service-card skeleton" style="height: 220px;"></div>
+            <div class="service-card skeleton" style="height: 220px;"></div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/indexPage.js"></script>
+</body>
+</html>
