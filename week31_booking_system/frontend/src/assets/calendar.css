@@ -48,8 +48,66 @@
     font-size: 0.95rem;
 }
 
-.summary-label { color: var(--text-secondary); }
-.summary-val { font-weight: 600; color: var(--text-primary); }
+.summary-label { 
+    color: var(--text-secondary); 
+    font-weight: 500;
+}
+
+.summary-val { 
+    font-weight: 600; 
+    color: var(--text-primary); 
+}
+
+.summary-val-placeholder {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--warning);
+    background-color: var(--warning-bg);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.summary-val-highlight {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent-light);
+    background-color: rgba(99, 102, 241, 0.15);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--accent-glow);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.section-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: -0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-guide {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.step-badge {
+    background-color: var(--bg-surface-hover);
+    color: var(--accent-light);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
 
 /* Provider Selector Dropdown & Form Groups */
 .summary-card .form-group {
