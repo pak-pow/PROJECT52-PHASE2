@@ -20,7 +20,7 @@
     background-color: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 2rem;
+    padding: 2.25rem;
     box-shadow: var(--shadow-md);
     position: sticky;
     top: 90px;
@@ -29,17 +29,17 @@
 .summary-card h3 {
     font-size: 1.5rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .summary-details {
-    margin: 1.25rem 0;
-    padding: 1rem 0;
+    margin: 1.75rem 0;
+    padding: 1.25rem 0;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1.1rem;
 }
 
 .summary-row {
@@ -51,18 +51,29 @@
 .summary-label { color: var(--text-secondary); }
 .summary-val { font-weight: 600; color: var(--text-primary); }
 
-/* Provider Selector Dropdown */
+/* Provider Selector Dropdown & Form Groups */
+.summary-card .form-group {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+}
+
 .select-input {
     width: 100%;
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     color: var(--text-primary);
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     border-radius: var(--radius-md);
     outline: none;
     font-size: 0.95rem;
-    margin-top: 0.4rem;
-    margin-bottom: 1.25rem;
     cursor: pointer;
 }
 
