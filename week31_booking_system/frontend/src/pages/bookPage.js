@@ -67,6 +67,10 @@ async function initBookingPage(serviceId) {
             try {
                 const availData = await apiFetchProviderAvailability(selectedProviderId, serviceId, dateStr);
                 slotPicker.render(availData.slots, formatDate(dateStr));
+                const slotContainer = document.getElementById("slot-picker-container");
+                if (slotContainer) {
+                    slotContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
             } catch (err) {
                 showToast(err.message, "error");
             }
@@ -85,6 +89,18 @@ async function initBookingPage(serviceId) {
         document.getElementById("summary-duration").textContent = `${selectedService.duration_minutes} mins`;
         document.getElementById("summary-price").textContent = formatCurrency(selectedService.price);
 
+        function updateProviderBio(provId) {
+            const bioBox = document.getElementById("provider-bio");
+            if (!bioBox) return;
+            const prov = providers.find(p => p.id === provId);
+            if (prov && prov.bio) {
+                bioBox.textContent = `💡 ${prov.bio}`;
+                bioBox.style.display = "block";
+            } else {
+                bioBox.style.display = "none";
+            }
+        }
+
         // Render Provider Dropdown
         const providerSelect = document.getElementById("provider-select");
         if (providers.length === 0) {
@@ -95,10 +111,12 @@ async function initBookingPage(serviceId) {
             `).join("");
 
             selectedProviderId = providers[0].id;
+            updateProviderBio(selectedProviderId);
         }
 
         providerSelect.addEventListener("change", (e) => {
             selectedProviderId = parseInt(e.target.value);
+            updateProviderBio(selectedProviderId);
             selectedDateStr = null;
             selectedSlot = null;
             const summaryDate = document.getElementById("summary-date");
