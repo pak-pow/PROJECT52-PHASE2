@@ -33,7 +33,8 @@ async function initBookingPage(serviceId) {
             selectedSlot = slot;
             const summaryTime = document.getElementById("summary-time");
             if (summaryTime) {
-                summaryTime.textContent = `${slot.start_time} - ${slot.end_time}`;
+                summaryTime.className = "summary-val-highlight";
+                summaryTime.textContent = `⏰ ${slot.start_time} - ${slot.end_time}`;
             }
             validateAndToggleSubmit();
         }
@@ -48,12 +49,14 @@ async function initBookingPage(serviceId) {
 
             const summaryDate = document.getElementById("summary-date");
             if (summaryDate) {
-                summaryDate.textContent = formatDate(dateStr);
+                summaryDate.className = "summary-val-highlight";
+                summaryDate.textContent = `📅 ${formatDate(dateStr)}`;
             }
 
             const summaryTime = document.getElementById("summary-time");
             if (summaryTime) {
-                summaryTime.textContent = "Select time slot";
+                summaryTime.className = "summary-val-placeholder";
+                summaryTime.textContent = "⏰ Select time slot";
             }
 
             if (!selectedProviderId) {
@@ -98,6 +101,16 @@ async function initBookingPage(serviceId) {
             selectedProviderId = parseInt(e.target.value);
             selectedDateStr = null;
             selectedSlot = null;
+            const summaryDate = document.getElementById("summary-date");
+            if (summaryDate) {
+                summaryDate.className = "summary-val-placeholder";
+                summaryDate.textContent = "📌 Select on calendar";
+            }
+            const summaryTime = document.getElementById("summary-time");
+            if (summaryTime) {
+                summaryTime.className = "summary-val-placeholder";
+                summaryTime.textContent = "⏰ Select time slot";
+            }
             calendar.reset();
             slotPicker.reset();
             validateAndToggleSubmit();
