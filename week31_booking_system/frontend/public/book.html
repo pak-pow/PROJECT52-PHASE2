@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify — Schedule Appointment</title>
+    <!-- Synchronous Theme Pre-Initialization -->
+    <script>
+        (function() {
+            var t = localStorage.getItem("booking_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/calendar.css">
+</head>
+<body>
+    <header id="app-header" class="app-header"></header>
+
+    <main class="main-content">
+        <div class="booking-layout">
+            <!-- Sidebar Service & Specialist Summary -->
+            <div class="summary-card">
+                <span class="card-badge" id="service-category">Service</span>
+                <h3 id="service-title">Loading Service...</h3>
+                <p id="service-desc" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;"></p>
+
+                <div class="form-group">
+                    <label for="provider-select">Select Specialist</label>
+                    <select id="provider-select" class="select-input">
+                        <option value="">Loading qualified providers...</option>
+                    </select>
+                </div>
+
+                <div class="summary-details">
+                    <div class="summary-row">
+                        <span class="summary-label">Duration</span>
+                        <span class="summary-val" id="summary-duration">-- mins</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Price</span>
+                        <span class="summary-val" id="summary-price">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Date</span>
+                        <span class="summary-val" id="summary-date">Select on calendar</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Time Slot</span>
+                        <span class="summary-val" id="summary-time">Select time slot</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="booking-notes">Notes / Special Requests (Optional)</label>
+                    <input type="text" id="booking-notes" class="form-input" placeholder="e.g. First time consultation">
+                </div>
+
+                <button id="btn-confirm-booking" class="btn-primary" style="width: 100%; margin-top: 0.5rem;" disabled>
+                    Confirm & Reserve Appointment ➔
+                </button>
+            </div>
+
+            <!-- Calendar & Slot Picker Interactive Area -->
+            <div>
+                <div class="calendar-card">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Select Date</h3>
+                    <div id="calendar-container"></div>
+                    <div id="slot-picker-container"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/bookPage.js"></script>
+</body>
+</html>
