@@ -60,46 +60,64 @@ async function loadAppointments() {
     }
 }
 
-function updateStats() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+function getCategorizedBookings() {
+    const todayStr = new Date().toISOString().split("T")[0];
 
     const upcomingList = allBookings.filter(b => {
-        if (b.status === "cancelled") return false;
-        const bDate = new Date(b.booking_date);
-        return bDate >= today;
+        return b.status === "confirmed" && b.booking_date >= todayStr;
     });
 
-    const historyList = allBookings.filter(b => !upcomingList.includes(b));
+    const pastList = allBookings.filter(b => {
+        return b.status === "confirmed" && b.booking_date < todayStr;
+    });
+
+    const cancelledList = allBookings.filter(b => {
+        return b.status === "cancelled";
+    });
+
+    return { upcomingList, pastList, cancelledList, todayStr };
+}
+
+function updateStats() {
+    const { upcomingList, pastList, cancelledList } = getCategorizedBookings();
 
     document.getElementById("stat-total").textContent = allBookings.length;
     document.getElementById("stat-upcoming").textContent = upcomingList.length;
     document.getElementById("count-upcoming").textContent = upcomingList.length;
-    document.getElementById("count-history").textContent = historyList.length;
+    document.getElementById("count-past").textContent = pastList.length;
+    document.getElementById("count-cancelled").textContent = cancelledList.length;
 }
 
 function renderAppointmentsGrid() {
     const grid = document.getElementById("appointments-grid");
     if (!grid) return;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const { upcomingList, pastList, cancelledList, todayStr } = getCategorizedBookings();
 
-    const upcomingList = allBookings.filter(b => {
-        if (b.status === "cancelled") return false;
-        const bDate = new Date(b.booking_date);
-        return bDate >= today;
-    });
-
-    const historyList = allBookings.filter(b => !upcomingList.includes(b));
-    const activeList = currentTab === "upcoming" ? upcomingList : historyList;
+    let activeList = [];
+    if (currentTab === "upcoming") activeList = upcomingList;
+    else if (currentTab === "past") activeList = pastList;
+    else if (currentTab === "cancelled") activeList = cancelledList;
 
     if (activeList.length === 0) {
+        let label = "Upcoming";
+        let icon = "📅";
+        let desc = "You don't have any active upcoming reservations. Browse our service catalog to book an appointment.";
+        if (currentTab === "past") {
+            label = "Past";
+            icon = "🎉";
+            desc = "No completed past appointments found.";
+        } else if (currentTab === "cancelled") {
+            label = "Cancelled";
+            icon = "🚫";
+            desc = "No cancelled appointments found.";
+        }
+
         grid.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">${currentTab === "upcoming" ? "📅" : "📜"}</div>
-                <h3>No ${currentTab === "upcoming" ? "Upcoming" : "Past or Cancelled"} Appointments</h3>
-                <p>${currentTab === "upcoming" ? "You don't have any active upcoming reservations. Browse our service catalog to book an appointment." : "No appointment history found."}</p>
+                <div class="empty-icon">${icon}</div>
+                <h3>No ${label} Appointments</h3>
+                <p>${desc}</p>
                 ${currentTab === "upcoming" ? `<a href="index.html" class="btn-primary">Browse Services ➔</a>` : ""}
             </div>
         `;
@@ -107,16 +125,28 @@ function renderAppointmentsGrid() {
     }
 
     grid.innerHTML = activeList.map(b => {
-        const isConfirmed = b.status === "confirmed";
         const isCancelled = b.status === "cancelled";
+        const isPast = b.booking_date < todayStr;
+        const isUpcoming = b.status === "confirmed" && !isPast;
+
+        let statusClass = "status-confirmed";
+        let statusText = "✅ Confirmed";
+
+        if (isCancelled) {
+            statusClass = "status-cancelled";
+            statusText = "🚫 Cancelled";
+        } else if (isPast) {
+            statusClass = "status-completed";
+            statusText = "🎉 Completed";
+        }
 
         return `
-            <div class="appointment-card" data-booking-id="${b.id}">
+            <div class="appointment-card ${isCancelled ? "card-cancelled" : ""}" data-booking-id="${b.id}">
                 <div>
                     <div class="card-header-row">
                         <span class="card-badge">${escapeHtml(b.service_category || "Service")}</span>
-                        <span class="status-badge status-${b.status}">
-                            ${isConfirmed ? "✅ Confirmed" : isCancelled ? "🚫 Cancelled" : "🎉 Completed"}
+                        <span class="status-badge ${statusClass}">
+                            ${statusText}
                         </span>
                     </div>
                     <h3 class="app-service-title">${escapeHtml(b.service_title)}</h3>
@@ -132,7 +162,7 @@ function renderAppointmentsGrid() {
 
                 <div class="app-card-footer">
                     <span class="app-price">${formatCurrency(b.price)}</span>
-                    ${isConfirmed ? `
+                    ${isUpcoming ? `
                         <button class="btn-danger btn-cancel-booking" data-booking-id="${b.id}">
                             Cancel Appointment
                         </button>
