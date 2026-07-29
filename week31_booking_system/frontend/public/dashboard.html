@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify — My Appointments</title>
+    <!-- Synchronous Theme Pre-Initialization -->
+    <script>
+        (function() {
+            var t = localStorage.getItem("booking_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+</head>
+<body>
+    <header id="app-header" class="app-header"></header>
+
+    <main class="main-content">
+        <div class="dashboard-container">
+            <!-- User Welcome Banner & Stat Metrics -->
+            <div class="dashboard-banner">
+                <div class="user-welcome">
+                    <h2 id="welcome-title">My Appointments</h2>
+                    <p>Manage your upcoming appointments and booking history</p>
+                </div>
+                <div class="stats-group">
+                    <div class="stat-box">
+                        <div class="stat-val" id="stat-total">0</div>
+                        <div class="stat-lbl">Total</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="stat-upcoming">0</div>
+                        <div class="stat-lbl">Upcoming</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Bar -->
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="upcoming">
+                    <span>Upcoming</span>
+                    <span class="tab-count" id="count-upcoming">0</span>
+                </button>
+                <button class="tab-btn" data-tab="history">
+                    <span>History & Cancelled</span>
+                    <span class="tab-count" id="count-history">0</span>
+                </button>
+            </div>
+
+            <!-- Appointments Cards Grid -->
+            <div id="appointments-grid" class="appointments-grid">
+                <!-- Skeleton Loader -->
+                <div class="appointment-card skeleton" style="height: 220px;"></div>
+                <div class="appointment-card skeleton" style="height: 220px;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/dashboardPage.js"></script>
+</body>
+</html>
