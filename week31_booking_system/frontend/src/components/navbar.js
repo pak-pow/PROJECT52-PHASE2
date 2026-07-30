@@ -19,6 +19,7 @@ export function renderNavbar() {
 
             <nav class="nav-links">
                 <a href="index.html" class="nav-item ${window.location.pathname.endsWith("index.html") || window.location.pathname.endsWith("/") ? "active" : ""}">Services</a>
+                <a href="provider.html" class="nav-item ${window.location.pathname.endsWith("provider.html") ? "active" : ""}">Schedules</a>
                 ${loggedIn ? `
                     <a href="dashboard.html" class="nav-item ${window.location.pathname.endsWith("dashboard.html") ? "active" : ""}">My Appointments</a>
                     <span class="user-greeting" style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 500;">
