@@ -1,8 +1,11 @@
 import { renderNavbar } from "../components/navbar.js";
 import { apiRegister } from "../api/authApi.js";
 import { showToast } from "../utils/helpers.js";
+import { clearSession } from "../utils/authCheck.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Clear any stale local storage session when visiting register view
+    clearSession();
     renderNavbar();
 
     const form = document.getElementById("register-form");
