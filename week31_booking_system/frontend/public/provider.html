@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify — Provider Schedule Agenda</title>
+    <!-- Synchronous Theme Pre-Initialization -->
+    <script>
+        (function() {
+            var t = localStorage.getItem("booking_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/provider.css">
+</head>
+<body>
+    <header id="app-header" class="app-header"></header>
+
+    <main class="main-content">
+        <div class="provider-container">
+            <!-- Header Banner -->
+            <div class="provider-header-card">
+                <div class="provider-info">
+                    <h2 id="provider-name-header">Specialist Daily Agenda</h2>
+                    <p id="provider-title-header">View client appointments, working hours, and daily time slot schedules</p>
+                </div>
+            </div>
+
+            <!-- Provider & Date Controls -->
+            <div class="filter-bar-box">
+                <div class="filter-group">
+                    <label for="provider-select-agenda">Select Specialist</label>
+                    <select id="provider-select-agenda" class="form-input">
+                        <option value="">Loading specialists...</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date-select-agenda">Schedule Date</label>
+                    <input type="date" id="date-select-agenda" class="form-input">
+                </div>
+            </div>
+
+            <!-- Daily Schedule Agenda Box -->
+            <div class="calendar-card">
+                <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;" id="agenda-date-title">
+                    Daily Schedule Agenda
+                </h3>
+                <p class="section-subtitle" id="agenda-date-subtitle">
+                    Showing time slot bookings for selected provider and date
+                </p>
+
+                <div id="agenda-timeline" class="agenda-timeline">
+                    <!-- Skeleton Loader -->
+                    <div class="agenda-slot-row skeleton" style="height: 70px;"></div>
+                    <div class="agenda-slot-row skeleton" style="height: 70px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/providerPage.js"></script>
+</body>
+</html>
