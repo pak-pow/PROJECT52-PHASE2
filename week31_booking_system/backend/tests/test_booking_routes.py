@@ -217,3 +217,16 @@ def test_list_my_bookings_and_cancellation(client):
     my_bookings_after = client.get("/api/bookings/my-bookings", headers=headers).get_json()["bookings"]
     cancelled_b = next(b for b in my_bookings_after if b["id"] == bid)
     assert cancelled_b["status"] == "cancelled"
+
+
+def test_invalid_booking_date_format(client):
+    headers = _get_auth_headers(client)
+    resp = client.post("/api/bookings", json={
+        "provider_id": 1,
+        "service_id": 1,
+        "booking_date": "invalid-date-string",
+        "start_time": "10:00",
+        "end_time": "10:30"
+    }, headers=headers)
+    assert resp.status_code == 400
+    assert "Invalid 'booking_date' format" in resp.get_json()["error"]
