@@ -24,6 +24,12 @@ def create_new_booking():
     if not provider_id or not service_id or not booking_date or not start_time or not end_time:
         return jsonify({"error": "Fields 'provider_id', 'service_id', 'booking_date', 'start_time', and 'end_time' are required."}), 400
 
+    import datetime
+    try:
+        datetime.datetime.strptime(booking_date, "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"error": "Invalid 'booking_date' format. Must be YYYY-MM-DD."}), 400
+
     service = get_service_by_id(service_id)
     if not service:
         return jsonify({"error": "Specified service not found."}), 404
