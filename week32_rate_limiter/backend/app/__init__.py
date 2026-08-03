@@ -2,6 +2,7 @@ from flask import Flask
 from app.config.settings import Config
 from app.routes.health_routes import health_bp
 from app.routes.demo_routes import demo_bp
+from app.routes.auth_routes import auth_bp
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -19,5 +20,6 @@ def create_app(config_class=Config):
     # Register Blueprints
     app.register_blueprint(health_bp)
     app.register_blueprint(demo_bp)
+    app.register_blueprint(auth_bp)
 
     return app
