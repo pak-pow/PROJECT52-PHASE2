@@ -78,3 +78,24 @@ def test_sliding_window_endpoint_limit(client):
     blocked = client.get("/api/sliding/test")
     assert blocked.status_code == 429
     assert blocked.get_json()["error"] == "Too Many Requests"
+
+def test_api_key_issuance_and_status(client):
+    # Issue Enterprise API Key
+    res = client.post("/api/auth/api-key", json={"tier": "enterprise"})
+    assert res.status_code == 201
+    data = res.get_json()
+    assert "api_key" in data
+    assert data["tier"] == "enterprise"
+    assert data["rate_limit"]["capacity"] == 100
+
+    api_key = data["api_key"]
+    status_res = client.get("/api/auth/api-key/status", headers={"X-API-Key": api_key})
+    assert status_res.status_code == 200
+    assert status_res.get_json()["capacity"] == 100
+
+def test_tier_based_rate_limiting(client):
+    # Test pre-seeded Pro key (capacity 30)
+    pro_key = "demo-pro-key"
+    res = client.get("/api/tier/data", headers={"X-API-Key": pro_key})
+    assert res.status_code == 200
+    assert res.headers["X-RateLimit-Limit"] == "30"
