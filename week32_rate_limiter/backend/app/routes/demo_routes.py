@@ -39,3 +39,13 @@ def heavy_action():
         "timestamp": time.time(),
         "limit": "2 reqs / 30 sec (Strict Action Limit)"
     }), 200
+
+@demo_bp.route("/api/tier/data", methods=["GET"])
+@rate_limit(use_tier=True)
+def tier_data():
+    client_id = request.headers.get("X-API-Key", "anonymous")
+    return jsonify({
+        "message": "Tier-based rate limit response!",
+        "client_key": client_id,
+        "timestamp": time.time()
+    }), 200
