@@ -1,0 +1,189 @@
+/* ══════════════════════════════════════════════════════════════
+   Week 32 — Rate Limiter  |  Dashboard & Gauge Styles
+   ══════════════════════════════════════════════════════════════ */
+
+.dashboard-hero {
+    margin-bottom: 2rem;
+}
+
+.dashboard-hero h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-hero p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dashboard-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Tier Selector & API Key Generator */
+.tier-selector-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.tier-btn {
+    flex: 1;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all var(--transition);
+}
+
+.tier-btn:hover {
+    background-color: var(--bg-surface-hover);
+}
+
+.tier-btn.active {
+    background-color: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.key-display-box {
+    background-color: var(--bg-base);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    font-family: monospace;
+    font-size: 0.95rem;
+    color: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+/* Gauge Meter & Stats */
+.gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.capacity-meter-bar {
+    width: 100%;
+    height: 16px;
+    background-color: var(--bg-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin: 0.75rem 0;
+}
+
+.capacity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), var(--accent));
+    transition: width 0.3s ease;
+    border-radius: var(--radius-full);
+}
+
+.capacity-fill.warning {
+    background: linear-gradient(90deg, var(--warning), var(--danger));
+}
+
+.meter-stats {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Burst Controls */
+.burst-button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* Console Log Table */
+.console-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.console-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.console-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+    font-weight: 700;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.console-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: monospace;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.status-badge.ok {
+    background-color: var(--success-bg);
+    color: var(--success);
+}
+
+.status-badge.blocked {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+}
