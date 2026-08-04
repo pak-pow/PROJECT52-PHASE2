@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & API Key Manager — Rate Limiter</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/auth.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("limiter_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="main-content">
+        <div class="auth-card">
+            <h2>🔑 API Key Manager</h2>
+            <p>Access your API Keys, view current usage quotas, and manage subscription rate limits.</p>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Developer Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="dev@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="tier-select">Select Subscription Tier</label>
+                    <select id="tier-select" class="form-input" style="cursor: pointer;">
+                        <option value="free">Free Tier (5 reqs / min)</option>
+                        <option value="pro">Pro Tier (30 reqs / min)</option>
+                        <option value="enterprise">Enterprise Tier (100 reqs / min)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                    🚀 Issue API Key & Enter Control Center
+                </button>
+            </form>
+
+            <p class="auth-footer-text">
+                Need developer registration? <a href="register.html" class="auth-link">Register Account</a>
+            </p>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/loginPage.js"></script>
+</body>
+</html>
