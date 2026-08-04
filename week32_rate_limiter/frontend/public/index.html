@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Rate Limiter — Control Center & Live Burst Tester</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("limiter_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="main-content">
+        <section class="dashboard-hero">
+            <h1>⚡ Rate Limiter Control Center</h1>
+            <p>Test Token Bucket & Sliding Window algorithms in real-time with live burst requests and capacity meters.</p>
+        </section>
+
+        <div class="dashboard-grid">
+            <!-- Card 1: API Key & Tier Configuration -->
+            <div class="dashboard-card">
+                <span class="card-badge">🔑 Client Identity & Subscription</span>
+                <h3>API Key & Tier Selector</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Select an API Key tier to dynamically adjust endpoint capacity limits.</p>
+                
+                <div class="tier-selector-group">
+                    <button class="tier-btn active" data-tier="free">FREE (5/min)</button>
+                    <button class="tier-btn" data-tier="pro">PRO (30/min)</button>
+                    <button class="tier-btn" data-tier="enterprise">ENTERPRISE (100/min)</button>
+                </div>
+
+                <div class="key-display-box">
+                    <span>Active Key: <strong id="active-key-text">demo-free-key</strong></span>
+                    <button id="generate-key-btn" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">🎲 Issue New Key</button>
+                </div>
+            </div>
+
+            <!-- Card 2: Live Capacity Meter -->
+            <div class="dashboard-card">
+                <span class="card-badge">📊 Real-Time Token Bucket</span>
+                <h3>Live Bucket Capacity</h3>
+                
+                <div class="gauge-container">
+                    <div class="capacity-meter-bar">
+                        <div id="capacity-fill" class="capacity-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="meter-stats">
+                        <span>Remaining: <strong id="remaining-count">--</strong> / <span id="limit-total">--</span></span>
+                        <span>Status: <strong id="bucket-status" style="color: var(--success);">READY</strong></span>
+                    </div>
+                </div>
+
+                <div class="burst-button-grid">
+                    <button id="burst-1-btn" class="btn-primary">⚡ Fire 1 Req</button>
+                    <button id="burst-5-btn" class="btn-primary" style="background-color: #8b5cf6;">🚀 Burst 5x</button>
+                    <button id="burst-10-btn" class="btn-primary" style="background-color: #ec4899;">💥 Burst 10x</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: HTTP Response Log Table -->
+        <div class="console-card">
+            <span class="card-badge">📋 Inspection Console</span>
+            <h3>Live HTTP Response Stream</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary);">Real-time log of status codes, remaining token headers, and 429 retry timers.</p>
+
+            <table class="console-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Endpoint</th>
+                        <th>Status</th>
+                        <th>X-RateLimit-Remaining</th>
+                        <th>Retry-After</th>
+                    </tr>
+                </thead>
+                <tbody id="response-log-body">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                            No requests fired yet. Click a burst button above to send live API traffic!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/indexPage.js"></script>
+</body>
+</html>
