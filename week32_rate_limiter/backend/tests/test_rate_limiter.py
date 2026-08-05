@@ -99,3 +99,28 @@ def test_tier_based_rate_limiting(client):
     res = client.get("/api/tier/data", headers={"X-API-Key": pro_key})
     assert res.status_code == 200
     assert res.headers["X-RateLimit-Limit"] == "30"
+
+def test_sliding_window_log_eviction():
+    log = SlidingWindowLog(limit=1, window_seconds=0.2)
+    allowed1, _, _ = log.is_allowed()
+    assert allowed1
+
+    # Immediate second request should fail
+    allowed2, _, _ = log.is_allowed()
+    assert not allowed2
+
+    # Wait for window eviction (0.25s)
+    time.sleep(0.25)
+    allowed3, _, _ = log.is_allowed()
+    assert allowed3
+
+def test_heavy_action_strict_limit(client):
+    # Route limit: 2 reqs / 30 sec
+    res1 = client.get("/api/action/heavy")
+    res2 = client.get("/api/action/heavy")
+    res3 = client.get("/api/action/heavy")
+
+    assert res1.status_code == 200
+    assert res2.status_code == 200
+    assert res3.status_code == 429
+    assert "Retry-After" in res3.headers
