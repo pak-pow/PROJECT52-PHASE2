@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentApiKey = getActiveApiKey();
     let currentTier = "free";
+    let currentAlgorithm = "token_bucket";
+
+    // Day 4 Analytics State
+    let totalReqs = 0;
+    let acceptedReqs = 0;
+    let blockedReqs = 0;
 
     const activeKeyText = document.getElementById("active-key-text");
     const remainingCount = document.getElementById("remaining-count");
@@ -16,11 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const bucketStatus = document.getElementById("bucket-status");
     const responseLogBody = document.getElementById("response-log-body");
 
+    // Analytics Scorecard Elements
+    const statTotalReqs = document.getElementById("stat-total-reqs");
+    const statAcceptedReqs = document.getElementById("stat-accepted-reqs");
+    const statBlockedReqs = document.getElementById("stat-blocked-reqs");
+    const statAcceptanceRate = document.getElementById("stat-acceptance-rate");
+
     if (activeKeyText) activeKeyText.textContent = currentApiKey;
+
+    // Day 4: Algorithm Toggle Buttons
+    document.querySelectorAll(".algo-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".algo-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentAlgorithm = btn.getAttribute("data-algo");
+            const label = currentAlgorithm === "token_bucket" ? "Token Bucket" : "Sliding Window Log";
+            showToast(`Switched rate limiter engine to ${label}.`, "info");
+        });
+    });
 
     // Tier Selector Buttons
     document.querySelectorAll(".tier-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
+        btn.addEventListener("click", async () => {
             document.querySelectorAll(".tier-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
@@ -56,6 +79,43 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Clear Console & Reset Stats Button
+    document.getElementById("clear-console-btn")?.addEventListener("click", () => {
+        totalReqs = 0;
+        acceptedReqs = 0;
+        blockedReqs = 0;
+
+        if (statTotalReqs) statTotalReqs.textContent = "0";
+        if (statAcceptedReqs) statAcceptedReqs.textContent = "0";
+        if (statBlockedReqs) statBlockedReqs.textContent = "0";
+        if (statAcceptanceRate) statAcceptanceRate.textContent = "100%";
+
+        if (responseLogBody) {
+            responseLogBody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                        Console cleared. Click a burst button above to send live API traffic!
+                    </td>
+                </tr>
+            `;
+        }
+        showToast("Inspection console & stats scorecard reset.", "info");
+    });
+
+    // Update Analytics Scorecard
+    function updateAnalytics(isOk) {
+        totalReqs++;
+        if (isOk) acceptedReqs++;
+        else blockedReqs++;
+
+        if (statTotalReqs) statTotalReqs.textContent = totalReqs;
+        if (statAcceptedReqs) statAcceptedReqs.textContent = acceptedReqs;
+        if (statBlockedReqs) statBlockedReqs.textContent = blockedReqs;
+
+        const rate = totalReqs > 0 ? Math.round((acceptedReqs / totalReqs) * 100) : 100;
+        if (statAcceptanceRate) statAcceptanceRate.textContent = `${rate}%`;
+    }
+
     // Helper: Add log row to console table
     function logResponse(status, endpoint, headers) {
         if (!responseLogBody) return;
@@ -66,6 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const isOk = status === 200;
+        updateAnalytics(isOk);
+
         const remaining = headers.remaining !== null ? headers.remaining : "--";
         const limit = headers.limit !== null ? headers.limit : "--";
         const retryAfter = headers.retryAfter ? `${headers.retryAfter}s` : "--";
@@ -97,10 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const nowStr = new Date().toLocaleTimeString();
+        const algoTag = currentAlgorithm === "token_bucket" ? "[Token Bucket]" : "[Sliding Window]";
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${nowStr}</td>
-            <td>${escapeHtml(endpoint)}</td>
+            <td>${escapeHtml(endpoint)} <span style="font-size: 0.75rem; color: var(--text-muted);">${algoTag}</span></td>
             <td>
                 <span class="status-badge ${isOk ? 'ok' : 'blocked'}">
                     ${status} ${isOk ? 'OK' : 'TOO MANY REQUESTS'}
@@ -116,8 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Burst Execution Helper
-    async function fireBurst(count, endpoint = "/tier/data") {
-        showToast(`Firing ${count}x burst requests to ${endpoint}...`, "info");
+    async function fireBurst(count) {
+        const endpoint = currentAlgorithm === "token_bucket" ? "/tier/data" : "/sliding/test";
+        showToast(`Firing ${count}x burst requests using ${currentAlgorithm.replace('_', ' ')}...`, "info");
+        
         for (let i = 0; i < count; i++) {
             try {
                 const res = await sendBurstRequest(endpoint, currentApiKey);
