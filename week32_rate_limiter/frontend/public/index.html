@@ -41,10 +41,16 @@
                 </div>
             </div>
 
-            <!-- Card 2: Live Capacity Meter -->
+            <!-- Card 2: Live Capacity Meter & Algorithm Mode -->
             <div class="dashboard-card">
-                <span class="card-badge">📊 Real-Time Token Bucket</span>
-                <h3>Live Bucket Capacity</h3>
+                <span class="card-badge">⚙️ Engine Controls & Live Capacity</span>
+                <h3>Algorithm & Meter Controls</h3>
+
+                <!-- Day 4: Algorithm Switcher -->
+                <div class="algorithm-toggle-group">
+                    <button class="algo-btn active" data-algo="token_bucket">🪣 Token Bucket</button>
+                    <button class="algo-btn" data-algo="sliding_window">⏱️ Sliding Window Log</button>
+                </div>
                 
                 <div class="gauge-container">
                     <div class="capacity-meter-bar">
@@ -64,17 +70,44 @@
             </div>
         </div>
 
+        <!-- Day 4: Analytics Scorecard Grid -->
+        <div class="stats-scorecard-grid">
+            <div class="stat-card">
+                <div class="stat-card-label">Total Requests</div>
+                <div id="stat-total-reqs" class="stat-card-value">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label" style="color: var(--success);">Accepted (200)</div>
+                <div id="stat-accepted-reqs" class="stat-card-value" style="color: var(--success);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label" style="color: var(--danger);">Blocked (429)</div>
+                <div id="stat-blocked-reqs" class="stat-card-value" style="color: var(--danger);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label" style="color: var(--accent-light);">Acceptance Rate</div>
+                <div id="stat-acceptance-rate" class="stat-card-value" style="color: var(--accent-light);">100%</div>
+            </div>
+        </div>
+
         <!-- Section: HTTP Response Log Table -->
         <div class="console-card">
-            <span class="card-badge">📋 Inspection Console</span>
-            <h3>Live HTTP Response Stream</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary);">Real-time log of status codes, remaining token headers, and 429 retry timers.</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <div>
+                    <span class="card-badge">📋 Inspection Console</span>
+                    <h3 style="margin-bottom: 0;">Live HTTP Response Stream</h3>
+                </div>
+                <button id="clear-console-btn" class="btn-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+                    🧹 Clear Console & Reset Stats
+                </button>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Real-time log of status codes, remaining token headers, and 429 retry timers.</p>
 
             <table class="console-table">
                 <thead>
                     <tr>
                         <th>Time</th>
-                        <th>Endpoint</th>
+                        <th>Endpoint & Algorithm</th>
                         <th>Status</th>
                         <th>X-RateLimit-Remaining</th>
                         <th>Retry-After</th>
@@ -88,6 +121,23 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Day 4: Algorithm Comparison Guide Card -->
+        <div class="comparison-card" style="margin-top: 2rem;">
+            <span class="card-badge">📚 Algorithm Architecture Comparison</span>
+            <h3>Token Bucket vs. Sliding Window Log</h3>
+            
+            <div class="comparison-grid">
+                <div class="comparison-box">
+                    <h4>🪣 Token Bucket Algorithm</h4>
+                    <p>Calculates continuous token refills over microsecond delta intervals. Allows temporary initial burst capacity up to bucket size while guaranteeing a steady average consumption rate.</p>
+                </div>
+                <div class="comparison-box">
+                    <h4>⏱️ Sliding Window Log Algorithm</h4>
+                    <p>Tracks exact request microsecond timestamps in a sliding log array. Automatically evicts expired timestamps older than window duration. Prevents double-capacity window edge exploitation.</p>
+                </div>
+            </div>
         </div>
     </main>
 
