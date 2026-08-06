@@ -6,22 +6,28 @@ def get_client_identifier() -> str:
     Priority:
     1. Header `X-API-Key`
     2. Bearer Authorization token
-    3. Header `X-Forwarded-For` (first proxy IP)
+    3. Header `X-Forwarded-For` (first proxy IP, sanitized)
     4. Remote Addr IP fallback
     """
     api_key = request.headers.get("X-API-Key")
-    if api_key:
+    if api_key and api_key.strip():
         return f"apikey:{api_key.strip()}"
 
     auth_header = request.headers.get("Authorization", "")
-    if auth_header.startswith("Bearer "):
+    if auth_header and auth_header.startswith("Bearer "):
         token = auth_header[7:].strip()
         if token:
             return f"token:{token}"
 
     forwarded = request.headers.get("X-Forwarded-For")
-    if forwarded:
+    if forwarded and forwarded.strip():
+        # Handle multi-proxy chains "client_ip, proxy1_ip, proxy2_ip"
         client_ip = forwarded.split(",")[0].strip()
-        return f"ip:{client_ip}"
+        if client_ip:
+            return f"ip:{client_ip}"
 
-    return f"ip:{request.remote_addr or '127.0.0.1'}"
+    remote = request.remote_addr
+    if remote and remote.strip():
+        return f"ip:{remote.strip()}"
+
+    return "ip:127.0.0.1"
