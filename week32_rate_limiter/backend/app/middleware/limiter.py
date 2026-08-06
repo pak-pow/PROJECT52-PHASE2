@@ -28,7 +28,15 @@ def rate_limit(limit: int = 10, window: float = 60.0, algorithm: str = "token_bu
                 effective_limit = t_limit
                 effective_window = t_window
 
-            key = f"limiter:{f.__name__}:{client_id}"
+            # Day 5: Allow dynamic query parameter overrides for custom testing
+            c_limit = request.args.get("custom_limit", type=int)
+            c_window = request.args.get("custom_window", type=float)
+            if c_limit and c_limit > 0:
+                effective_limit = c_limit
+            if c_window and c_window > 0:
+                effective_window = c_window
+
+            key = f"limiter:{f.__name__}:{client_id}:{effective_limit}:{effective_window}"
             now = time.time()
 
             if algorithm == "token_bucket":
