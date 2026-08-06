@@ -39,6 +39,16 @@
                     <span>Active Key: <strong id="active-key-text">demo-free-key</strong></span>
                     <button id="generate-key-btn" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">🎲 Issue New Key</button>
                 </div>
+
+                <!-- Day 5: Custom Sandbox Threshold Form -->
+                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">🧪 Custom Sandbox Limits</span>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="number" id="custom-limit-input" class="form-input" placeholder="Limit" min="1" value="3" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; flex: 1;">
+                        <input type="number" id="custom-window-input" class="form-input" placeholder="Window (sec)" min="1" value="5" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; flex: 1;">
+                        <button id="fire-custom-sandbox-btn" class="btn-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.8rem; white-space: nowrap;">🎯 Test Sandbox</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Card 2: Live Capacity Meter & Algorithm Mode -->
