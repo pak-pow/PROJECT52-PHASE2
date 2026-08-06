@@ -124,3 +124,20 @@ def test_heavy_action_strict_limit(client):
     assert res2.status_code == 200
     assert res3.status_code == 429
     assert "Retry-After" in res3.headers
+
+def test_custom_sandbox_query_parameters(client):
+    # Pass custom limit = 2
+    res1 = client.get("/api/custom/test?custom_limit=2&custom_window=10")
+    res2 = client.get("/api/custom/test?custom_limit=2&custom_window=10")
+    res3 = client.get("/api/custom/test?custom_limit=2&custom_window=10")
+
+    assert res1.status_code == 200
+    assert res1.headers["X-RateLimit-Limit"] == "2"
+    assert res2.status_code == 200
+    assert res3.status_code == 429
+
+def test_multi_proxy_x_forwarded_for_header(client):
+    headers = {"X-Forwarded-For": "203.0.113.195, 70.41.3.18, 150.172.238.178"}
+    res = client.get("/api/public/ping", headers=headers)
+    assert res.status_code == 200
+    assert "X-RateLimit-Remaining" in res.headers
