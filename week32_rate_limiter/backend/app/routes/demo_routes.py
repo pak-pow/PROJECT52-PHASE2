@@ -49,3 +49,15 @@ def tier_data():
         "client_key": client_id,
         "timestamp": time.time()
     }), 200
+
+@demo_bp.route("/api/custom/test", methods=["GET"])
+@rate_limit(limit=3, window=5.0)
+def custom_test():
+    c_limit = request.args.get("custom_limit", 3)
+    c_window = request.args.get("custom_window", 5.0)
+    return jsonify({
+        "message": "Custom sandbox rate limit response!",
+        "effective_limit": c_limit,
+        "effective_window": c_window,
+        "timestamp": time.time()
+    }), 200
