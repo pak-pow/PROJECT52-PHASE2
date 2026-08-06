@@ -14,11 +14,15 @@ export async function issueApiKey(tier = "free") {
     return await res.json();
 }
 
-export async function sendBurstRequest(endpoint = "/data/burst-test", apiKey = "") {
+export async function sendBurstRequest(endpoint = "/data/burst-test", apiKey = "", queryParams = {}) {
     const headers = {};
     if (apiKey) headers["X-API-Key"] = apiKey;
 
-    const res = await fetch(`${API_BASE}${endpoint}`, { method: "GET", headers });
+    let url = `${API_BASE}${endpoint}`;
+    const params = new URLSearchParams(queryParams).toString();
+    if (params) url += `?${params}`;
+
+    const res = await fetch(url, { method: "GET", headers });
     const data = await res.json().catch(() => ({}));
     
     return {
