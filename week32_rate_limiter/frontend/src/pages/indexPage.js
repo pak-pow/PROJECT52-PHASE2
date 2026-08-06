@@ -197,4 +197,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("burst-1-btn")?.addEventListener("click", () => fireBurst(1));
     document.getElementById("burst-5-btn")?.addEventListener("click", () => fireBurst(5));
     document.getElementById("burst-10-btn")?.addEventListener("click", () => fireBurst(10));
+
+    // Day 5: Custom Sandbox Test Handler
+    document.getElementById("fire-custom-sandbox-btn")?.addEventListener("click", async () => {
+        const cLimit = parseInt(document.getElementById("custom-limit-input")?.value || "3");
+        const cWindow = parseFloat(document.getElementById("custom-window-input")?.value || "5");
+
+        if (isNaN(cLimit) || cLimit < 1 || isNaN(cWindow) || cWindow < 1) {
+            showToast("Please enter valid positive numbers for limit and window.", "warning");
+            return;
+        }
+
+        const endpoint = "/custom/test";
+        showToast(`Testing Custom Sandbox Limit (${cLimit} reqs / ${cWindow}s)...`, "info");
+        try {
+            const res = await sendBurstRequest(endpoint, currentApiKey, {
+                custom_limit: cLimit,
+                custom_window: cWindow
+            });
+            logResponse(res.status, `${endpoint}?limit=${cLimit}&win=${cWindow}s`, res.headers);
+        } catch (err) {
+            logResponse(500, endpoint, { remaining: 0, limit: 0, retryAfter: null });
+        }
+    });
 });
