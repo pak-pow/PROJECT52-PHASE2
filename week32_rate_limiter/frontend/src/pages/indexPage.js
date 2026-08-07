@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let blockedReqs = 0;
 
     const activeKeyText = document.getElementById("active-key-text");
+    const activeTierPill = document.getElementById("active-tier-pill");
+    const activeCapacityText = document.getElementById("active-capacity-text");
     const remainingCount = document.getElementById("remaining-count");
     const limitTotal = document.getElementById("limit-total");
     const capacityFill = document.getElementById("capacity-fill");
@@ -28,7 +30,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const statBlockedReqs = document.getElementById("stat-blocked-reqs");
     const statAcceptanceRate = document.getElementById("stat-acceptance-rate");
 
-    if (activeKeyText) activeKeyText.textContent = currentApiKey;
+    // Day 6: Sync Active Session UI Details
+    async function syncActiveSessionUI() {
+        if (activeKeyText) activeKeyText.textContent = currentApiKey;
+
+        try {
+            const res = await fetch("http://127.0.0.1:5000/api/auth/api-key/status", {
+                headers: { "X-API-Key": currentApiKey }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const tier = (data.tier || "free").toLowerCase();
+                const cap = data.capacity || 5;
+                const win = data.window_seconds || 60;
+
+                if (activeTierPill) {
+                    activeTierPill.textContent = `${tier.toUpperCase()} (${cap} REQS/MIN)`;
+                    activeTierPill.className = `tier-pill ${tier}`;
+                }
+                if (activeCapacityText) {
+                    activeCapacityText.textContent = `${cap} Requests / ${win} Sec`;
+                }
+                return;
+            }
+        } catch (e) {
+            // Fallback UI
+        }
+
+        if (activeTierPill) {
+            activeTierPill.textContent = "FREE (5 REQS/MIN)";
+            activeTierPill.className = "tier-pill free";
+        }
+        if (activeCapacityText) {
+            activeCapacityText.textContent = "5 Requests / 60 Sec";
+        }
+    }
+
+    syncActiveSessionUI();
 
     // Day 4: Algorithm Toggle Buttons
     document.querySelectorAll(".algo-btn").forEach(btn => {
@@ -39,44 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const label = currentAlgorithm === "token_bucket" ? "Token Bucket" : "Sliding Window Log";
             showToast(`Switched rate limiter engine to ${label}.`, "info");
         });
-    });
-
-    // Tier Selector Buttons
-    document.querySelectorAll(".tier-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-            document.querySelectorAll(".tier-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            currentTier = btn.getAttribute("data-tier");
-            showToast(`Selected ${currentTier.toUpperCase()} tier. Generating API key...`, "info");
-
-            try {
-                const res = await issueApiKey(currentTier);
-                if (res.api_key) {
-                    currentApiKey = res.api_key;
-                    setActiveApiKey(currentApiKey);
-                    if (activeKeyText) activeKeyText.textContent = currentApiKey;
-                    showToast(`Active API Key updated: ${currentApiKey}`, "success");
-                }
-            } catch (err) {
-                showToast("Failed to issue API key.", "error");
-            }
-        });
-    });
-
-    // Issue New Key Button
-    document.getElementById("generate-key-btn")?.addEventListener("click", async () => {
-        try {
-            const res = await issueApiKey(currentTier);
-            if (res.api_key) {
-                currentApiKey = res.api_key;
-                setActiveApiKey(currentApiKey);
-                if (activeKeyText) activeKeyText.textContent = currentApiKey;
-                showToast(`Issued new key: ${currentApiKey}`, "success");
-            }
-        } catch (err) {
-            showToast("Failed to generate key.", "error");
-        }
     });
 
     // Clear Console & Reset Stats Button
