@@ -188,6 +188,41 @@
     color: var(--danger);
 }
 
+/* Day 6: Active Developer Session Display */
+.session-card-info {
+    background-color: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.session-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.session-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.tier-pill {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tier-pill.free { background-color: var(--bg-surface); color: var(--text-secondary); }
+.tier-pill.pro { background-color: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid #8b5cf6; }
+.tier-pill.enterprise { background-color: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid #ec4899; }
+
 /* Day 4: Algorithm Switcher & Analytics Scorecard */
 .algorithm-toggle-group {
     display: flex;
