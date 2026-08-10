@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanvasSync — Interactive Collaborative Workspace</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/canvas.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("canvas_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="canvas-workspace">
+        <canvas id="drawing-canvas"></canvas>
+        <div id="toolbar-container"></div>
+    </main>
+
+    <script type="module" src="../src/pages/roomPage.js"></script>
+</body>
+</html>
