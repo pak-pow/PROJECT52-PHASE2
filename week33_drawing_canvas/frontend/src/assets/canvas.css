@@ -146,3 +146,75 @@
     align-items: center;
     gap: 0.5rem;
 }
+
+/* Day 3: Floating Remote Peer Cursors */
+.remote-cursor-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: transform 0.05s linear;
+}
+
+.cursor-pointer-svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.cursor-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+/* Day 3: Participant List Sidebar Overlay */
+.participant-panel {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-md);
+    z-index: 200;
+    min-width: 180px;
+}
+
+.participant-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.35rem;
+}
+
+.participant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.user-avatar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full);
+}
