@@ -6,6 +6,7 @@
     <title>CanvasSync — Interactive Collaborative Workspace</title>
     <link rel="stylesheet" href="../src/assets/base.css">
     <link rel="stylesheet" href="../src/assets/canvas.css">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
         (function() {
             var theme = localStorage.getItem("canvas_theme") || "dark";
@@ -16,8 +17,10 @@
 <body>
     <div id="navbar-container"></div>
 
-    <main class="canvas-workspace">
+    <main class="canvas-workspace" id="workspace-main">
         <canvas id="drawing-canvas"></canvas>
+        <div id="cursor-container"></div>
+        <div id="participant-container"></div>
         <div id="toolbar-container"></div>
     </main>
 
