@@ -3,8 +3,9 @@ import { renderToolbar } from "../components/toolbar.js";
 import { renderParticipantList } from "../components/participantList.js";
 import { CanvasEngine } from "../engine/canvasEngine.js";
 import { CursorTracker } from "../engine/cursorTracker.js";
+import { HistoryManager } from "../engine/historyManager.js";
 import { SocketClient } from "../api/socketClient.js";
-import { getQueryParam, showToast } from "../utils/helpers.js";
+import { getQueryParam, showToast, exportCanvasToPng } from "../utils/helpers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const roomCode = (getQueryParam("room") || "CANVAS-DEMO").toUpperCase();
@@ -17,26 +18,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!canvasElement) return;
 
-    // 1. Initialize Real-Time WebSocket Client
+    // 1. Initialize Real-Time WebSocket Client & History Manager
     const socketClient = new SocketClient("http://127.0.0.1:5000");
     const cursorTracker = new CursorTracker(cursorContainer);
+    const historyManager = new HistoryManager(30);
 
     let myAvatarColor = "#3b82f6";
+
+    // Save initial blank canvas state
+    setTimeout(() => {
+        historyManager.saveState(canvasEngine.ctx, canvasElement);
+    }, 200);
 
     // 2. Initialize Canvas Engine with stroke emit callback
     const canvasEngine = new CanvasEngine(canvasElement, (strokeData) => {
         socketClient.sendStroke(roomCode, strokeData);
+        historyManager.saveState(canvasEngine.ctx, canvasElement);
     });
 
     // 3. Render Floating Toolbar Controls
     renderToolbar(
-        (tool) => canvasEngine.setTool(tool),
+        (tool) => {
+            canvasEngine.setTool(tool);
+            showToast(`Tool: ${tool.toUpperCase()}`, "info");
+        },
         (color) => canvasEngine.setColor(color),
         (size) => canvasEngine.setSize(size),
         () => {
             socketClient.clearCanvas(roomCode);
+        },
+        () => {
+            const success = historyManager.undo(canvasEngine.ctx, canvasElement);
+            if (success) showToast("Undo action ↩️", "info");
+        },
+        () => {
+            const success = historyManager.redo(canvasEngine.ctx, canvasElement);
+            if (success) showToast("Redo action ↪️", "info");
+        },
+        () => {
+            exportCanvasToPng(canvasElement, roomCode);
         }
     );
+
+    // Keyboard Shortcuts (Ctrl+Z / Ctrl+Y)
+    window.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === "z") {
+            e.preventDefault();
+            const success = historyManager.undo(canvasEngine.ctx, canvasElement);
+            if (success) showToast("Undo action ↩️", "info");
+        } else if (e.ctrlKey && e.key.toLowerCase() === "y") {
+            e.preventDefault();
+            const success = historyManager.redo(canvasEngine.ctx, canvasElement);
+            if (success) showToast("Redo action ↪️", "info");
+        }
+    });
 
     // 4. WebSocket Event Handlers
     socketClient.on("onConnect", () => {
