@@ -98,19 +98,37 @@ export class CanvasEngine {
         this.ctx.lineWidth = this.currentSize;
 
         const pts = this.currentPoints;
-        if (pts.length < 2) {
-            this.ctx.arc(coords.x, coords.y, this.currentSize / 2, 0, Math.PI * 2);
-            this.ctx.fillStyle = this.ctx.strokeStyle;
-            this.ctx.fill();
-        } else {
-            // Draw smooth quadratic curve path
-            this.ctx.moveTo(pts[0].x, pts[0].y);
-            for (let i = 1; i < pts.length - 1; i++) {
-                const xc = (pts[i].x + pts[i + 1].x) / 2;
-                const yc = (pts[i].y + pts[i + 1].y) / 2;
-                this.ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
-            }
+        const start = pts[0];
+        const end = coords;
+
+        if (this.currentTool === "line") {
+            this.ctx.moveTo(start.x, start.y);
+            this.ctx.lineTo(end.x, end.y);
             this.ctx.stroke();
+        } else if (this.currentTool === "rectangle") {
+            this.ctx.strokeRect(start.x, start.y, end.x - start.x, end.y - start.y);
+        } else if (this.currentTool === "circle") {
+            const rx = Math.abs(end.x - start.x) / 2;
+            const ry = Math.abs(end.y - start.y) / 2;
+            const cx = Math.min(start.x, end.x) + rx;
+            const cy = Math.min(start.y, end.y) + ry;
+            this.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+        } else {
+            // Freehand Brush & Eraser
+            if (pts.length < 2) {
+                this.ctx.arc(coords.x, coords.y, this.currentSize / 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = this.ctx.strokeStyle;
+                this.ctx.fill();
+            } else {
+                this.ctx.moveTo(pts[0].x, pts[0].y);
+                for (let i = 1; i < pts.length - 1; i++) {
+                    const xc = (pts[i].x + pts[i + 1].x) / 2;
+                    const yc = (pts[i].y + pts[i + 1].y) / 2;
+                    this.ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
+                }
+                this.ctx.stroke();
+            }
         }
     }
 
@@ -144,18 +162,36 @@ export class CanvasEngine {
         this.ctx.lineWidth = strokeData.size;
 
         const pts = strokeData.points;
-        if (pts.length < 2) {
-            this.ctx.arc(pts[0].x, pts[0].y, strokeData.size / 2, 0, Math.PI * 2);
-            this.ctx.fillStyle = this.ctx.strokeStyle;
-            this.ctx.fill();
-        } else {
-            this.ctx.moveTo(pts[0].x, pts[0].y);
-            for (let i = 1; i < pts.length - 1; i++) {
-                const xc = (pts[i].x + pts[i + 1].x) / 2;
-                const yc = (pts[i].y + pts[i + 1].y) / 2;
-                this.ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
-            }
+        const start = pts[0];
+        const end = pts[pts.length - 1];
+
+        if (strokeData.tool === "line") {
+            this.ctx.moveTo(start.x, start.y);
+            this.ctx.lineTo(end.x, end.y);
             this.ctx.stroke();
+        } else if (strokeData.tool === "rectangle") {
+            this.ctx.strokeRect(start.x, start.y, end.x - start.x, end.y - start.y);
+        } else if (strokeData.tool === "circle") {
+            const rx = Math.abs(end.x - start.x) / 2;
+            const ry = Math.abs(end.y - start.y) / 2;
+            const cx = Math.min(start.x, end.x) + rx;
+            const cy = Math.min(start.y, end.y) + ry;
+            this.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+        } else {
+            if (pts.length < 2) {
+                this.ctx.arc(pts[0].x, pts[0].y, strokeData.size / 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = this.ctx.strokeStyle;
+                this.ctx.fill();
+            } else {
+                this.ctx.moveTo(pts[0].x, pts[0].y);
+                for (let i = 1; i < pts.length - 1; i++) {
+                    const xc = (pts[i].x + pts[i + 1].x) / 2;
+                    const yc = (pts[i].y + pts[i + 1].y) / 2;
+                    this.ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
+                }
+                this.ctx.stroke();
+            }
         }
         this.ctx.restore();
     }
