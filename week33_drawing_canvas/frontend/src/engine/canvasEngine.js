@@ -85,41 +85,68 @@ export class CanvasEngine {
         this.isDrawing = true;
         const coords = this._getCanvasCoords(e);
         this.currentPoints = [coords];
+
+        // Capture canvas snapshot for shape live preview overlay
+        if (["line", "rectangle", "circle"].includes(this.currentTool)) {
+            const dpr = window.devicePixelRatio || 1;
+            this.shapePreviewSnapshot = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 
     draw(e) {
         if (!this.isDrawing) return;
 
         const coords = this._getCanvasCoords(e);
-        this.currentPoints.push(coords);
-
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = this.currentTool === "eraser" ? (document.documentElement.getAttribute("data-theme") === "dark" ? "#0f172a" : "#ffffff") : this.currentColor;
-        this.ctx.lineWidth = this.currentSize;
-
-        const pts = this.currentPoints;
-        const start = pts[0];
+        const start = this.currentPoints[0];
         const end = coords;
 
-        if (this.currentTool === "line") {
-            this.ctx.moveTo(start.x, start.y);
-            this.ctx.lineTo(end.x, end.y);
-            this.ctx.stroke();
-        } else if (this.currentTool === "rectangle") {
-            this.ctx.strokeRect(start.x, start.y, end.x - start.x, end.y - start.y);
-        } else if (this.currentTool === "circle") {
-            const rx = Math.abs(end.x - start.x) / 2;
-            const ry = Math.abs(end.y - start.y) / 2;
-            const cx = Math.min(start.x, end.x) + rx;
-            const cy = Math.min(start.y, end.y) + ry;
-            this.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-            this.ctx.stroke();
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.lineCap = "round";
+        this.ctx.lineJoin = "round";
+        this.ctx.lineWidth = this.currentSize;
+
+        if (this.currentTool === "eraser") {
+            this.ctx.globalCompositeOperation = "destination-out";
+            this.ctx.strokeStyle = "rgba(0,0,0,1)";
+        } else {
+            this.ctx.globalCompositeOperation = "source-over";
+            this.ctx.strokeStyle = this.currentColor;
+        }
+
+        if (["line", "rectangle", "circle"].includes(this.currentTool)) {
+            // Restore snapshot to clear previous drag frames
+            if (this.shapePreviewSnapshot) {
+                this.ctx.putImageData(this.shapePreviewSnapshot, 0, 0);
+            }
+
+            if (this.currentTool === "line") {
+                this.ctx.moveTo(start.x, start.y);
+                this.ctx.lineTo(end.x, end.y);
+                this.ctx.stroke();
+            } else if (this.currentTool === "rectangle") {
+                this.ctx.strokeRect(start.x, start.y, end.x - start.x, end.y - start.y);
+            } else if (this.currentTool === "circle") {
+                const rx = Math.abs(end.x - start.x) / 2;
+                const ry = Math.abs(end.y - start.y) / 2;
+                const cx = Math.min(start.x, end.x) + rx;
+                const cy = Math.min(start.y, end.y) + ry;
+                this.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                this.ctx.stroke();
+            }
         } else {
             // Freehand Brush & Eraser
+            this.currentPoints.push(coords);
+            const pts = this.currentPoints;
+
             if (pts.length < 2) {
                 this.ctx.arc(coords.x, coords.y, this.currentSize / 2, 0, Math.PI * 2);
-                this.ctx.fillStyle = this.ctx.strokeStyle;
-                this.ctx.fill();
+                if (this.currentTool === "eraser") {
+                    this.ctx.fill();
+                } else {
+                    this.ctx.fillStyle = this.currentColor;
+                    this.ctx.fill();
+                }
             } else {
                 this.ctx.moveTo(pts[0].x, pts[0].y);
                 for (let i = 1; i < pts.length - 1; i++) {
@@ -130,18 +157,27 @@ export class CanvasEngine {
                 this.ctx.stroke();
             }
         }
+
+        this.ctx.restore();
     }
 
     stopDrawing() {
         if (!this.isDrawing) return;
         this.isDrawing = false;
 
-        if (this.currentPoints.length > 0) {
+        let strokePoints = this.currentPoints;
+
+        if (["line", "rectangle", "circle"].includes(this.currentTool) && this.currentPoints.length > 0) {
+            // Shape tools only need start and end coordinates
+            strokePoints = [this.currentPoints[0], this.currentPoints[this.currentPoints.length - 1]];
+        }
+
+        if (strokePoints.length > 0) {
             const strokeData = {
                 tool: this.currentTool,
                 color: this.currentColor,
                 size: this.currentSize,
-                points: this.currentPoints
+                points: strokePoints
             };
 
             if (this.onStrokeDrawn) {
@@ -149,6 +185,7 @@ export class CanvasEngine {
             }
         }
         this.currentPoints = [];
+        this.shapePreviewSnapshot = null;
     }
 
     renderExternalStroke(strokeData) {
@@ -158,8 +195,15 @@ export class CanvasEngine {
         this.ctx.beginPath();
         this.ctx.lineCap = "round";
         this.ctx.lineJoin = "round";
-        this.ctx.strokeStyle = strokeData.tool === "eraser" ? (document.documentElement.getAttribute("data-theme") === "dark" ? "#0f172a" : "#ffffff") : strokeData.color;
         this.ctx.lineWidth = strokeData.size;
+
+        if (strokeData.tool === "eraser") {
+            this.ctx.globalCompositeOperation = "destination-out";
+            this.ctx.strokeStyle = "rgba(0,0,0,1)";
+        } else {
+            this.ctx.globalCompositeOperation = "source-over";
+            this.ctx.strokeStyle = strokeData.color || "#3b82f6";
+        }
 
         const pts = strokeData.points;
         const start = pts[0];
@@ -181,8 +225,12 @@ export class CanvasEngine {
         } else {
             if (pts.length < 2) {
                 this.ctx.arc(pts[0].x, pts[0].y, strokeData.size / 2, 0, Math.PI * 2);
-                this.ctx.fillStyle = this.ctx.strokeStyle;
-                this.ctx.fill();
+                if (strokeData.tool === "eraser") {
+                    this.ctx.fill();
+                } else {
+                    this.ctx.fillStyle = strokeData.color || "#3b82f6";
+                    this.ctx.fill();
+                }
             } else {
                 this.ctx.moveTo(pts[0].x, pts[0].y);
                 for (let i = 1; i < pts.length - 1; i++) {
