@@ -97,28 +97,27 @@ export class CanvasEngine {
         if (!this.isDrawing) return;
 
         const coords = this._getCanvasCoords(e);
+        this.currentPoints.push(coords);
+
         const start = this.currentPoints[0];
         const end = coords;
 
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.lineCap = "round";
-        this.ctx.lineJoin = "round";
-        this.ctx.lineWidth = this.currentSize;
-
-        if (this.currentTool === "eraser") {
-            this.ctx.globalCompositeOperation = "destination-out";
-            this.ctx.strokeStyle = "rgba(0,0,0,1)";
-        } else {
-            this.ctx.globalCompositeOperation = "source-over";
-            this.ctx.strokeStyle = this.currentColor;
-        }
-
         if (["line", "rectangle", "circle"].includes(this.currentTool)) {
-            // Restore snapshot to clear previous drag frames
+            // Restore snapshot to clear previous drag preview frame
             if (this.shapePreviewSnapshot) {
                 this.ctx.putImageData(this.shapePreviewSnapshot, 0, 0);
             }
+
+            this.ctx.save();
+            const dpr = window.devicePixelRatio || 1;
+            this.ctx.scale(dpr, dpr);
+
+            this.ctx.beginPath();
+            this.ctx.lineCap = "round";
+            this.ctx.lineJoin = "round";
+            this.ctx.lineWidth = this.currentSize;
+            this.ctx.strokeStyle = this.currentColor;
+            this.ctx.globalCompositeOperation = "source-over";
 
             if (this.currentTool === "line") {
                 this.ctx.moveTo(start.x, start.y);
@@ -134,9 +133,23 @@ export class CanvasEngine {
                 this.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
                 this.ctx.stroke();
             }
+            this.ctx.restore();
         } else {
             // Freehand Brush & Eraser
-            this.currentPoints.push(coords);
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.lineCap = "round";
+            this.ctx.lineJoin = "round";
+            this.ctx.lineWidth = this.currentSize;
+
+            if (this.currentTool === "eraser") {
+                this.ctx.globalCompositeOperation = "destination-out";
+                this.ctx.strokeStyle = "rgba(0,0,0,1)";
+            } else {
+                this.ctx.globalCompositeOperation = "source-over";
+                this.ctx.strokeStyle = this.currentColor;
+            }
+
             const pts = this.currentPoints;
 
             if (pts.length < 2) {
@@ -156,9 +169,8 @@ export class CanvasEngine {
                 }
                 this.ctx.stroke();
             }
+            this.ctx.restore();
         }
-
-        this.ctx.restore();
     }
 
     stopDrawing() {
@@ -167,9 +179,11 @@ export class CanvasEngine {
 
         let strokePoints = this.currentPoints;
 
-        if (["line", "rectangle", "circle"].includes(this.currentTool) && this.currentPoints.length > 0) {
-            // Shape tools only need start and end coordinates
-            strokePoints = [this.currentPoints[0], this.currentPoints[this.currentPoints.length - 1]];
+        if (["line", "rectangle", "circle"].includes(this.currentTool) && this.currentPoints.length > 1) {
+            // Shape tools take start point and final release point
+            const start = this.currentPoints[0];
+            const end = this.currentPoints[this.currentPoints.length - 1];
+            strokePoints = [start, end];
         }
 
         if (strokePoints.length > 0) {
@@ -192,6 +206,9 @@ export class CanvasEngine {
         if (!strokeData || !strokeData.points || strokeData.points.length === 0) return;
 
         this.ctx.save();
+        const dpr = window.devicePixelRatio || 1;
+        this.ctx.scale(dpr, dpr);
+
         this.ctx.beginPath();
         this.ctx.lineCap = "round";
         this.ctx.lineJoin = "round";
