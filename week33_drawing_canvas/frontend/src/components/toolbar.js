@@ -1,4 +1,4 @@
-export function renderToolbar(onToolChange, onColorChange, onSizeChange, onClearCanvas) {
+export function renderToolbar(onToolChange, onColorChange, onSizeChange, onClearCanvas, onUndo, onRedo, onExportPng) {
     const toolbarContainer = document.getElementById("toolbar-container");
     if (!toolbarContainer) return;
 
@@ -16,8 +16,11 @@ export function renderToolbar(onToolChange, onColorChange, onSizeChange, onClear
         <div class="floating-toolbar">
             <!-- Tool Selection Group -->
             <div class="tool-group">
-                <button class="tool-btn active" data-tool="brush" title="Brush Tool">✏️</button>
+                <button class="tool-btn active" data-tool="brush" title="Brush Tool (Freehand)">✏️</button>
                 <button class="tool-btn" data-tool="eraser" title="Eraser Tool">🧹</button>
+                <button class="tool-btn" data-tool="line" title="Straight Line Tool">📏</button>
+                <button class="tool-btn" data-tool="rectangle" title="Rectangle Tool">🔲</button>
+                <button class="tool-btn" data-tool="circle" title="Circle Tool">⭕</button>
             </div>
 
             <div class="toolbar-divider"></div>
@@ -39,17 +42,30 @@ export function renderToolbar(onToolChange, onColorChange, onSizeChange, onClear
 
             <div class="toolbar-divider"></div>
 
-            <!-- Clear Canvas Button -->
-            <button id="clear-canvas-btn" class="btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; color: var(--danger);">
-                🗑️ Clear
-            </button>
+            <!-- History Controls: Undo / Redo -->
+            <div class="tool-group">
+                <button id="undo-btn" class="tool-btn" title="Undo (Ctrl+Z)">↩️</button>
+                <button id="redo-btn" class="tool-btn" title="Redo (Ctrl+Y)">↪️</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Actions: Export PNG & Clear Canvas -->
+            <div class="tool-group">
+                <button id="export-png-btn" class="btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">
+                    💾 Export PNG
+                </button>
+                <button id="clear-canvas-btn" class="btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; color: var(--danger);">
+                    🗑️ Clear
+                </button>
+            </div>
         </div>
     `;
 
     // Event Handlers
-    toolbarContainer.querySelectorAll(".tool-btn").forEach(btn => {
+    toolbarContainer.querySelectorAll(".tool-btn[data-tool]").forEach(btn => {
         btn.addEventListener("click", () => {
-            toolbarContainer.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+            toolbarContainer.querySelectorAll(".tool-btn[data-tool]").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             const tool = btn.getAttribute("data-tool");
             if (onToolChange) onToolChange(tool);
@@ -80,6 +96,18 @@ export function renderToolbar(onToolChange, onColorChange, onSizeChange, onClear
             sizePreview.style.height = `${Math.max(4, Math.min(24, val))}px`;
         }
         if (onSizeChange) onSizeChange(val);
+    });
+
+    document.getElementById("undo-btn")?.addEventListener("click", () => {
+        if (onUndo) onUndo();
+    });
+
+    document.getElementById("redo-btn")?.addEventListener("click", () => {
+        if (onRedo) onRedo();
+    });
+
+    document.getElementById("export-png-btn")?.addEventListener("click", () => {
+        if (onExportPng) onExportPng();
     });
 
     document.getElementById("clear-canvas-btn")?.addEventListener("click", () => {
