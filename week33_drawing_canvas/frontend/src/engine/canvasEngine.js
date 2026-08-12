@@ -206,9 +206,6 @@ export class CanvasEngine {
         if (!strokeData || !strokeData.points || strokeData.points.length === 0) return;
 
         this.ctx.save();
-        const dpr = window.devicePixelRatio || 1;
-        this.ctx.scale(dpr, dpr);
-
         this.ctx.beginPath();
         this.ctx.lineCap = "round";
         this.ctx.lineJoin = "round";
