@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanvasSync — Real-Time Collaborative Multi-User Drawing</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/lobby.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("canvas_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="lobby-container">
+        <section class="lobby-hero">
+            <h1>Collaborative <span style="color: var(--accent-light);">Whiteboard</span> & Canvas</h1>
+            <p>Draw, sketch, and brainstorm together in real-time with friends and teammates. Enter a room code to join or create your own room instantly!</p>
+        </section>
+
+        <div class="lobby-grid">
+            <!-- Card 1: Create New Room -->
+            <div class="lobby-card">
+                <h3>✨ Create a New Drawing Room</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Start a fresh canvas room and share the room code with your friends.</p>
+                
+                <div class="form-group">
+                    <label for="create-nickname-input" class="form-label">Your Nickname</label>
+                    <input type="text" id="create-nickname-input" class="form-input" placeholder="e.g. Picasso" value="Artist-Picasso">
+                </div>
+
+                <button id="create-room-btn" class="btn-primary" style="width: 100%; padding: 0.8rem;">
+                    🚀 Create Room & Draw →
+                </button>
+            </div>
+
+            <!-- Card 2: Join Existing Room -->
+            <div class="lobby-card">
+                <h3>🔑 Join Existing Room</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Enter a 6-character room code to hop directly into an active room.</p>
+                
+                <div class="form-group">
+                    <label for="join-nickname-input" class="form-label">Your Nickname</label>
+                    <input type="text" id="join-nickname-input" class="form-input" placeholder="e.g. Monet" value="Artist-Monet">
+                </div>
+
+                <div class="form-group">
+                    <label for="join-room-code-input" class="form-label">Room Code</label>
+                    <input type="text" id="join-room-code-input" class="form-input" placeholder="e.g. CANVAS-A1B2C" style="font-family: monospace; text-transform: uppercase;">
+                </div>
+
+                <button id="join-room-btn" class="btn-secondary" style="width: 100%; padding: 0.8rem; background-color: var(--accent-light); color: #ffffff; border: none; font-weight: 700;">
+                    🎨 Enter Room →
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/indexPage.js"></script>
+</body>
+</html>
