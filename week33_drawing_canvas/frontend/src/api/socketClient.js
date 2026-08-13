@@ -47,6 +47,14 @@ export class SocketClient {
             if (this.handlers.onCursorUpdate) this.handlers.onCursorUpdate(data);
         });
 
+        this.socket.on("chat_received", (data) => {
+            if (this.handlers.onChatReceived) this.handlers.onChatReceived(data);
+        });
+
+        this.socket.on("reaction_received", (data) => {
+            if (this.handlers.onReactionReceived) this.handlers.onReactionReceived(data);
+        });
+
         this.socket.on("error", (data) => {
             if (this.handlers.onError) this.handlers.onError(data);
         });
@@ -67,6 +75,18 @@ export class SocketClient {
     sendCursor(roomCode, username, color, x, y) {
         if (this.socket) {
             this.socket.emit("cursor_move", { room_code: roomCode, username, color, x, y });
+        }
+    }
+
+    sendChatMessage(roomCode, username, message) {
+        if (this.socket) {
+            this.socket.emit("send_chat", { room_code: roomCode, username, message });
+        }
+    }
+
+    sendReaction(roomCode, username, emoji) {
+        if (this.socket) {
+            this.socket.emit("send_reaction", { room_code: roomCode, username, emoji });
         }
     }
 
