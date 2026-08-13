@@ -1,6 +1,7 @@
 import { renderNavbar } from "../components/navbar.js";
 import { renderToolbar } from "../components/toolbar.js";
 import { renderParticipantList } from "../components/participantList.js";
+import { renderChatBox, appendChatMessage, triggerFloatingEmoji } from "../components/chatBox.js";
 import { CanvasEngine } from "../engine/canvasEngine.js";
 import { CursorTracker } from "../engine/cursorTracker.js";
 import { HistoryManager } from "../engine/historyManager.js";
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvasElement = document.getElementById("drawing-canvas");
     const cursorContainer = document.getElementById("cursor-container");
     const participantContainer = document.getElementById("participant-container");
+    const chatContainer = document.getElementById("chat-container");
 
     if (!canvasElement) return;
 
@@ -60,6 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+    // 4. Render In-Room Chat Box
+    renderChatBox(
+        chatContainer,
+        (msgText) => {
+            socketClient.sendChatMessage(roomCode, username, msgText);
+        },
+        (emoji) => {
+            socketClient.sendReaction(roomCode, username, emoji);
+        }
+    );
+
     // Keyboard Shortcuts (Ctrl+Z / Ctrl+Y)
     window.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.key.toLowerCase() === "z") {
@@ -73,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 4. WebSocket Event Handlers
+    // 5. WebSocket Event Handlers
     socketClient.on("onConnect", () => {
         socketClient.joinRoom(roomCode, username);
     });
@@ -118,7 +131,15 @@ document.addEventListener("DOMContentLoaded", () => {
         cursorTracker.updateRemoteCursor(cursorData);
     });
 
-    // 5. Throttled Mousemove Cursor Broadcast (30fps)
+    socketClient.on("onChatReceived", (chatData) => {
+        appendChatMessage(chatData.username, chatData.message);
+    });
+
+    socketClient.on("onReactionReceived", (reactionData) => {
+        triggerFloatingEmoji(reactionData.username, reactionData.emoji);
+    });
+
+    // 6. Throttled Mousemove Cursor Broadcast (30fps)
     let lastCursorEmit = 0;
     canvasElement.addEventListener("mousemove", (e) => {
         const now = Date.now();
