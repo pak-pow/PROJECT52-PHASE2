@@ -54,3 +54,31 @@ def register_room_events(socketio):
                 "x": data.get("x"),
                 "y": data.get("y")
             }, to=room_code, include_self=False)
+
+    @socketio.on("send_chat")
+    def handle_send_chat(data):
+        sid = request.sid
+        room_code = data.get("room_code")
+        text = data.get("message", "").strip()
+        username = data.get("username", "Artist")
+
+        if room_code and text:
+            emit("chat_received", {
+                "sid": sid,
+                "username": username,
+                "message": text
+            }, to=room_code)
+
+    @socketio.on("send_reaction")
+    def handle_send_reaction(data):
+        sid = request.sid
+        room_code = data.get("room_code")
+        emoji = data.get("emoji", "❤️")
+        username = data.get("username", "Artist")
+
+        if room_code:
+            emit("reaction_received", {
+                "sid": sid,
+                "username": username,
+                "emoji": emoji
+            }, to=room_code)
