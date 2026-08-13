@@ -218,3 +218,138 @@
     height: 10px;
     border-radius: var(--radius-full);
 }
+
+/* Day 5: In-Room Collapsible Chat Panel */
+.chat-panel {
+    position: absolute;
+    bottom: 2rem;
+    left: 1.5rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 200;
+    width: 280px;
+    overflow: hidden;
+}
+
+.chat-header {
+    background-color: var(--bg-surface);
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+
+.chat-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.chat-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0.65rem;
+    gap: 0.5rem;
+}
+
+.chat-messages {
+    height: 140px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+}
+
+.chat-system-msg {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.chat-msg-item {
+    word-break: break-word;
+}
+
+.chat-sender {
+    color: var(--accent-light);
+    margin-right: 0.25rem;
+}
+
+.reaction-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0.25rem;
+    border-top: 1px dashed var(--border);
+}
+
+.reaction-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.reaction-btn:hover {
+    transform: scale(1.3);
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.chat-input {
+    flex: 1;
+    background-color: var(--bg-base);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: var(--accent);
+}
+
+/* Day 5: Floating Reaction Emoji Animations */
+.floating-emoji-badge {
+    position: absolute;
+    z-index: 300;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    animation: floatUp 2.5s ease-out forwards;
+    font-size: 1.2rem;
+}
+
+.floating-emoji-badge small {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-light);
+}
+
+@keyframes floatUp {
+    0% { opacity: 0; transform: translateY(0) scale(0.6); }
+    15% { opacity: 1; transform: translateY(-30px) scale(1.1); }
+    80% { opacity: 1; transform: translateY(-180px) scale(1); }
+    100% { opacity: 0; transform: translateY(-240px) scale(0.8); }
+}
