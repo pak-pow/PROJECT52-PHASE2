@@ -56,3 +56,29 @@ def test_room_manager_unit():
     room_code, left_info = room_manager.leave_room("sid-101")
     assert room_code == "UNIT-ROOM"
     assert left_info["user"]["username"] == "Vee"
+
+def test_get_nonexistent_room_404(client):
+    res = client.get("/api/rooms/NONEXISTENT-ROOM")
+    assert res.status_code == 404
+    data = res.get_json()
+    assert "error" in data
+
+def test_random_room_code_generation():
+    code1 = room_manager.generate_room_code()
+    code2 = room_manager.generate_room_code()
+    assert code1.startswith("CANVAS-")
+    assert code2.startswith("CANVAS-")
+    assert code1 != code2
+
+def test_room_manager_multiple_users():
+    code = room_manager.create_room("MULTI-USER-ROOM")
+    res1 = room_manager.join_room(code, "sid-1", "Artist 1")
+    res2 = room_manager.join_room(code, "sid-2", "Artist 2")
+
+    assert len(res2["users_list"]) == 2
+    details = room_manager.get_room_details(code)
+    assert details["user_count"] == 2
+
+    room_code, left_info = room_manager.leave_room("sid-1")
+    assert room_code == "MULTI-USER-ROOM"
+    assert len(left_info["remaining_users"]) == 1
