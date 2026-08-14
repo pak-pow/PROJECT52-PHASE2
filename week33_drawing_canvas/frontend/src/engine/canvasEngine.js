@@ -13,6 +13,7 @@ export class CanvasEngine {
         this.currentSize = 5;
         this.isDrawing = false;
         this.currentPoints = [];
+        this.renderedStrokes = [];
 
         this._initCanvas();
         this._attachEventListeners();
@@ -37,9 +38,15 @@ export class CanvasEngine {
         this.canvas.style.width = `${width}px`;
         this.canvas.style.height = `${height}px`;
 
-        this.ctx.scale(dpr, dpr);
         this.ctx.lineCap = "round";
         this.ctx.lineJoin = "round";
+
+        // Redraw all accumulated strokes after canvas buffer resize
+        if (this.renderedStrokes && this.renderedStrokes.length > 0) {
+            this.renderedStrokes.forEach(stroke => {
+                this.renderExternalStroke(stroke, false);
+            });
+        }
     }
 
     setTool(tool) { this.currentTool = tool; }
@@ -194,6 +201,8 @@ export class CanvasEngine {
                 points: strokePoints
             };
 
+            this.renderedStrokes.push(strokeData);
+
             if (this.onStrokeDrawn) {
                 this.onStrokeDrawn(strokeData);
             }
@@ -202,8 +211,12 @@ export class CanvasEngine {
         this.shapePreviewSnapshot = null;
     }
 
-    renderExternalStroke(strokeData) {
+    renderExternalStroke(strokeData, saveToHistory = true) {
         if (!strokeData || !strokeData.points || strokeData.points.length === 0) return;
+
+        if (saveToHistory) {
+            this.renderedStrokes.push(strokeData);
+        }
 
         this.ctx.save();
         this.ctx.beginPath();
@@ -261,5 +274,6 @@ export class CanvasEngine {
     clear() {
         const dpr = window.devicePixelRatio || 1;
         this.ctx.clearRect(0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
+        this.renderedStrokes = [];
     }
 }
