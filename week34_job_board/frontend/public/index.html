@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechJobs — Find Your Next Tech Career</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <section class="catalog-hero">
+        <h1>Find Your Next <span style="color: var(--accent-light);">Tech Role</span></h1>
+        <p>Discover top engineering, data science, and product roles at leading tech companies.</p>
+        
+        <div class="search-bar-container">
+            <input type="text" id="search-keyword" class="search-input" placeholder="Search by job title, skill, or company (e.g. Python, React)...">
+            <button id="search-btn" class="btn-primary">Search Jobs</button>
+        </div>
+    </section>
+
+    <main class="catalog-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filter-sidebar">
+            <div>
+                <div class="filter-group-title">Location</div>
+                <select id="filter-location" class="filter-select">
+                    <option value="">All Locations</option>
+                    <option value="Remote">Remote</option>
+                    <option value="New York">New York, NY</option>
+                    <option value="San Francisco">San Francisco, CA</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="filter-group-title">Job Type</div>
+                <select id="filter-type" class="filter-select">
+                    <option value="">All Job Types</option>
+                    <option value="Full-time">Full-Time</option>
+                    <option value="Remote">Remote Only</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Part-time">Part-Time</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="filter-group-title">Category</div>
+                <select id="filter-category" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Frontend">Frontend</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="filter-group-title">Min Salary ($/yr)</div>
+                <select id="filter-salary" class="filter-select">
+                    <option value="0">Any Salary</option>
+                    <option value="80000">$80,000+</option>
+                    <option value="120000">$120,000+</option>
+                    <option value="150000">$150,000+</option>
+                </select>
+            </div>
+
+            <button id="reset-filters-btn" class="btn-sm-outline" style="width: 100%;">Reset Filters</button>
+        </aside>
+
+        <!-- Job Grid -->
+        <section>
+            <div id="job-count-badge" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 600;">
+                Loading job opportunities...
+            </div>
+
+            <div id="job-grid" class="job-grid">
+                <!-- Job cards populated via indexPage.js -->
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../src/pages/indexPage.js"></script>
+</body>
+</html>
