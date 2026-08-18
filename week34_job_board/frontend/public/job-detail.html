@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Overview — TechJobs</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <link rel="stylesheet" href="../src/assets/detail.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="detail-container">
+        <a href="index.html" class="back-link">← Back to Job Search</a>
+
+        <div id="job-detail-card" class="job-detail-card">
+            <!-- Job detail details populated by jobDetailPage.js -->
+            <p style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading job listing details...</p>
+        </div>
+    </main>
+
+    <!-- Application Form Modal -->
+    <div id="application-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-job-title">Apply for Position</h3>
+                <button id="modal-close-btn" class="modal-close-btn">✕</button>
+            </div>
+
+            <form id="application-form" class="modal-form">
+                <input type="hidden" id="modal-job-id">
+
+                <div class="form-group">
+                    <label for="applicant-name" class="form-label">Full Name</label>
+                    <input type="text" id="applicant-name" class="form-input" placeholder="e.g. Vee Coder" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="applicant-email" class="form-label">Email Address</label>
+                    <input type="email" id="applicant-email" class="form-input" placeholder="e.g. vee@dev.io" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="applicant-resume" class="form-label">Resume File (PDF / DOCX)</label>
+                    <input type="file" id="applicant-resume" class="form-input" accept=".pdf,.doc,.docx,.txt" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="applicant-cover-letter" class="form-label">Cover Letter / Note</label>
+                    <textarea id="applicant-cover-letter" class="form-textarea" rows="4" placeholder="Why are you a great fit for this tech role?"></textarea>
+                </div>
+
+                <button type="submit" id="submit-app-btn" class="btn-primary" style="width: 100%; padding: 0.75rem;">
+                    🚀 Submit Application →
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../src/pages/jobDetailPage.js"></script>
+</body>
+</html>
