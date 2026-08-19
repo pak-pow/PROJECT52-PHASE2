@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Portal — TechJobs</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <link rel="stylesheet" href="../src/assets/detail.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="dashboard-title-group">
+                <h1>Employer Recruitment Workspace</h1>
+                <p id="company-subtitle">Manage company job postings, review resumes, and update candidate statuses.</p>
+            </div>
+            <button id="open-post-modal-btn" class="btn-primary">
+                ➕ Post New Job
+            </button>
+        </div>
+
+        <!-- Metrics Overview -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">💼</div>
+                <div>
+                    <div id="metric-active-jobs" class="metric-number">0</div>
+                    <div class="metric-label">Active Job Listings</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">📑</div>
+                <div>
+                    <div id="metric-total-apps" class="metric-number">0</div>
+                    <div class="metric-label">Total Applications Received</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">⏳</div>
+                <div>
+                    <div id="metric-pending-apps" class="metric-number">0</div>
+                    <div class="metric-label">Pending Candidate Reviews</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employer Posted Jobs & Applicants Section -->
+        <section>
+            <div class="section-title">
+                <span>Active Job Listings & Candidate Submissions</span>
+            </div>
+
+            <div id="employer-job-list">
+                <!-- Posted jobs populated by employerPage.js -->
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading employer job postings...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create New Job Modal -->
+    <div id="post-job-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 620px;">
+            <div class="modal-header">
+                <h3>Post a New Tech Opportunity</h3>
+                <button id="post-modal-close-btn" class="modal-close-btn">✕</button>
+            </div>
+
+            <form id="post-job-form" class="modal-form">
+                <div class="form-group">
+                    <label for="post-title" class="form-label">Position Title</label>
+                    <input type="text" id="post-title" class="form-input" placeholder="e.g. Senior Backend Engineer" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="post-company" class="form-label">Company Name</label>
+                        <input type="text" id="post-company" class="form-input" placeholder="e.g. TechCorp Labs" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-location" class="form-label">Location</label>
+                        <input type="text" id="post-location" class="form-input" placeholder="e.g. Remote (US) / NYC" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="post-type" class="form-label">Job Type</label>
+                        <select id="post-type" class="form-input">
+                            <option value="Full-time">Full-Time</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Part-time">Part-Time</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-category" class="form-label">Category</label>
+                        <select id="post-category" class="form-input">
+                            <option value="Engineering">Engineering</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Frontend">Frontend</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="post-salary-min" class="form-label">Min Salary ($/yr)</label>
+                        <input type="number" id="post-salary-min" class="form-input" placeholder="100000" step="5000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-salary-max" class="form-label">Max Salary ($/yr)</label>
+                        <input type="number" id="post-salary-max" class="form-input" placeholder="140000" step="5000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-description" class="form-label">Job Description</label>
+                    <textarea id="post-description" class="form-textarea" rows="4" placeholder="Describe the responsibilities and role summary..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-requirements" class="form-label">Requirements & Skills</label>
+                    <textarea id="post-requirements" class="form-textarea" rows="3" placeholder="Key skills required (e.g. Python, Flask, Docker)..."></textarea>
+                </div>
+
+                <button type="submit" id="submit-post-btn" class="btn-primary" style="width: 100%; padding: 0.75rem;">
+                    ✨ Publish Job Posting →
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../src/pages/employerPage.js"></script>
+</body>
+</html>
