@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — TechJobs</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <link rel="stylesheet" href="../src/assets/detail.css">
+    <link rel="stylesheet" href="../src/assets/auth.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Create Your Account</h2>
+                <p>Join as a Job Seeker to apply for tech jobs or as an Employer to post listings.</p>
+            </div>
+
+            <form id="register-form" class="auth-form">
+                <div class="role-selector-row">
+                    <button type="button" id="role-applicant-btn" class="role-btn active" data-role="applicant">👨‍💻 Job Seeker</button>
+                    <button type="button" id="role-employer-btn" class="role-btn" data-role="employer">🏢 Employer</button>
+                </div>
+                <input type="hidden" id="register-role" value="applicant">
+
+                <div class="form-group">
+                    <label for="register-username" class="form-label">Username</label>
+                    <input type="text" id="register-username" class="form-input" placeholder="e.g. vee_coder" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="register-email" class="form-label">Email Address</label>
+                    <input type="email" id="register-email" class="form-input" placeholder="e.g. vee@dev.io" required>
+                </div>
+
+                <div id="company-name-group" class="form-group" style="display: none;">
+                    <label for="register-company" class="form-label">Company Name</label>
+                    <input type="text" id="register-company" class="form-input" placeholder="e.g. TechCorp Labs">
+                </div>
+
+                <div class="form-group">
+                    <label for="register-password" class="form-label">Password</label>
+                    <input type="password" id="register-password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="register-submit-btn" class="btn-primary" style="width: 100%; padding: 0.75rem;">
+                    Create Account →
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Sign In</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/registerPage.js"></script>
+</body>
+</html>
