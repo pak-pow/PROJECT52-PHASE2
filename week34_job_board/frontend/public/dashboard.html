@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Dashboard — TechJobs</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <link rel="stylesheet" href="../src/assets/detail.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="dashboard-title-group">
+                <h1 id="welcome-heading">Applicant Workspace</h1>
+                <p>Track your submitted job applications and manage your saved job bookmarks.</p>
+            </div>
+        </div>
+
+        <!-- Metrics Overview -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📑</div>
+                <div>
+                    <div id="metric-apps-submitted" class="metric-number">0</div>
+                    <div class="metric-label">Applications Submitted</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🎯</div>
+                <div>
+                    <div id="metric-interviews" class="metric-number">0</div>
+                    <div class="metric-label">Interviews / Active Reviews</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🔖</div>
+                <div>
+                    <div id="metric-saved-jobs" class="metric-number">0</div>
+                    <div class="metric-label">Saved Job Bookmarks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Submitted Applications Track -->
+        <section>
+            <div class="section-title">
+                <span>Submitted Job Applications & Live Statuses</span>
+            </div>
+
+            <div id="applicant-app-list">
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading submitted applications...</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Saved Jobs Bookmarks -->
+        <section style="margin-top: 1rem;">
+            <div class="section-title">
+                <span>Saved Tech Job Bookmarks</span>
+            </div>
+
+            <div id="saved-jobs-grid" class="job-grid">
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading saved jobs...</p>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../src/pages/dashboardPage.js"></script>
+</body>
+</html>
