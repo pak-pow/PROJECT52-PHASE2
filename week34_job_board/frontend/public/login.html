@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — TechJobs</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/catalog.css">
+    <link rel="stylesheet" href="../src/assets/detail.css">
+    <link rel="stylesheet" href="../src/assets/auth.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("jobboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your applications or post new job listings.</p>
+            </div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email" class="form-label">Email Address</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="e.g. vee@dev.io" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password" class="form-label">Password</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="login-submit-btn" class="btn-primary" style="width: 100%; padding: 0.75rem;">
+                    Sign In →
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="register.html">Create an Account</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/loginPage.js"></script>
+</body>
+</html>
