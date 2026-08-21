@@ -89,3 +89,58 @@ def test_application_submission_and_status_update(client):
     status_res = client.put(f"/api/applications/{app_data['id']}/status", json={"status": "Interviewing"})
     assert status_res.status_code == 200
     assert status_res.get_json()["status"] == "Interviewing"
+
+def test_job_not_found_404(client):
+    res = client.get("/api/jobs/99999")
+    assert res.status_code == 404
+    data = res.get_json()
+    assert "error" in data
+
+def test_invalid_status_update_400(client):
+    emp = UserModel.create_user("emp_bad_status", "badstatus@corp.com", "pass123", role="employer")
+    job = JobModel.create_job(emp["id"], "DevOps Engineer", "DevOps Inc", "Remote", "Full-time", 90000, 120000, "Engineering", "CI/CD Pipelines")
+    app_record = ApplicationModel.create_application(job["id"], "Candidate A", "cand@test.com")
+
+    res = client.put(f"/api/applications/{app_record['id']}/status", json={"status": "INVALID_STATUS"})
+    assert res.status_code == 400
+    assert "error" in res.get_json()
+
+def test_saved_jobs_bookmarking(client):
+    user = UserModel.create_user("bookmark_user", "bm@test.com", "pass123", role="applicant")
+    emp = UserModel.create_user("emp_bm", "empbm@test.com", "pass123", role="employer")
+    job = JobModel.create_job(emp["id"], "Data Engineer", "DataCorp", "Chicago", "Full-time", 110000, 140000, "Data Science", "SQL & PySpark")
+
+    # Bookmark job
+    post_res = client.post(f"/api/users/{user['id']}/saved-jobs", json={"job_id": job["id"]})
+    assert post_res.status_code == 200
+    assert post_res.get_json()["saved"] is True
+
+    # Get saved jobs
+    get_res = client.get(f"/api/users/{user['id']}/saved-jobs")
+    assert get_res.status_code == 200
+    saved_list = get_res.get_json()
+    assert len(saved_list) == 1
+    assert saved_list[0]["title"] == "Data Engineer"
+
+    # Un-bookmark job
+    unbm_res = client.post(f"/api/users/{user['id']}/saved-jobs", json={"job_id": job["id"]})
+    assert unbm_res.status_code == 200
+    assert unbm_res.get_json()["saved"] is False
+
+def test_resume_file_upload_application(client):
+    import io
+    emp = UserModel.create_user("emp_upload", "upload@corp.com", "pass123", role="employer")
+    job = JobModel.create_job(emp["id"], "Full-Stack Dev", "WebCorp", "Remote", "Remote", 95000, 125000, "Engineering", "Flask & React")
+
+    data = {
+        "job_id": str(job["id"]),
+        "applicant_name": "Test Applicant",
+        "applicant_email": "applicant@upload.com",
+        "cover_letter": "Please see attached resume.",
+        "resume": (io.BytesIO(b"%PDF-1.4 sample resume content"), "my_resume.pdf")
+    }
+
+    res = client.post("/api/applications", data=data, content_type="multipart/form-data")
+    assert res.status_code == 201
+    app_data = res.get_json()
+    assert app_data["resume_path"].endswith("my_resume.pdf")
