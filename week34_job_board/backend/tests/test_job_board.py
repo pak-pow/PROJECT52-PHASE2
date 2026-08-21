@@ -144,3 +144,66 @@ def test_resume_file_upload_application(client):
     assert res.status_code == 201
     app_data = res.get_json()
     assert app_data["resume_path"].endswith("my_resume.pdf")
+
+def test_duplicate_email_registration_409(client):
+    client.post("/api/auth/register", json={
+        "username": "user1",
+        "email": "duplicate@test.com",
+        "password": "password123"
+    })
+    res2 = client.post("/api/auth/register", json={
+        "username": "user2",
+        "email": "duplicate@test.com",
+        "password": "password123"
+    })
+    assert res2.status_code == 409
+    assert "already exists" in res2.get_json()["error"]
+
+def test_invalid_login_credentials_401(client):
+    client.post("/api/auth/register", json={
+        "username": "user_auth",
+        "email": "auth@test.com",
+        "password": "correct_password"
+    })
+    res = client.post("/api/auth/login", json={
+        "email": "auth@test.com",
+        "password": "WRONG_PASSWORD"
+    })
+    assert res.status_code == 401
+    assert "Invalid email or password" in res.get_json()["error"]
+
+def test_job_deletion_workflow(client):
+    emp = UserModel.create_user("emp_del", "del@corp.com", "pass123", role="employer")
+    job = JobModel.create_job(emp["id"], "QA Automation Engineer", "QACorp", "Remote", "Full-time", 80000, 100000, "Engineering", "Pytest & Selenium")
+
+    del_res = client.delete(f"/api/jobs/{job['id']}")
+    assert del_res.status_code == 200
+    assert del_res.get_json()["message"] == "Job listing deleted successfully."
+
+    get_res = client.get(f"/api/jobs/{job['id']}")
+    assert get_res.status_code == 404
+
+def test_job_creation_missing_fields_400(client):
+    res = client.post("/api/jobs", json={
+        "employer_id": 1,
+        "title": "Incomplete Job"
+        # missing company, location, description
+    })
+    assert res.status_code == 400
+    assert "required" in res.get_json()["error"]
+
+def test_applicant_applications_history_list(client):
+    emp = UserModel.create_user("emp_hist", "hist@corp.com", "pass123", role="employer")
+    applicant = UserModel.create_user("applicant_hist", "apphist@dev.com", "pass123", role="applicant")
+
+    job1 = JobModel.create_job(emp["id"], "Node.js Developer", "Backend LLC", "Remote", "Remote", 100000, 130000, "Engineering", "Express & Mongo")
+    job2 = JobModel.create_job(emp["id"], "Python Developer", "Data Inc", "NYC", "Full-time", 110000, 140000, "Engineering", "FastAPI")
+
+    ApplicationModel.create_application(job1["id"], "Applicant Hist", "apphist@dev.com", applicant_id=applicant["id"], cover_letter="App 1")
+    ApplicationModel.create_application(job2["id"], "Applicant Hist", "apphist@dev.com", applicant_id=applicant["id"], cover_letter="App 2")
+
+    res = client.get(f"/api/users/{applicant['id']}/applications")
+    assert res.status_code == 200
+    apps_list = res.get_json()
+    assert len(apps_list) == 2
+    assert apps_list[0]["applicant_id"] == applicant["id"]
