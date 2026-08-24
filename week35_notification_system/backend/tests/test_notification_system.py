@@ -60,3 +60,46 @@ def test_notification_model_crud():
     updated = NotificationModel.update_status(n["id"], "Sent")
     assert updated["status"] == "Sent"
     assert updated["sent_at"] is not None
+
+def test_email_provider():
+    from app.providers.email_provider import EmailNotificationProvider
+    provider = EmailNotificationProvider()
+    assert provider.channel_name() == "email"
+    assert provider.validate_recipient("vee@dev.io") is True
+    assert provider.validate_recipient("invalid_email") is False
+
+    res = provider.send("vee@dev.io", "Hello Email!", subject="Test Email")
+    assert res["success"] is True
+    assert res["message_id"].startswith("email_")
+
+def test_sms_provider():
+    from app.providers.sms_provider import SMSNotificationProvider
+    provider = SMSNotificationProvider()
+    assert provider.channel_name() == "sms"
+    assert provider.validate_recipient("+14155552671") is True
+    assert provider.validate_recipient("123") is False
+
+    res = provider.send("+14155552671", "Hello SMS!")
+    assert res["success"] is True
+    assert res["message_id"].startswith("sms_")
+
+def test_webhook_provider():
+    from app.providers.webhook_provider import WebhookNotificationProvider
+    provider = WebhookNotificationProvider()
+    assert provider.channel_name() == "webhook"
+    assert provider.validate_recipient("https://api.myapp.com/webhook") is True
+    assert provider.validate_recipient("not_a_url") is False
+
+    res = provider.send("https://api.myapp.com/webhook", '{"event": "alert"}')
+    assert res["success"] is True
+    assert res["message_id"].startswith("hook_")
+
+def test_template_engine_rendering():
+    from app.services.template_engine import TemplateEngine
+    tmpl_text = "Welcome to {{ company }}, {{ username }}!"
+    rendered = TemplateEngine.render(tmpl_text, {"company": "TechJobs", "username": "Vee"})
+    assert rendered == "Welcome to TechJobs, Vee!"
+
+    vars_extracted = TemplateEngine.extract_variables(tmpl_text)
+    assert "company" in vars_extracted
+    assert "username" in vars_extracted
