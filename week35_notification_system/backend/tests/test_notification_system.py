@@ -103,3 +103,43 @@ def test_template_engine_rendering():
     vars_extracted = TemplateEngine.extract_variables(tmpl_text)
     assert "company" in vars_extracted
     assert "username" in vars_extracted
+
+def test_task_queue_async_execution():
+    import time
+    from app.queues.worker import enqueue_notification_job
+
+    n = NotificationModel.create_notification(
+        user_id=1,
+        recipient="queue_test@dev.io",
+        channel="email",
+        content="Async Queue Execution Test",
+        subject="Queue Test"
+    )
+    assert n["status"] == "Queued"
+
+    enqueue_notification_job(n["id"])
+    time.sleep(0.3)
+
+    processed = NotificationModel.get_by_id(n["id"])
+    assert processed["status"] == "Sent"
+
+def test_user_opt_out_skipping():
+    import time
+    from app.queues.worker import enqueue_notification_job
+
+    UserPreferenceModel.set_user_preferences(user_id=88, email_enabled=True, sms_enabled=False)
+
+    n = NotificationModel.create_notification(
+        user_id=88,
+        recipient="+14155552671",
+        channel="sms",
+        content="This should be skipped due to opt-out"
+    )
+    assert n["status"] == "Queued"
+
+    enqueue_notification_job(n["id"])
+    time.sleep(0.3)
+
+    processed = NotificationModel.get_by_id(n["id"])
+    assert processed["status"] == "Skipped"
+    assert "opted out" in processed["error_message"]
