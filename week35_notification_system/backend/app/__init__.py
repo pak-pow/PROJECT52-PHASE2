@@ -3,6 +3,9 @@ from flask_cors import CORS
 from app.config.settings import Config
 from app.db import init_db
 from app.routes.health_routes import health_bp
+from app.routes.notification_routes import notification_bp
+from app.routes.preference_routes import preference_bp
+from app.routes.template_routes import template_bp
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +15,9 @@ def create_app():
 
     # Register Blueprints
     app.register_blueprint(health_bp)
+    app.register_blueprint(notification_bp)
+    app.register_blueprint(preference_bp)
+    app.register_blueprint(template_bp)
 
     # Initialize Database Schema
     with app.app_context():
