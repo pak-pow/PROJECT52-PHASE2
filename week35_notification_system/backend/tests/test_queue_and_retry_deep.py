@@ -13,8 +13,11 @@ from app.queues.task_queue import notification_queue
 
 @pytest.fixture
 def app_instance():
+    from app.db import init_db
     app = create_app()
     app.config["TESTING"] = True
+    with app.app_context():
+        init_db()
     return app
 
 def test_queue_enqueue_and_sent_status(app_instance):
@@ -68,7 +71,7 @@ def test_queue_invalid_recipient_format_causes_failure(app_instance):
         content="Bad recipient test"
     )
     enqueue_notification_job(n["id"])
-    time.sleep(1.0) # Wait for retry attempts
+    time.sleep(3.0) # Wait for exponential backoff retries (0.4s + 0.8s + 1.6s)
 
     updated = NotificationModel.get_by_id(n["id"])
     assert updated["status"] == "Failed"
