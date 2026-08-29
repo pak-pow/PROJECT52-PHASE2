@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotificationEngine — Multi-Channel Dispatcher Dashboard</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("notif_system_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="dashboard-wrapper">
+        <!-- Metric Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon-box">📨</div>
+                <div>
+                    <div id="metric-total-dispatched" class="metric-value">0</div>
+                    <div class="metric-title">Total Dispatched</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-box" style="color: var(--success); background-color: rgba(16, 185, 129, 0.15);">✅</div>
+                <div>
+                    <div id="metric-sent-count" class="metric-value">0</div>
+                    <div class="metric-title">Delivered (Sent)</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-box" style="color: var(--warning); background-color: rgba(245, 158, 11, 0.15);">🛡️</div>
+                <div>
+                    <div id="metric-skipped-count" class="metric-value">0</div>
+                    <div class="metric-title">Opt-Out Skipped</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-box" style="color: var(--info); background-color: rgba(59, 130, 246, 0.15);">⚡</div>
+                <div>
+                    <div id="metric-queue-status" class="metric-value">Active</div>
+                    <div class="metric-title">ThreadPool Queue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Main Workspace -->
+        <div class="dashboard-grid">
+            <!-- Left Column: Dispatch Console & User Preferences -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>🚀 Notification Dispatch Console</h3>
+                    </div>
+
+                    <form id="dispatch-form">
+                        <!-- Channel Selection -->
+                        <div class="form-group">
+                            <label class="form-label">Select Communication Channel</label>
+                            <div class="channel-selector-pills">
+                                <button type="button" class="channel-pill-btn active" data-channel="email">✉️ Email</button>
+                                <button type="button" class="channel-pill-btn" data-channel="sms">📱 SMS</button>
+                                <button type="button" class="channel-pill-btn" data-channel="webhook">🌐 Webhook</button>
+                            </div>
+                            <input type="hidden" id="selected-channel" value="email">
+                        </div>
+
+                        <!-- User ID & Idempotency Key Row -->
+                        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 0.85rem;">
+                            <div class="form-group">
+                                <label for="input-user-id" class="form-label">User ID</label>
+                                <input type="number" id="input-user-id" class="form-input" value="1" min="1" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-idempotency" class="form-label">Idempotency Key (Optional)</label>
+                                <input type="text" id="input-idempotency" class="form-input" placeholder="e.g. notif_key_99">
+                            </div>
+                        </div>
+
+                        <!-- Recipient Address / Phone / URL -->
+                        <div class="form-group">
+                            <label for="input-recipient" id="recipient-label" class="form-label">Recipient Email Address</label>
+                            <input type="text" id="input-recipient" class="form-input" placeholder="vee@dev.io" required>
+                        </div>
+
+                        <!-- Template Selection Dropdown -->
+                        <div class="form-group">
+                            <label for="select-template" class="form-label">Message Template</label>
+                            <select id="select-template" class="form-select">
+                                <option value="">-- Custom Direct Message --</option>
+                            </select>
+                        </div>
+
+                        <!-- Dynamic Template Variables JSON Box -->
+                        <div id="variables-container" class="form-group" style="display: none;">
+                            <label for="input-variables" class="form-label">Template Variables (JSON)</label>
+                            <textarea id="input-variables" class="form-textarea" rows="3" placeholder='{"username": "Vee", "email": "vee@dev.io"}'></textarea>
+                        </div>
+
+                        <!-- Direct Content Box -->
+                        <div id="direct-content-container" class="form-group">
+                            <label for="input-content" class="form-label">Notification Body Content</label>
+                            <textarea id="input-content" class="form-textarea" rows="3" placeholder="Enter custom alert message..."></textarea>
+                        </div>
+
+                        <button type="submit" id="send-notif-btn" class="btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.8rem;">
+                            ⚡ Enqueue Notification Dispatch →
+                        </button>
+                    </form>
+                </div>
+
+                <!-- User Preferences Opt-In/Opt-Out Panel -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>🛡️ User Channel Preferences</h3>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">User ID: <strong id="pref-user-display">1</strong></span>
+                    </div>
+
+                    <div class="preference-toggles-box">
+                        <div class="toggle-row">
+                            <span>📧 Email Channel</span>
+                            <input type="checkbox" id="pref-email-toggle" checked style="cursor: pointer; transform: scale(1.2);">
+                        </div>
+                        <div class="toggle-row">
+                            <span>📱 SMS Text Alerts</span>
+                            <input type="checkbox" id="pref-sms-toggle" checked style="cursor: pointer; transform: scale(1.2);">
+                        </div>
+                        <div class="toggle-row">
+                            <span>🌐 Webhook HTTP Pushes</span>
+                            <input type="checkbox" id="pref-webhook-toggle" checked style="cursor: pointer; transform: scale(1.2);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Audit Feed & Log Stream -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>📑 Live Notification Audit Trail</h3>
+                    <button id="refresh-logs-btn" class="btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                        🔄 Refresh Feed
+                    </button>
+                </div>
+
+                <div id="audit-feed-container" class="audit-feed-list">
+                    <p style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading live notification stream...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/dashboardPage.js"></script>
+</body>
+</html>
