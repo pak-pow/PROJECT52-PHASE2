@@ -54,7 +54,7 @@ def seed_database():
     UserPreferenceModel.set_user_preferences(user_id=1, email_enabled=True, sms_enabled=True, webhook_enabled=True)
     UserPreferenceModel.set_user_preferences(user_id=2, email_enabled=True, sms_enabled=False, webhook_enabled=True)
 
-    print("[SEED] Database seeding completed successfully! ✨")
+    print("[SEED] Database seeding completed successfully!")
 
 if __name__ == "__main__":
     seed_database()
