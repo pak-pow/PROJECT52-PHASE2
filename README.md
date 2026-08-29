@@ -46,12 +46,12 @@ Phase 2 represents the convergence of foundational skills into cohesive systems.
 | 27 | Portfolio v2 with Backend | Full Stack | Contact Forms, Admin Dashboard | 7h | Done |
 | 28 | Quiz Platform with Scores | Full Stack | Leaderboards, Timed Tests | 7h | Done |
 | 29 | File Upload & Storage System | Backend | File Handling, Cloud Storage | 6h | Done |
-| 30 | Social Media Feed | Full Stack | Infinite Scroll, Like System | 8h | Not Started |
-| 31 | Booking/Reservation System | Full Stack | Calendar Logic, Availability | 9h | Not Started |
-| 32 | API Rate Limiter Middleware | Backend | Redis, Token Bucket Algorithm | 6h | Not Started |
-| 33 | Multi-user Drawing Canvas | Full Stack | Canvas API, Real-time Sync | 8h | Not Started |
-| 34 | Job Board Platform | Full Stack | Search Filters, Application System | 9h | Not Started |
-| 35 | Notification System | Backend | Email/SMS Integration, Queues | 7h | Not Started |
+| 30 | Social Media Feed | Full Stack | Infinite Scroll, Like System | 8h | Done |
+| 31 | Booking/Reservation System | Full Stack | Calendar Logic, Availability | 9h | Done |
+| 32 | API Rate Limiter Middleware | Backend | Redis, Token Bucket Algorithm | 6h | Done |
+| 33 | Multi-user Drawing Canvas | Full Stack | Canvas API, Real-time Sync | 8h | Done |
+| 34 | Job Board Platform | Full Stack | Search Filters, Application System | 9h | Done |
+| 35 | Notification System | Backend | Email/SMS Integration, Queues | 7h | Done |
 | 36 | Analytics Dashboard | Full Stack | Data Visualization, Metrics | 8h | Not Started |
 
 **Total Estimated Time:** 159 hours over 24 weeks (\~6.6 hours/week)
