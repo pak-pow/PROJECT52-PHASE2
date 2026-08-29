@@ -1,6 +1,6 @@
-# 🔔 Week 35 — Multi-Channel Notification System Backend
+# 🔔 Week 35 — Multi-Channel Notification System & Web Dashboard
 
-A production-grade, high-throughput **Multi-Channel Notification System** backend built with Flask (Python), SQLite, Jinja2, and an asynchronous `ThreadPoolExecutor` background task queue. Dispatches personalized notifications across **Email** (SMTP / Mock Email), **SMS** (Twilio / E.164 phone formatting), and **Webhook** (HTTP POST event pushes). Features Jinja2 dynamic template variable rendering, user channel opt-in/opt-out preference enforcement, idempotency key deduplication, per-user rate limiting, exponential backoff retries, and comprehensive delivery audit logs.
+A production-grade, high-throughput **Multi-Channel Notification System** built with Flask (Python), SQLite, Jinja2, an asynchronous `ThreadPoolExecutor` background task queue, and an interactive ES6 JavaScript frontend dashboard. Dispatches personalized notifications across **Email** (SMTP / Mock Email), **SMS** (Twilio / E.164 phone formatting), and **Webhook** (HTTP POST event pushes). Features Jinja2 dynamic template variable rendering, user channel opt-in/opt-out preference enforcement, idempotency key deduplication, per-user rate limiting, exponential backoff retries, and comprehensive delivery audit logs.
 
 ---
 
@@ -8,7 +8,7 @@ A production-grade, high-throughput **Multi-Channel Notification System** backen
 
 ```mermaid
 graph TD
-    Client["Client Application"] -->|1. POST /api/notifications/send| NotifRoute["Notification Controller (/api/notifications)"]
+    Client["Client / Web Dashboard"] -->|1. POST /api/notifications/send| NotifRoute["Notification Controller (/api/notifications)"]
     Client -->|2. GET/PUT /api/preferences/<id>| PrefRoute["Preference Controller (/api/preferences)"]
     Client -->|3. GET/POST /api/templates| TmplRoute["Template Controller (/api/templates)"]
     
@@ -45,6 +45,8 @@ graph TD
   - Background workers automatically skip delivery (`status = 'Skipped'`) if the recipient opted out of that channel.
 - **Per-User Rate Limiting**:
   - Enforces a 10 request/minute rate limit per user (`Config.RATE_LIMIT_PER_MINUTE = 10`) to prevent abuse and runaway loops.
+- **Interactive Web Dashboard**:
+  - Modern, responsive Dark / Light mode UI for dispatching notifications, selecting templates with auto-populated JSON variables, toggling user channel preferences in real-time, and monitoring the live auto-polling audit feed.
 
 ---
 
@@ -73,13 +75,19 @@ python run.py
 ```
 The Flask server seeds default notification templates and starts on `http://127.0.0.1:5000`.
 
-### 2. Run Automated Pytest Test Suite
+### 2. Open Frontend Web Dashboard
+Open the file in your web browser:
+```
+week35_notification_system/frontend/public/index.html
+```
+
+### 3. Run Automated Pytest Test Suite
 ```bash
 cd week35_notification_system/backend
 python -m pytest tests/ -v
 ```
 
-### 3. Send a Sample Notification (cURL)
+### 4. Send a Sample Notification via cURL
 ```bash
 curl -X POST http://127.0.0.1:5000/api/notifications/send \
   -H "Content-Type: application/json" \
