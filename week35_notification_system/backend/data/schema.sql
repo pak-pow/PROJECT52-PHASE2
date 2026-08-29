@@ -1,11 +1,7 @@
 -- SQLite Schema for Week 35 Notification System
 
-DROP TABLE IF EXISTS notifications;
-DROP TABLE IF EXISTS templates;
-DROP TABLE IF EXISTS user_preferences;
-
 -- Templates Table (Email, SMS, Webhook Templates)
-CREATE TABLE templates (
+CREATE TABLE IF NOT EXISTS templates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
     channel VARCHAR(30) NOT NULL, -- 'email', 'sms', 'webhook'
@@ -15,7 +11,7 @@ CREATE TABLE templates (
 );
 
 -- User Preferences Table (Opt-in / Opt-out Channels)
-CREATE TABLE user_preferences (
+CREATE TABLE IF NOT EXISTS user_preferences (
     user_id INTEGER PRIMARY KEY,
     email_enabled INTEGER DEFAULT 1,
     sms_enabled INTEGER DEFAULT 1,
@@ -24,7 +20,7 @@ CREATE TABLE user_preferences (
 );
 
 -- Notifications Audit Log & Queue Table
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     idempotency_key VARCHAR(120) UNIQUE,
     user_id INTEGER NOT NULL,
@@ -43,6 +39,6 @@ CREATE TABLE notifications (
 );
 
 -- Indexes for Fast Status & User Queries
-CREATE INDEX idx_notifications_status ON notifications(status);
-CREATE INDEX idx_notifications_user_id ON notifications(user_id);
-CREATE INDEX idx_notifications_idempotency ON notifications(idempotency_key);
+CREATE INDEX IF NOT EXISTS idx_notifications_status ON notifications(status);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_idempotency ON notifications(idempotency_key);
