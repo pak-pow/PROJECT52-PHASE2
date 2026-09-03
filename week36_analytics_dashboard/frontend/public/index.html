@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseMetrics — Real-Time Analytics & Business Intelligence</title>
+    <link rel="stylesheet" href="../src/assets/base.css">
+    <link rel="stylesheet" href="../src/assets/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function() {
+            var theme = localStorage.getItem("analytics_dashboard_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="dashboard-container">
+        <!-- Filter & Action Toolbar -->
+        <div class="dashboard-toolbar">
+            <div class="toolbar-group">
+                <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);">Date Range:</span>
+                <div class="date-pill-selector">
+                    <button class="date-pill-btn" data-range="today">Today</button>
+                    <button class="date-pill-btn" data-range="7d">7 Days</button>
+                    <button class="date-pill-btn active" data-range="30d">30 Days</button>
+                    <button class="date-pill-btn" data-range="all">All Time</button>
+                </div>
+            </div>
+
+            <div class="toolbar-group">
+                <button id="btn-simulate-event" class="btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+                    ⚡ Simulate Live Event
+                </button>
+
+                <button id="btn-refresh-data" class="btn-outline">
+                    🔄 Refresh
+                </button>
+
+                <button id="btn-export-csv" class="btn-outline">
+                    📥 Export CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- 4 Primary KPI Summary Cards -->
+        <div id="metric-cards-container"></div>
+
+        <!-- Main Traffic Chart Area -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h3>📈 Traffic Volume & Visitor Trends</h3>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Pageviews (Solid) vs. Unique Visitors (Dashed)</span>
+                </div>
+            </div>
+            <div style="height: 320px; width: 100%; position: relative;">
+                <canvas id="trafficChartCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Breakdowns Grid: Top Pages & Categorical Donut Charts -->
+        <div class="dashboard-main-grid">
+            <!-- Left: Top Performing Pages Table -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>🏆 Top Performing Content</h3>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Ranked by View Count</span>
+                </div>
+                <div id="top-pages-container" style="overflow-x: auto;"></div>
+            </div>
+
+            <!-- Right: Device & Browser Donut Charts -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>📱 Device Distribution</h3>
+                    </div>
+                    <div style="height: 180px; width: 100%; position: relative;">
+                        <canvas id="deviceChartCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>🌐 Browser Share</h3>
+                    </div>
+                    <div style="height: 180px; width: 100%; position: relative;">
+                        <canvas id="browserChartCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Funnel Analysis & Traffic Referrers Grid -->
+        <div class="dashboard-main-grid">
+            <!-- Left: Conversion Funnel Visualizer -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>🎯 Conversion Funnel Analytics</h3>
+                    <select id="select-funnel" class="btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; background: var(--bg-input);">
+                        <option value="">Loading Funnels...</option>
+                    </select>
+                </div>
+                <div id="funnel-view-container"></div>
+            </div>
+
+            <!-- Right: Top Referrers & Geographic Distribution -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>🔗 Top Traffic Sources</h3>
+                    </div>
+                    <div id="referrers-container" class="breakdown-list"></div>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>🌍 Geographic Reach</h3>
+                    </div>
+                    <div id="countries-container" class="breakdown-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Real-Time Activity Feed -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <span style="color: var(--success); font-size: 0.9rem;">●</span>
+                    <h3>Live Real-Time Activity Stream</h3>
+                </div>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">
+                    Showing <strong id="live-events-count" style="color: var(--accent-light);">0</strong> recent visitor actions
+                </span>
+            </div>
+            <div id="live-feed-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;"></div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/pages/dashboardPage.js"></script>
+</body>
+</html>
